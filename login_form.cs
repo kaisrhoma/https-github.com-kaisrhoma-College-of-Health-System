@@ -23,5 +23,10 @@ namespace college_of_health_sciences
         {
 
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            label4.Text = "Kais Login";
+        }
     }
 }

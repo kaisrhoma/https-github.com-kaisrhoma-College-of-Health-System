@@ -86,7 +86,7 @@
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = global::college_of_health_sciences.Properties.Resources.garyan_univirsty_logo;
-            this.pictureBox2.Location = new System.Drawing.Point(955, 7);
+            this.pictureBox2.Location = new System.Drawing.Point(960, 7);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(131, 125);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -319,6 +319,7 @@
             this.button2.TabIndex = 0;
             this.button2.Text = "Admin";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // login_form
             // 
