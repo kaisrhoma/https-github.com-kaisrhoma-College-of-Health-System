@@ -23,7 +23,7 @@ namespace college_of_health_sciences
 
         private void login_form_Load(object sender, EventArgs e)
         {
-            textBox1.Focus();
+    
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -204,5 +204,10 @@ namespace college_of_health_sciences
 
 
     }
+
+        private void login_form_Shown(object sender, EventArgs e)
+        {
+            textBox1.Focus();
+        }
     }
 }

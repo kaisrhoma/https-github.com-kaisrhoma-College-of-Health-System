@@ -146,7 +146,7 @@
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Dubai", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(190, 98);
+            this.label4.Location = new System.Drawing.Point(182, 96);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(124, 34);
@@ -356,7 +356,7 @@
             this.Name = "login_form";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "login_form";
-            this.Load += new System.EventHandler(this.login_form_Load);
+            this.Shown += new System.EventHandler(this.login_form_Shown);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.login_form_KeyDown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
