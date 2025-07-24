@@ -16,7 +16,7 @@ namespace college_of_health_sciences
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new admin_form());
+            Application.Run(new login_form());
         }
     }
 }
