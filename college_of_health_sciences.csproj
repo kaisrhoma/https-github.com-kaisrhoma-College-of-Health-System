@@ -47,6 +47,42 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="dashboards\admin\edit_admin.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\admin\edit_admin.Designer.cs">
+      <DependentUpon>edit_admin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\administrative_operations.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\administrative_operations.Designer.cs">
+      <DependentUpon>administrative_operations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\exams_edit_profile.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\exams_edit_profile.Designer.cs">
+      <DependentUpon>exams_edit_profile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\exams_home.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\exams_home.Designer.cs">
+      <DependentUpon>exams_home.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\grads_management.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\grads_management.Designer.cs">
+      <DependentUpon>grads_management.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\statements_reports.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\exams_dashboards\statements_reports.Designer.cs">
+      <DependentUpon>statements_reports.cs</DependentUpon>
+    </Compile>
     <Compile Include="moduls\conn.cs" />
     <Compile Include="dashboards\admin\admin_home.cs">
       <SubType>UserControl</SubType>
@@ -90,8 +126,26 @@
     <EmbeddedResource Include="dashboards\admin\admin_home.resx">
       <DependentUpon>admin_home.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\admin\edit_admin.resx">
+      <DependentUpon>edit_admin.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="dashboards\admin\users_management.resx">
       <DependentUpon>users_management.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\exams_dashboards\administrative_operations.resx">
+      <DependentUpon>administrative_operations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\exams_dashboards\exams_edit_profile.resx">
+      <DependentUpon>exams_edit_profile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\exams_dashboards\exams_home.resx">
+      <DependentUpon>exams_home.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\exams_dashboards\grads_management.resx">
+      <DependentUpon>grads_management.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\exams_dashboards\statements_reports.resx">
+      <DependentUpon>statements_reports.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="system_forms\admin_form.resx">
       <DependentUpon>admin_form.cs</DependentUpon>
@@ -128,12 +182,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="dashboards\department_management\" />
-    <Folder Include="dashboards\exams\" />
-    <Folder Include="dashboards\registrar\" />
-    <Folder Include="dashboards\scientific_affairs\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="images\user.png" />
     <None Include="Resources\adminlogin.png" />
