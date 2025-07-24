@@ -36,9 +36,9 @@
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -64,8 +64,9 @@
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1182, 141);
+            this.panel1.Size = new System.Drawing.Size(888, 115);
             this.panel1.TabIndex = 0;
             // 
             // label1
@@ -74,9 +75,10 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Times New Roman", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(417, 28);
+            this.label1.Location = new System.Drawing.Point(314, 23);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(379, 78);
+            this.label1.Size = new System.Drawing.Size(306, 62);
             this.label1.TabIndex = 2;
             this.label1.Text = "University of Gharyan\r\nFaculty of Health Sciences";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -86,9 +88,10 @@
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = global::college_of_health_sciences.Properties.Resources.garyan_univirsty_logo;
-            this.pictureBox2.Location = new System.Drawing.Point(960, 7);
+            this.pictureBox2.Location = new System.Drawing.Point(722, 6);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(131, 125);
+            this.pictureBox2.Size = new System.Drawing.Size(98, 102);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 1;
             this.pictureBox2.TabStop = false;
@@ -97,9 +100,10 @@
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::college_of_health_sciences.Properties.Resources.cohs_logo;
-            this.pictureBox1.Location = new System.Drawing.Point(95, 7);
+            this.pictureBox1.Location = new System.Drawing.Point(71, 6);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(131, 125);
+            this.pictureBox1.Size = new System.Drawing.Size(98, 102);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -112,13 +116,14 @@
             this.panel2.Controls.Add(this.pictureBox3);
             this.panel2.Controls.Add(this.label4);
             this.panel2.Controls.Add(this.label3);
-            this.panel2.Controls.Add(this.textBox2);
-            this.panel2.Controls.Add(this.label2);
             this.panel2.Controls.Add(this.textBox1);
+            this.panel2.Controls.Add(this.label2);
+            this.panel2.Controls.Add(this.textBox2);
             this.panel2.Controls.Add(this.button1);
-            this.panel2.Location = new System.Drawing.Point(268, 270);
+            this.panel2.Location = new System.Drawing.Point(201, 219);
+            this.panel2.Margin = new System.Windows.Forms.Padding(2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(665, 393);
+            this.panel2.Size = new System.Drawing.Size(499, 320);
             this.panel2.TabIndex = 1;
             // 
             // pictureBox3
@@ -126,9 +131,10 @@
             this.pictureBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox3.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox3.Image = global::college_of_health_sciences.Properties.Resources.adminlogin;
-            this.pictureBox3.Location = new System.Drawing.Point(279, 14);
+            this.pictureBox3.Location = new System.Drawing.Point(209, 11);
+            this.pictureBox3.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(101, 102);
+            this.pictureBox3.Size = new System.Drawing.Size(76, 83);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox3.TabIndex = 6;
             this.pictureBox3.TabStop = false;
@@ -140,9 +146,10 @@
             this.label4.BackColor = System.Drawing.Color.Transparent;
             this.label4.Font = new System.Drawing.Font("Dubai", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(254, 120);
+            this.label4.Location = new System.Drawing.Point(182, 96);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(155, 42);
+            this.label4.Size = new System.Drawing.Size(124, 34);
             this.label4.TabIndex = 5;
             this.label4.Text = "Admin Login";
             // 
@@ -154,23 +161,25 @@
             this.label3.ForeColor = System.Drawing.Color.White;
             this.label3.Image = global::college_of_health_sciences.Properties.Resources.userid;
             this.label3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label3.Location = new System.Drawing.Point(132, 189);
+            this.label3.Location = new System.Drawing.Point(99, 154);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Padding = new System.Windows.Forms.Padding(3);
-            this.label3.Size = new System.Drawing.Size(156, 34);
+            this.label3.Padding = new System.Windows.Forms.Padding(2);
+            this.label3.Size = new System.Drawing.Size(117, 28);
             this.label3.TabIndex = 4;
             this.label3.Text = "username";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox2
+            // textBox1
             // 
-            this.textBox2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(287, 189);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(229, 36);
-            this.textBox2.TabIndex = 3;
+            this.textBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox1.Location = new System.Drawing.Point(215, 154);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(172, 30);
+            this.textBox1.TabIndex = 3;
             // 
             // label2
             // 
@@ -180,23 +189,25 @@
             this.label2.ForeColor = System.Drawing.Color.White;
             this.label2.Image = global::college_of_health_sciences.Properties.Resources.password;
             this.label2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label2.Location = new System.Drawing.Point(132, 248);
+            this.label2.Location = new System.Drawing.Point(99, 202);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Padding = new System.Windows.Forms.Padding(3);
-            this.label2.Size = new System.Drawing.Size(156, 34);
+            this.label2.Padding = new System.Windows.Forms.Padding(2);
+            this.label2.Size = new System.Drawing.Size(117, 28);
             this.label2.TabIndex = 2;
             this.label2.Text = "password";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // textBox1
+            // textBox2
             // 
-            this.textBox1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(287, 248);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(229, 36);
-            this.textBox1.TabIndex = 1;
+            this.textBox2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox2.Location = new System.Drawing.Point(215, 202);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(172, 30);
+            this.textBox2.TabIndex = 1;
             // 
             // button1
             // 
@@ -206,21 +217,24 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(132, 326);
+            this.button1.Location = new System.Drawing.Point(99, 265);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(384, 46);
+            this.button1.Size = new System.Drawing.Size(288, 37);
             this.button1.TabIndex = 0;
             this.button1.Text = "Login";
             this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel3
             // 
             this.panel3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panel3.BackColor = System.Drawing.Color.Transparent;
             this.panel3.Controls.Add(this.tableLayoutPanel1);
-            this.panel3.Location = new System.Drawing.Point(268, 215);
+            this.panel3.Location = new System.Drawing.Point(201, 175);
+            this.panel3.Margin = new System.Windows.Forms.Padding(2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(665, 49);
+            this.panel3.Size = new System.Drawing.Size(499, 40);
             this.panel3.TabIndex = 2;
             // 
             // tableLayoutPanel1
@@ -239,10 +253,11 @@
             this.tableLayoutPanel1.Controls.Add(this.button2, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(665, 49);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(499, 40);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // button6
@@ -252,13 +267,14 @@
             this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button6.ForeColor = System.Drawing.Color.White;
-            this.button6.Location = new System.Drawing.Point(532, 0);
+            this.button6.Location = new System.Drawing.Point(396, 0);
             this.button6.Margin = new System.Windows.Forms.Padding(0);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(133, 49);
+            this.button6.Size = new System.Drawing.Size(103, 40);
             this.button6.TabIndex = 4;
             this.button6.Text = "Departments";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button5
             // 
@@ -267,13 +283,14 @@
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button5.ForeColor = System.Drawing.Color.White;
-            this.button5.Location = new System.Drawing.Point(399, 0);
+            this.button5.Location = new System.Drawing.Point(297, 0);
             this.button5.Margin = new System.Windows.Forms.Padding(0);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(133, 49);
+            this.button5.Size = new System.Drawing.Size(99, 40);
             this.button5.TabIndex = 3;
             this.button5.Text = "S Affairs";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button4
             // 
@@ -282,13 +299,14 @@
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button4.ForeColor = System.Drawing.Color.White;
-            this.button4.Location = new System.Drawing.Point(266, 0);
+            this.button4.Location = new System.Drawing.Point(198, 0);
             this.button4.Margin = new System.Windows.Forms.Padding(0);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(133, 49);
+            this.button4.Size = new System.Drawing.Size(99, 40);
             this.button4.TabIndex = 2;
             this.button4.Text = "Exams";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button3
             // 
@@ -297,10 +315,10 @@
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button3.ForeColor = System.Drawing.Color.White;
-            this.button3.Location = new System.Drawing.Point(133, 0);
+            this.button3.Location = new System.Drawing.Point(99, 0);
             this.button3.Margin = new System.Windows.Forms.Padding(0);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(133, 49);
+            this.button3.Size = new System.Drawing.Size(99, 40);
             this.button3.TabIndex = 1;
             this.button3.Text = "Registrar";
             this.button3.UseVisualStyleBackColor = true;
@@ -316,7 +334,7 @@
             this.button2.Location = new System.Drawing.Point(0, 0);
             this.button2.Margin = new System.Windows.Forms.Padding(0);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(133, 49);
+            this.button2.Size = new System.Drawing.Size(99, 40);
             this.button2.TabIndex = 0;
             this.button2.Text = "Admin";
             this.button2.UseVisualStyleBackColor = true;
@@ -324,19 +342,22 @@
             // 
             // login_form
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::college_of_health_sciences.Properties.Resources.login_backimage;
-            this.ClientSize = new System.Drawing.Size(1182, 718);
+            this.ClientSize = new System.Drawing.Size(888, 583);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MinimumSize = new System.Drawing.Size(1200, 700);
+            this.KeyPreview = true;
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.MinimumSize = new System.Drawing.Size(904, 576);
             this.Name = "login_form";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "login_form";
-            this.Load += new System.EventHandler(this.login_form_Load);
+            this.Shown += new System.EventHandler(this.login_form_Shown);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.login_form_KeyDown);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
@@ -358,10 +379,10 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Panel panel3;

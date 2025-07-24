@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="conn.cs" />
     <Compile Include="dashboards\admin\admin_home.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -73,6 +74,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Session.cs" />
     <EmbeddedResource Include="dashboards\admin\admin_home.resx">
       <DependentUpon>admin_home.cs</DependentUpon>
     </EmbeddedResource>

@@ -17,6 +17,8 @@ namespace college_of_health_sciences
         {
             InitializeComponent();
             button1_Click(null, null);
+            label2.Text = Session.Username;
+            
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -59,6 +61,28 @@ namespace college_of_health_sciences
             users_management users_manage = new users_management();
             users_manage.Dock = DockStyle.Fill; 
             panel4.Controls.Add(users_manage);
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panel4_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void admin_form_Load(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            login_form login = new login_form();
+            login.Show();
+            this.Close();
         }
     }
 }
