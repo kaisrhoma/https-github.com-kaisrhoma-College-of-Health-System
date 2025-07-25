@@ -32,5 +32,13 @@ namespace college_of_health_sciences.system_forms
             login.Show();
             this.Close();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            panel4.Controls.Clear();
+            statements_reports stmt_reports = new statements_reports();
+            stmt_reports.Dock = DockStyle.Fill;
+            panel4.Controls.Add(stmt_reports);
+        }
     }
 }

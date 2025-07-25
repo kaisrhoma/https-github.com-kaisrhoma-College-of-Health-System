@@ -19,7 +19,7 @@ namespace college_of_health_sciences
         public login_form()
         {
             InitializeComponent();
-            
+            Session.Role = "Admin";
         }
 
         private void login_form_Load(object sender, EventArgs e)
