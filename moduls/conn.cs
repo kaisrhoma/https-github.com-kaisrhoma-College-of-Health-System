@@ -1,16 +1,13 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 
 namespace college_of_health_sciences
 {
-    internal class conn
+    public class conn
     {
         public class DatabaseConnection
         {
+            private readonly string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
             private SqlConnection connection;
-
-            // تأكد من اسم السيرفر والقاعدة صحيحين
-            private string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
 
             public SqlConnection OpenConnection()
             {
@@ -31,7 +28,3 @@ namespace college_of_health_sciences
         }
     }
 }
-
-
-
-

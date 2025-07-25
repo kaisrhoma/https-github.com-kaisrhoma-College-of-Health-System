@@ -25,5 +25,12 @@ namespace college_of_health_sciences.system_forms
             gradsm.Dock = DockStyle.Fill;
             panel4.Controls.Add(gradsm);
         }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            login_form login = new login_form();
+            login.Show();
+            this.Close();
+        }
     }
 }
