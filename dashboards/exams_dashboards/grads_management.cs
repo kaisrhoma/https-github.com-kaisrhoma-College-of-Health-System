@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
     {
 
         private readonly string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
+       // SqlConnection conn = new SqlConnection("Data Source=.;Initial Catalog=Cohs_DB;Integrated Security=True");
 
 
         public grads_management()
@@ -33,6 +35,12 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 comboBox1.DisplayMember = "course_name";
                 comboBox1.ValueMember = "course_id";
                 comboBox1.SelectedIndex = -1; // لا شيء محدد افتراضياً
+                comboBox_Year.Items.Add("1");
+                comboBox_Year.Items.Add("2");
+                comboBox_Year.Items.Add("3");
+                comboBox_Year.Items.Add("4");
+
+                comboBox_Year.SelectedIndex = 0;
             }
 
         }
@@ -397,6 +405,355 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             catch (Exception ex)
             {
                 MessageBox.Show("خطأ أثناء الحفظ: " + ex.Message);
+            }
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+
+        }
+        //--------------------------------------------------------------------------------------------------------------------------3
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+
+        {
+            if (comboBox_Year.SelectedItem == null) return;
+
+            int yearNumber;
+            if (!int.TryParse(comboBox_Year.SelectedItem.ToString(), out yearNumber))
+                return;
+
+            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;")) 
+
+            {
+                conn.Open();
+
+                SqlCommand cmd = new SqlCommand("SELECT course_id, course_name FROM Courses WHERE year_number = @year", conn);
+                cmd.Parameters.AddWithValue("@year", yearNumber);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                comboBox_Course.DisplayMember = "course_name";
+                comboBox_Course.ValueMember = "course_id";
+                comboBox_Course.DataSource = dt;
+            }
+
+
+        }
+
+
+
+        private void button5_Click(object sender, EventArgs e)
+
+        {
+            if (comboBox_Year.SelectedItem == null)
+            {
+                MessageBox.Show("يرجى اختيار السنة الدراسية.");
+                return;
+            }
+
+            if (comboBox_Course.SelectedValue == null)
+            {
+                MessageBox.Show("يرجى اختيار المادة.");
+                return;
+            }
+
+            int selectedYear;
+            if (!int.TryParse(comboBox_Year.SelectedItem.ToString(), out selectedYear))
+            {
+                MessageBox.Show("السنة الدراسية غير صالحة.");
+                return;
+            }
+
+            int courseId = Convert.ToInt32(comboBox_Course.SelectedValue);
+
+            string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = @"
+            SELECT 
+                s.student_id, 
+                s.university_number, 
+                s.full_name, 
+                d.dep_name, 
+                g.final_grade, 
+                g.success_status,
+                c.course_name, 
+                c.course_id,
+                i.full_name AS instructor_name
+            FROM Grades g
+            INNER JOIN Students s ON g.student_id = s.student_id
+            INNER JOIN Departments d ON s.department_id = d.department_id
+            INNER JOIN Courses c ON g.course_id = c.course_id
+            INNER JOIN Course_Instructor ci ON c.course_id = ci.course_id
+            INNER JOIN Instructors i ON ci.instructor_id = i.instructor_id
+            WHERE g.course_id = @courseId 
+              AND c.year_number = @year
+              AND g.success_status = N'رسوب'
+        ";
+
+                //    string query = @"
+                //SELECT s.student_id, s.full_name, s.university_number, g.final_grade, g.success_status
+                //FROM Grades g
+                //INNER JOIN Students s ON g.student_id = s.student_id
+                //INNER JOIN Courses c ON g.course_id = c.course_id
+                //WHERE g.course_id = @courseId 
+                //  AND c.year_number = @year
+                //  AND g.success_status = N'رسوب'";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@courseId", courseId);
+                    cmd.Parameters.AddWithValue("@year", selectedYear);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    dataGridView3.DataSource = dt;
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        MessageBox.Show("لا يوجد طلاب راسبين في هذه المادة والسنة الدراسية.");
+                    }
+                }
+            }
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (dataGridView3.Rows.Count == 0)
+            {
+                MessageBox.Show("لا يوجد بيانات للطباعة.");
+                return;
+            }
+
+            PrintDocument printDoc = new PrintDocument();
+            printDoc.DefaultPageSettings.Landscape = false;
+            printDoc.PrintPage += PrintDoc_PrintPage;
+
+            PrintPreviewDialog preview = new PrintPreviewDialog();
+            preview.Document = printDoc;
+            preview.ShowDialog();
+        }
+
+        private void PrintDoc_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            int marginLeft = e.MarginBounds.Left;
+            int marginTop = e.MarginBounds.Top;
+            int pageWidth = e.MarginBounds.Width;
+
+            Font titleFont = new Font("Arial", 16, FontStyle.Bold);
+            Font headerFont = new Font("Arial", 12, FontStyle.Bold);
+            Font cellFont = new Font("Arial", 11);
+            Brush blackBrush = Brushes.Black;
+
+            StringFormat rightAlign = new StringFormat()
+            {
+                Alignment = StringAlignment.Far,
+                LineAlignment = StringAlignment.Center,
+                FormatFlags = StringFormatFlags.DirectionRightToLeft
+            };
+
+            StringFormat centerAlign = new StringFormat()
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center,
+                FormatFlags = StringFormatFlags.DirectionRightToLeft
+            };
+
+            int currentY = marginTop;
+
+            // --- رأس الصفحة ---
+            string[] headerLines = new string[]
+            {
+        "دولة ليبيا",
+        "وزارة التعليم",
+        "جامعة غريان",
+        "كلية العلوم الصحية",
+        $"التاريخ: {DateTime.Now.ToString("yyyy/MM/dd")}"
+            };
+
+            foreach (var line in headerLines)
+            {
+                g.DrawString(line, titleFont, blackBrush, new RectangleF(marginLeft, currentY, pageWidth, 30), centerAlign);
+                currentY += 30;
+            }
+
+            currentY += 10; // مسافة بعد الرأس
+
+            // --- عنوان الكشف ---
+            string reportTitle = "كشف الطلاب الراسبين";
+            g.DrawString(reportTitle, titleFont, blackBrush, new RectangleF(marginLeft, currentY, pageWidth, 30), centerAlign);
+            currentY += 40;
+
+            // --- معلومات المادة (يمكن تعديل المتغيرات حسب بياناتك) ---
+            // افترض أن هذه البيانات مأخوذة من مكان ما (مثلاً من اختيار الكمبوكس)
+            string courseName = "مقدمة في الحاسوب"; // اسم المادة
+            string courseId = "43";                  // رقم المادة
+            string instructorName = "أ. محمد علي";  // اسم المحاضر
+            int studentsCount = dataGridView3.Rows.Count;
+
+            // عرض معلومات المادة في جدول صغير
+            int infoColWidth = pageWidth / 4;
+            int infoRowHeight = 30;
+
+            // مستطيلات كل عمود
+            Rectangle rectCourseNameTitle = new Rectangle(marginLeft + infoColWidth * 0, currentY, infoColWidth, infoRowHeight);
+            Rectangle rectCourseNameValue = new Rectangle(marginLeft + infoColWidth * 0, currentY + infoRowHeight, infoColWidth, infoRowHeight);
+
+            Rectangle rectCourseIdTitle = new Rectangle(marginLeft + infoColWidth * 1, currentY, infoColWidth, infoRowHeight);
+            Rectangle rectCourseIdValue = new Rectangle(marginLeft + infoColWidth * 1, currentY + infoRowHeight, infoColWidth, infoRowHeight);
+
+            Rectangle rectInstructorTitle = new Rectangle(marginLeft + infoColWidth * 2, currentY, infoColWidth, infoRowHeight);
+            Rectangle rectInstructorValue = new Rectangle(marginLeft + infoColWidth * 2, currentY + infoRowHeight, infoColWidth, infoRowHeight);
+
+            Rectangle rectCountTitle = new Rectangle(marginLeft + infoColWidth * 3, currentY, infoColWidth, infoRowHeight);
+            Rectangle rectCountValue = new Rectangle(marginLeft + infoColWidth * 3, currentY + infoRowHeight, infoColWidth, infoRowHeight);
+
+            // رسم رؤوس الأعمدة
+            g.FillRectangle(Brushes.LightGray, rectCourseNameTitle);
+            g.FillRectangle(Brushes.LightGray, rectCourseIdTitle);
+            g.FillRectangle(Brushes.LightGray, rectInstructorTitle);
+            g.FillRectangle(Brushes.LightGray, rectCountTitle);
+
+            g.DrawRectangle(Pens.Black, rectCourseNameTitle);
+            g.DrawRectangle(Pens.Black, rectCourseIdTitle);
+            g.DrawRectangle(Pens.Black, rectInstructorTitle);
+            g.DrawRectangle(Pens.Black, rectCountTitle);
+
+            g.DrawString("اسم المادة", headerFont, blackBrush, rectCourseNameTitle, centerAlign);
+            g.DrawString("رقم المادة", headerFont, blackBrush, rectCourseIdTitle, centerAlign);
+            g.DrawString("اسم المحاضر", headerFont, blackBrush, rectInstructorTitle, centerAlign);
+            g.DrawString("عدد الطلاب", headerFont, blackBrush, rectCountTitle, centerAlign);
+
+            // رسم قيم الأعمدة
+            g.DrawRectangle(Pens.Black, rectCourseNameValue);
+            g.DrawRectangle(Pens.Black, rectCourseIdValue);
+            g.DrawRectangle(Pens.Black, rectInstructorValue);
+            g.DrawRectangle(Pens.Black, rectCountValue);
+
+            g.DrawString(courseName, cellFont, blackBrush, rectCourseNameValue, centerAlign);
+            g.DrawString(courseId, cellFont, blackBrush, rectCourseIdValue, centerAlign);
+            g.DrawString(instructorName, cellFont, blackBrush, rectInstructorValue, centerAlign);
+            g.DrawString(studentsCount.ToString(), cellFont, blackBrush, rectCountValue, centerAlign);
+
+            currentY += infoRowHeight * 2 + 20; // اضافة مسافة بعد معلومات المادة
+
+            // --- جدول الطلاب الراسبين ---
+
+            // تعريف أعمدة الجدول
+            int colWidth_Id = 80;
+            int colWidth_Name = 200;
+            int colWidth_Department = 150;
+            int colWidth_Grade = 70;
+            int colWidth_Result = 70;
+
+            // رسم رؤوس الأعمدة
+            Rectangle rId = new Rectangle(marginLeft, currentY, colWidth_Id, infoRowHeight);
+            Rectangle rName = new Rectangle(marginLeft + colWidth_Id, currentY, colWidth_Name, infoRowHeight);
+            Rectangle rDept = new Rectangle(marginLeft + colWidth_Id + colWidth_Name, currentY, colWidth_Department, infoRowHeight);
+            Rectangle rGrade = new Rectangle(marginLeft + colWidth_Id + colWidth_Name + colWidth_Department, currentY, colWidth_Grade, infoRowHeight);
+            Rectangle rResult = new Rectangle(marginLeft + colWidth_Id + colWidth_Name + colWidth_Department + colWidth_Grade, currentY, colWidth_Result, infoRowHeight);
+
+            // خلفية الرؤوس
+            g.FillRectangle(Brushes.LightGray, rId);
+            g.FillRectangle(Brushes.LightGray, rName);
+            g.FillRectangle(Brushes.LightGray, rDept);
+            g.FillRectangle(Brushes.LightGray, rGrade);
+            g.FillRectangle(Brushes.LightGray, rResult);
+
+            // حدود الرؤوس
+            g.DrawRectangle(Pens.Black, rId);
+            g.DrawRectangle(Pens.Black, rName);
+            g.DrawRectangle(Pens.Black, rDept);
+            g.DrawRectangle(Pens.Black, rGrade);
+            g.DrawRectangle(Pens.Black, rResult);
+
+            // نص الرؤوس (محاذاة يمين أو وسط حسب المطلوب)
+            g.DrawString("رقم القيد", headerFont, blackBrush, rId, rightAlign);
+            g.DrawString("اسم الطالب", headerFont, blackBrush, rName, rightAlign);
+            g.DrawString("القسم", headerFont, blackBrush, rDept, rightAlign);
+            g.DrawString("الدرجة", headerFont, blackBrush, rGrade, rightAlign);
+            g.DrawString("النتيجة", headerFont, blackBrush, rResult, rightAlign);
+
+            currentY += infoRowHeight;
+
+            int rowHeight = 30;
+
+            // رسم بيانات الطلاب
+            foreach (DataGridViewRow row in dataGridView3.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                string studentId = row.Cells["student_id"].Value?.ToString() ?? "";
+                string studentName = row.Cells["full_name"].Value?.ToString() ?? "";
+                string department = row.Cells["dep_name"]?.ToString() ?? ""; // تأكد أن لديك هذا الحقل في DataGridView أو اجلبه من DB
+                string grade = row.Cells["final_grade"].Value?.ToString() ?? "";
+                string result = row.Cells["success_status"].Value?.ToString() ?? "";
+
+                Rectangle rrId = new Rectangle(marginLeft, currentY, colWidth_Id, rowHeight);
+                Rectangle rrName = new Rectangle(marginLeft + colWidth_Id, currentY, colWidth_Name, rowHeight);
+                Rectangle rrDept = new Rectangle(marginLeft + colWidth_Id + colWidth_Name, currentY, colWidth_Department, rowHeight);
+                Rectangle rrGrade = new Rectangle(marginLeft + colWidth_Id + colWidth_Name + colWidth_Department, currentY, colWidth_Grade, rowHeight);
+                Rectangle rrResult = new Rectangle(marginLeft + colWidth_Id + colWidth_Name + colWidth_Department + colWidth_Grade, currentY, colWidth_Result, rowHeight);
+
+                // رسم الحدود
+                g.DrawRectangle(Pens.Black, rrId);
+                g.DrawRectangle(Pens.Black, rrName);
+                g.DrawRectangle(Pens.Black, rrDept);
+                g.DrawRectangle(Pens.Black, rrGrade);
+                g.DrawRectangle(Pens.Black, rrResult);
+
+                // طباعة النصوص
+                g.DrawString(studentId, cellFont, blackBrush, rrId, rightAlign);
+                g.DrawString(studentName, cellFont, blackBrush, rrName, rightAlign);
+                g.DrawString(department, cellFont, blackBrush, rrDept, rightAlign);
+                g.DrawString(grade, cellFont, blackBrush, rrGrade, rightAlign);
+                g.DrawString(result, cellFont, blackBrush, rrResult, rightAlign);
+
+                currentY += rowHeight;
+
+                // تحقق من تجاوز الصفحة
+                if (currentY + rowHeight > e.MarginBounds.Bottom)
+                {
+                    e.HasMorePages = true;
+                    return;
+                }
+            }
+
+            e.HasMorePages = false;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            {
+                conn.Open();
+
+                foreach (DataGridViewRow row in dataGridView3.Rows)
+                {
+                    if (row.IsNewRow) continue;
+
+                    string univNo = row.Cells["university_number"].Value.ToString();
+
+                    SqlCommand cmd = new SqlCommand(@"
+                SELECT COUNT(*) FROM Grades g
+                JOIN Students s ON g.student_id = s.student_id
+                WHERE s.university_number = @univNo AND g.success_status = 'راسب'", conn);
+
+                    cmd.Parameters.AddWithValue("@univNo", univNo);
+
+                    int failCount = (int)cmd.ExecuteScalar();
+
+                    string result = failCount <= 2 ? $"مرحّل ({failCount} مواد)." : "يعيد السنة.";
+                    MessageBox.Show($"الطالب {univNo}: {result}");
+                }
             }
         }
     }
