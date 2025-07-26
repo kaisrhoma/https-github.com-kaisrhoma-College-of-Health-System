@@ -16,6 +16,7 @@ namespace college_of_health_sciences.system_forms
         public exams_form()
         {
             InitializeComponent();
+            button1_Click(null, null);
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -29,8 +30,9 @@ namespace college_of_health_sciences.system_forms
         private void button7_Click(object sender, EventArgs e)
         {
             login_form login = new login_form();
-            login.Show();
             this.Close();
+            login.Show();
+            
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -39,6 +41,30 @@ namespace college_of_health_sciences.system_forms
             statements_reports stmt_reports = new statements_reports();
             stmt_reports.Dock = DockStyle.Fill;
             panel4.Controls.Add(stmt_reports);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            panel4.Controls.Clear();
+            administrative_operations admin_op = new administrative_operations();
+            admin_op.Dock = DockStyle.Fill;
+            panel4.Controls.Add(admin_op);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            panel4.Controls.Clear();
+            exams_edit_profile  e_edit = new exams_edit_profile();
+            e_edit.Dock = DockStyle.Fill;
+            panel4.Controls.Add(e_edit);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            panel4.Controls.Clear();
+            exams_home ehome = new exams_home();
+            ehome.Dock = DockStyle.Fill;
+            panel4.Controls.Add(ehome);
         }
     }
 }
