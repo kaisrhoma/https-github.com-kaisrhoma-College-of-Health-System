@@ -177,6 +177,9 @@
     <EmbeddedResource Include="dashboards\exams_dashboards\statements_reports.resx">
       <DependentUpon>statements_reports.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\registrar_dashboard\certificates_reports.resx">
+      <DependentUpon>certificates_reports.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="dashboards\registrar_dashboard\registrar_edit_profile.resx">
       <DependentUpon>registrar_edit_profile.cs</DependentUpon>
     </EmbeddedResource>
@@ -185,6 +188,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dashboards\registrar_dashboard\students_management.resx">
       <DependentUpon>students_management.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\registrar_dashboard\transfer_deportation.resx">
+      <DependentUpon>transfer_deportation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="system_forms\admin_form.resx">
       <DependentUpon>admin_form.cs</DependentUpon>
