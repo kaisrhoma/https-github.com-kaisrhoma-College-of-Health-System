@@ -83,6 +83,36 @@
     <Compile Include="dashboards\exams_dashboards\statements_reports.Designer.cs">
       <DependentUpon>statements_reports.cs</DependentUpon>
     </Compile>
+    <Compile Include="dashboards\registrar_dashboard\certificates_reports.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\registrar_dashboard\certificates_reports.Designer.cs">
+      <DependentUpon>certificates_reports.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dashboards\registrar_dashboard\registrar_edit_profile.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\registrar_dashboard\registrar_edit_profile.Designer.cs">
+      <DependentUpon>registrar_edit_profile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dashboards\registrar_dashboard\registrar_home.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\registrar_dashboard\registrar_home.Designer.cs">
+      <DependentUpon>registrar_home.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dashboards\registrar_dashboard\students_management.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\registrar_dashboard\students_management.Designer.cs">
+      <DependentUpon>students_management.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dashboards\registrar_dashboard\transfer_deportation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="dashboards\registrar_dashboard\transfer_deportation.Designer.cs">
+      <DependentUpon>transfer_deportation.cs</DependentUpon>
+    </Compile>
     <Compile Include="moduls\conn.cs" />
     <Compile Include="dashboards\admin\admin_home.cs">
       <SubType>UserControl</SubType>
@@ -146,6 +176,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="dashboards\exams_dashboards\statements_reports.resx">
       <DependentUpon>statements_reports.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\registrar_dashboard\registrar_edit_profile.resx">
+      <DependentUpon>registrar_edit_profile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\registrar_dashboard\registrar_home.resx">
+      <DependentUpon>registrar_home.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dashboards\registrar_dashboard\students_management.resx">
+      <DependentUpon>students_management.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="system_forms\admin_form.resx">
       <DependentUpon>admin_form.cs</DependentUpon>
