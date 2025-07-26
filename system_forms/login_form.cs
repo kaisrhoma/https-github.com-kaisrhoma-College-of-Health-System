@@ -97,9 +97,9 @@ namespace college_of_health_sciences
                         case "admin":
                             nextForm = new admin_form();
                             break;
-                        //case "registrar":
-                        //    nextForm = new RegistrarForm();
-                        //    break;
+                        case "registrar":
+                            nextForm = new registerar_form();
+                            break;
                         case "exams":
                             nextForm = new exams_form();
                             break;

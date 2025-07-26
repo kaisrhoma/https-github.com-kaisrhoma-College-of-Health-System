@@ -59,5 +59,11 @@ namespace college_of_health_sciences.system_forms
             redit.Dock = DockStyle.Fill;
             panel4.Controls.Add(redit);
         }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            this.Close();
+            (new login_form()).ShowDialog();
+        }
     }
 }
