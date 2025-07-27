@@ -87,7 +87,7 @@ namespace college_of_health_sciences
                     Session.Username = username;
 
 
-                    MessageBox.Show("تم تسجيل الدخول");
+                    label5.Text = "تم تسجيل الدخول";
 
                     // افتح الفورم حسب الدور
                     Form nextForm = null;
@@ -122,7 +122,7 @@ namespace college_of_health_sciences
                 }
                 else
                 {
-                    MessageBox.Show("اسم المستخدم أو كلمة المرور غير صحيحة.");
+                    label5.Text = "اسم المستخدم أو كلمة المرور غير صحيحة.";
                 }
 
 
@@ -132,7 +132,7 @@ namespace college_of_health_sciences
             }
             else
             {
-                MessageBox.Show("الرجاء اختيار الدور قبل تسجيل الدخول.");
+                label5.Text = "الرجاء اختيار الدور قبل تسجيل الدخول.";
             }
             }
 
@@ -172,7 +172,7 @@ namespace college_of_health_sciences
                             Session.Username = username;
 
 
-                            MessageBox.Show("تم تسجيل الدخول");
+                            label5.Text = "تم تسجيل الدخول";
 
                             // افتح الفورم حسب الدور
                             Form nextForm = null;
@@ -207,7 +207,7 @@ namespace college_of_health_sciences
                         }
                         else
                         {
-                            MessageBox.Show("اسم المستخدم أو كلمة المرور غير صحيحة.");
+                            label5.Text = "اسم المستخدم أو كلمة المرور غير صحيحة.";
                         }
 
                         reader.Close();
@@ -215,12 +215,12 @@ namespace college_of_health_sciences
                     }
                     else
                     {
-                        MessageBox.Show("الرجاء اختيار الدور قبل تسجيل الدخول.");
+                        label5.Text = "الرجاء اختيار الدور قبل تسجيل الدخول.";
                     }
                     }
                 else
                 {
-                    MessageBox.Show("الرجاء إدخال اسم المستخدم وكلمة المرور.");
+                    label5.Text = "الرجاء إدخال اسم المستخدم وكلمة المرور.";
                 }
             }
         

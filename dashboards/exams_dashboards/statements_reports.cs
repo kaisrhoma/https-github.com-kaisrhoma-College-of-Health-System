@@ -17,7 +17,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
     {
         private PrintDocument printDocument1 = new PrintDocument();
         private DataTable reportData;
-      
+
 
         public statements_reports()
         {
@@ -75,13 +75,13 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             string group = firstRow["رقم المجموعة"].ToString();
             string instructor = firstRow["اسم الأستاذ"]?.ToString() ?? "غير معروف";
             string failedCount = dt.Rows.Count.ToString();
-            
+
             string[] infoTitles = { "اسم الأستاذ", "السنة الدراسية", "اسم المادة" };
             string[] infoValues = { instructor, year, courseName };
-            
+
             string[] infoTitles2 = { "رقم المادة", "رقم المجموعة", "عدد الطلاب" };
             string[] infoValues2 = { failedCount, group, courseId };
-           
+
 
             // الصف الأول
             for (int i = 0; i < 3; i++)
@@ -141,7 +141,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 if (tableY + rowHeightStudents > pageHeightLimit)
                 {
-                    
+
                     e.HasMorePages = true;
                     currentPageIndex++;
                     return;
@@ -285,8 +285,8 @@ ORDER BY c.course_id, cc.group_number, s.university_number;";
             //previewDialog.Document = printDocument1;
             //previewDialog.ShowDialog();
             // الحصول على البيانات من DataGridView
-        
-        
+
+
             DataTable dt = (DataTable)dataGridViewGrades.DataSource;
             if (dt == null || dt.Rows.Count == 0)
             {
@@ -301,15 +301,15 @@ ORDER BY c.course_id, cc.group_number, s.university_number;";
                 MessageBox.Show("لا توجد صفحات للطباعة.");
                 return;
             }
-           
-        
-            
+
+
+
 
             //printDocument1.PrintPage -= printDocument1_PrintPage;
             printDocument1.PrintPage += printDocument1_PrintPage;
-            
-         
-           
+
+
+
             //PrintPreviewDialog previewDialog = new PrintPreviewDialog();
 
             //previewDialog.Document = printDocument1;
@@ -323,6 +323,89 @@ ORDER BY c.course_id, cc.group_number, s.university_number;";
 
 
 
+        }
+        //--------------------------------------------------------------------------------------------------------------------2
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string uniNumber = txtUniversityNumber.Text.Trim();
+            if (string.IsNullOrEmpty(uniNumber))
+            {
+                MessageBox.Show("يرجى إدخال الرقم الجامعي.");
+                return;
+            }
+
+            string query = @"
+    SELECT 
+        c.year_number AS السنة,
+        c.course_name AS المادة,
+        g.final_grade AS الدرجة,
+        c.units AS الوحدات
+    FROM Grades g
+    INNER JOIN Students s ON g.student_id = s.student_id
+    INNER JOIN Courses c ON g.course_id = c.course_id
+    WHERE s.university_number = @university_number
+    ORDER BY c.year_number, c.course_name;";
+
+            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@university_number", uniNumber);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                reportData = new DataTable();
+                da.Fill(reportData);
+            }
+
+            if (reportData.Rows.Count == 0)
+            {
+                MessageBox.Show("لا توجد بيانات لهذا الرقم الجامعي.");
+                return;
+            }
+
+            dataGridViewReport.DataSource = reportData;
+            dataGridViewReport.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            // حساب المعدلات
+            CalculateAndDisplayAverages(reportData);
+        }
+
+        private void CalculateAndDisplayAverages(DataTable dt)
+        {
+            // حساب معدل كل سنة والمعدل التراكمي
+            var groupedByYear = dt.AsEnumerable()
+                .GroupBy(r => r.Field<int>("السنة"));
+
+            double totalWeightedGrades = 0;
+            int totalUnits = 0;
+
+            string averagesText = "";
+
+            foreach (var yearGroup in groupedByYear)
+            {
+                int year = yearGroup.Key;
+                double sumWeightedGrades = 0;
+                int sumUnits = 0;
+
+                foreach (var row in yearGroup)
+                {
+                    int grade = row.Field<int>("الدرجة");
+                    int units = row.Field<int>("الوحدات");
+                    sumWeightedGrades += grade * units;
+                    sumUnits += units;
+                }
+
+                double yearAverage = sumUnits == 0 ? 0 : sumWeightedGrades / sumUnits;
+                averagesText += $"معدل السنة {year}: {yearAverage:F2}\n";
+
+                totalWeightedGrades += sumWeightedGrades;
+                totalUnits += sumUnits;
+            }
+
+            double cumulativeAverage = totalUnits == 0 ? 0 : totalWeightedGrades / totalUnits;
+            averagesText += $"المعدل التراكمي: {cumulativeAverage:F2}";
+
+            // عرض المعدلات في مربع نص أو label
+            label9.Text = averagesText;
         }
     }
 }
