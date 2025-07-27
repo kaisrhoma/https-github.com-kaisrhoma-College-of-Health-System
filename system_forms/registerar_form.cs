@@ -17,7 +17,10 @@ namespace college_of_health_sciences.system_forms
         {
             InitializeComponent();
             button1_Click(null,null);
+            
         }
+
+
 
         private void button1_Click(object sender, EventArgs e)
         {
