@@ -41,6 +41,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 comboBox_Year.Items.Add("4");
 
                 comboBox_Year.SelectedIndex = 0;
+                dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             }
 
         }
@@ -59,6 +60,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     comboDepartment.DisplayMember = "dep_name";
                     comboDepartment.ValueMember = "department_id";
                     comboDepartment.DataSource = dt;
+                    dataGridViewGrades.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    dataGridViewGrades.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
                 }
             }
             catch (Exception ex)
@@ -280,6 +283,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 adapter.Fill(dt);
 
                 dataGridView2.DataSource = dt;
+                dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+               
             }
         }
         private void button3_Click(object sender, EventArgs e)
@@ -512,6 +517,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
+                    dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
                     dataGridView3.DataSource = dt;
 
@@ -755,6 +761,11 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     MessageBox.Show($"الطالب {univNo}: {result}");
                 }
             }
+        }
+
+        private void tabPage3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
