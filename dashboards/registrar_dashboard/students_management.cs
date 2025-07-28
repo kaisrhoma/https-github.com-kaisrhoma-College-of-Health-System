@@ -22,6 +22,21 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         }
 
+        public void SetFieldsEmpty()
+        {
+            textBox2.Text = "";
+            textBox3.Text = "";
+            textBox5.Text = "";
+            textBox6.Text = "";
+            radioButton1.Checked = false;
+            radioButton2.Checked = false;
+            comboBox3.SelectedItem = null;
+            comboBox4.SelectedItem = null;
+            comboBox5.SelectedItem = null;
+            dateTimePicker1.Value = DateTime.Now;
+        }
+
+
         public bool CheckNullFields()
         {
             bool hasError = false;
@@ -110,7 +125,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         }
 
 
-
+        //اضافة طالب جديد الى القاعدة في التاب الأول
         private void button7_Click(object sender, EventArgs e)
         {
             if (CheckNullFields())
@@ -119,7 +134,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 if (radioButton1.Checked) st_gender = true;
                 else st_gender = true;
 
-                    conn.DatabaseConnection db = new conn.DatabaseConnection();
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
                 SqlConnection con = db.OpenConnection();
 
                 string q = "INSERT INTO Students (university_number, full_name, college, department_id, current_year, status_id, documents_path, gender, birth_date, nationality, exam_round) " +
@@ -138,11 +153,14 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 try
                 {
                     cmd.ExecuteNonQuery();
-                    MessageBox.Show("تمت إضافة الطالب بنجاح");
+                    label1.ForeColor = Color.Green;
+                    label1.Text = "تمت إضافة الطالب بنجاح";
+                    SetFieldsEmpty();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("خطأ: " + ex.Message);
+                    label1.ForeColor = Color.Red;
+                    label1.Text = "خطأ: " + ex.Message;
                 }
                 finally
                 {
@@ -151,16 +169,19 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             }
             else
             {
-                MessageBox.Show("يرجى ملئ الحقول");
+                label1.ForeColor = Color.Red;
+                label1.Text = "يرجى ملئ الحقول !";
             }
-        
+        }
 
 
 
-    }
 
         private void students_management_Load(object sender, EventArgs e)
         {
+            label1.Text = "";
+            textBox2.Focus();
+
             var departments = new Dictionary<int, string>()
             {
                 {1, "قسم الرياضيات"},
@@ -197,6 +218,153 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             comboBox5.DataSource = new BindingSource(study_status, null);
             comboBox5.DisplayMember = "Value";
             comboBox5.ValueMember = "Key";
+        }
+
+
+        // تحط الركيز علي العناصر في التاب الحالي
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedTab == tabPage1) 
+            {
+                textBox2.Focus();
+            } else if (tabControl1.SelectedTab == tabPage2)
+            {
+                txtSearch.Focus();
+            }
+            else
+            {
+                textBox1.Focus();
+            }
+            
+        }
+
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) 
+            {
+                textBox3.Focus();
+                e.SuppressKeyPress = true;
+            }
+        }
+
+
+        private void comboBox5_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            textBox5.Focus();
+        }
+
+        private void textBox5_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+            {
+                button7_Click(null, null);
+                e.SuppressKeyPress = true;
+            }
+        }
+
+
+        // جلب بيانات الطالب حسب رقم القيد و السماح بتعديلها وعرضها في الجدول 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtSearch.Text))
+            {
+                conn.DatabaseConnection db2 = new conn.DatabaseConnection();
+                SqlConnection con2 = db2.OpenConnection();
+
+                string q2 = "SELECT s.university_number,s.full_name,d.dep_name,s.current_year,t.description,s.gender,s.birth_date,s.nationality,s.exam_round FROM Students s JOIN " +
+                    "Departments d ON s.department_id = d.department_id JOIN Status t ON s.status_id = t.status_id WHERE university_number = @university_number";
+
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(q2, con2);
+                    cmd.Parameters.AddWithValue("@university_number", txtSearch.Text.Trim());
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    // أضف أعمدة نصية للعرض بدل تعديل الأعمدة الأصلية
+                    if (!dt.Columns.Contains("GenderText"))
+                        dt.Columns.Add("GenderText", typeof(string));
+                    if (!dt.Columns.Contains("ExamRoundText"))
+                        dt.Columns.Add("ExamRoundText", typeof(string));
+                    if (!dt.Columns.Contains("yearText"))
+                        dt.Columns.Add("yearText", typeof(string));
+
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        bool genderBool = Convert.ToBoolean(row["gender"]);
+                        row["GenderText"] = genderBool ? "ذكر" : "أنثى";
+
+                        bool roundBool = Convert.ToBoolean(row["exam_round"]);
+                        row["ExamRoundText"] = roundBool ? "الثاني" : "الأول";
+
+                        switch (row["current_year"].ToString()) 
+                        {
+                            case "1":
+                                row["yearText"] = "سنة أولى";
+                                break;
+                            case "2":
+                                row["yearText"] = "سنة ثانية";
+                                break;
+                            case "3":
+                                row["yearText"] = "سنة ثالثة";
+                                break;
+                            case "4":
+                                row["yearText"] = "سنة رابعة";
+                                break;
+                            default : MessageBox.Show("شكل الإدخال يجب ان يكون مثل سنة أولى");
+                                break;
+                        }
+
+                    }
+
+                    dataGridView2.DataSource = dt;
+
+                    // إخفاء الأعمدة الأصلية
+                    dataGridView2.Columns["gender"].Visible = false;
+                    dataGridView2.Columns["exam_round"].Visible = false;
+                    dataGridView2.Columns["current_year"].Visible = false;
+
+                    // عرض الأعمدة النصية بدلاً منها
+                    dataGridView2.Columns["GenderText"].HeaderText = "الجنس";
+                    dataGridView2.Columns["ExamRoundText"].HeaderText = "الدور";
+                    dataGridView2.Columns["yearText"].HeaderText = "السنة";
+
+                    // باقي التنسيق
+                    dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    dataGridView2.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dataGridView2.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    dataGridView2.Columns["full_name"].HeaderText = "الإسم";
+                    dataGridView2.Columns["university_number"].HeaderText = "الرقم الجامعي";
+                    dataGridView2.Columns["dep_name"].HeaderText = "القسم";
+                    dataGridView2.Columns["current_year"].HeaderText = "السنة";
+                    dataGridView2.Columns["description"].HeaderText = "الحالة";
+                    dataGridView2.Columns["birth_date"].HeaderText = "تاريخ الميلاد";
+                    dataGridView2.Columns["nationality"].HeaderText = "الجنسية";
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("حدث خطأ أثناء جلب البيانات: " + ex.Message);
+                }
+                finally
+                {
+                    db2.CloseConnection();
+                }
+            }
+            else
+            {
+                MessageBox.Show("يرجى إدخال رقم القيد أولاً.");
+            }
+
+        }
+
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
