@@ -126,6 +126,7 @@
     <Compile Include="dashboards\admin\users_management.Designer.cs">
       <DependentUpon>users_management.cs</DependentUpon>
     </Compile>
+    <Compile Include="moduls\date_column.cs" />
     <Compile Include="system_forms\admin_form.cs">
       <SubType>Form</SubType>
     </Compile>
