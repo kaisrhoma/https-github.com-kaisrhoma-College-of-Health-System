@@ -37,30 +37,47 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             dateTimePicker1.Value = DateTime.Now;
         }
 
+        public bool checkTextBoxes(string elementText,TextBox element,bool error)
+        {
+            bool hasError = error;
+
+            if (string.IsNullOrEmpty(elementText))
+            {
+                errorProvider1.SetError(element, "يرجى ملئ الحقل قبل الحفظ");
+                hasError = true;
+            }
+            else
+            {
+                errorProvider1.SetError(element, "");
+            }
+            return hasError;
+        }
+
+        public bool checkComboBoxes(ComboBox element, bool error)
+        {
+            bool hasError = error;
+
+            if (element.SelectedItem == null)
+            {
+                errorProvider1.SetError(element, "يرجى ملئ الحقل قبل الحفظ");
+                hasError = true;
+            }
+            else
+            {
+                errorProvider1.SetError(element, "");
+            }
+            return hasError;
+        }
 
         public bool CheckNullFields()
         {
             bool hasError = false;
-
-            if (string.IsNullOrEmpty(textBox2.Text))
-            {
-                errorProvider1.SetError(textBox2, "يرجى ملئ الحقل قبل الحفظ");
-                hasError = true;
-            }
-            else
-            {
-                errorProvider1.SetError(textBox2, "");
-            }
-
-            if (string.IsNullOrEmpty(textBox3.Text))
-            {
-                errorProvider1.SetError(textBox3, "يرجى ملئ الحقل قبل الحفظ");
-                hasError = true;
-            }
-            else
-            {
-                errorProvider1.SetError(textBox3, "");
-            }
+            hasError = checkTextBoxes(textBox2.Text,textBox2,hasError);
+            hasError = checkTextBoxes(textBox3.Text,textBox3, hasError);
+            hasError = checkTextBoxes(textBox5.Text,textBox5, hasError);
+            hasError = checkComboBoxes(comboBox3,hasError);
+            hasError = checkComboBoxes(comboBox4,hasError);
+            hasError = checkComboBoxes(comboBox5,hasError);
 
             if (!dateTimePicker1.Checked)
             {
@@ -72,16 +89,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 errorProvider1.SetError(dateTimePicker1, "");
             }
 
-            if (string.IsNullOrEmpty(textBox5.Text))
-            {
-                errorProvider1.SetError(textBox5, "يرجى ملئ الحقل قبل الحفظ");
-                hasError = true;
-            }
-            else
-            {
-                errorProvider1.SetError(textBox5, "");
-            }
-
             if (!radioButton1.Checked && !radioButton2.Checked)
             {
                 errorProvider1.SetError(radioButton1, "يرجى اختيار أحد الخيارات");
@@ -90,36 +97,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             else
             {
                 errorProvider1.SetError(radioButton1, "");
-            }
-
-            if (comboBox3.SelectedItem == null)
-            {
-                errorProvider1.SetError(comboBox3, "يرجى ملئ الحقل قبل الحفظ");
-                hasError = true;
-            }
-            else
-            {
-                errorProvider1.SetError(comboBox3, "");
-            }
-
-            if (comboBox4.SelectedItem == null)
-            {
-                errorProvider1.SetError(comboBox4, "يرجى ملئ الحقل قبل الحفظ");
-                hasError = true;
-            }
-            else
-            {
-                errorProvider1.SetError(comboBox4, "");
-            }
-
-            if (comboBox5.SelectedItem == null)
-            {
-                errorProvider1.SetError(comboBox5, "يرجى ملئ الحقل قبل الحفظ");
-                hasError = true;
-            }
-            else
-            {
-                errorProvider1.SetError(comboBox5, "");
             }
 
             return !hasError; // إذا لا يوجد خطأ -> true
@@ -133,7 +110,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             {
                 bool st_gender = false;
                 if (radioButton1.Checked) st_gender = true;
-                else st_gender = true;
 
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
                 SqlConnection con = db.OpenConnection();
@@ -263,6 +239,39 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             }
         }
 
+        public void datagridviewstyle(DataGridView datagrid)
+        {
+            datagrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            datagrid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            datagrid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        }
+
+        private void setColumnReadOnly(String column ,DataGridView dgrid)
+        {
+            dgrid.Columns[column].ReadOnly = true;
+        }
+
+        private void setColumnHeaderText(String column, DataGridView dgrid, string text)
+        {
+            dgrid.Columns[column].HeaderText = text;
+        }
+
+        public void setColumnComboBox(DataGridView data_grid, string removed_column, string newc_name, string newc_header, string property_name, List<string> arry)
+        {
+            if (data_grid.Columns.Contains(removed_column))
+                data_grid.Columns.Remove(removed_column);
+            DataGridViewComboBoxColumn combo = new DataGridViewComboBoxColumn
+            {
+                Name = newc_name,
+                HeaderText = newc_header,
+                DataPropertyName = property_name
+            };
+            if (arry != null && arry.Count > 0)
+                combo.Items.AddRange(arry.ToArray());
+            data_grid.Columns.Add(combo);
+        }
+
+
         private void SearchStudent()
         {
             if (!string.IsNullOrEmpty(txtSearch.Text))
@@ -332,62 +341,21 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     dataGridView2.Columns["ExamRoundText"].HeaderText = "الدور";
                     dataGridView2.Columns["yearText"].HeaderText = "السنة";
 
-                    if (dataGridView2.Columns.Contains("yearText"))
-                        dataGridView2.Columns.Remove("yearText");
-                    DataGridViewComboBoxColumn comboYear = new DataGridViewComboBoxColumn();
-                    comboYear.Name = "comboyear";
-                    comboYear.HeaderText = "السنة";
-                    comboYear.DataPropertyName = "yearText";
-                    comboYear.Items.Add("سنة أولى");
-                    comboYear.Items.Add("سنة ثانية");
-                    comboYear.Items.Add("سنة ثالثة");
-                    comboYear.Items.Add("سنة رابعة");
-                    dataGridView2.Columns.Add(comboYear);
-
-                    if (dataGridView2.Columns.Contains("ExamRoundText"))
-                        dataGridView2.Columns.Remove("ExamRoundText");
-                    DataGridViewComboBoxColumn comboRound = new DataGridViewComboBoxColumn();
-                    comboRound.Name = "comboround";
-                    comboRound.HeaderText = "الدور";
-                    comboRound.DataPropertyName = "ExamRoundText";
-                    comboRound.Items.Add("الأول");
-                    comboRound.Items.Add("الثاني");
-                    dataGridView2.Columns.Add(comboRound);
-
-                    if (dataGridView2.Columns.Contains("GenderText"))
-                        dataGridView2.Columns.Remove("GenderText");
-                    DataGridViewComboBoxColumn comboGender = new DataGridViewComboBoxColumn();
-                    comboGender.Name = "combogender";
-                    comboGender.HeaderText = "الجنس";
-                    comboGender.DataPropertyName = "GenderText";
-                    comboGender.Items.Add("أنثى");
-                    comboGender.Items.Add("ذكر");
-                    dataGridView2.Columns.Add(comboGender);
+                    setColumnComboBox(dataGridView2, "yearText", "comboyear", "السنة", "yearText", new List<string> { "سنة أولى", "سنة ثانية", "سنة ثالثة", "سنة رابعة" });
+                    setColumnComboBox(dataGridView2, "ExamRoundText", "comboround", "الدور", "ExamRoundText", new List<string> { "الأول", "الثاني" });
+                    setColumnComboBox(dataGridView2, "GenderText", "combogender", "الجنس", "GenderText", new List<string> { "أنثى", "ذكر" });
+                    setColumnComboBox(dataGridView2, "dep_name", "columndepartment", "القسم", "dep_name", new List<string> { "قسم الرياضيات", "قسم الكيمياء", "قسم الفيزياء" });
 
                     if (dataGridView2.Columns.Contains("birth_date"))
                         dataGridView2.Columns.Remove("birth_date");
-
                     CalendarColumn columnDate = new CalendarColumn();
                     columnDate.HeaderText = "تاريخ الميلاد";
                     columnDate.Name = "columndate";
                     columnDate.DataPropertyName = "birth_date";
                     dataGridView2.Columns.Add(columnDate);
 
-                    if (dataGridView2.Columns.Contains("dep_name"))
-                        dataGridView2.Columns.Remove("dep_name");
-                    DataGridViewComboBoxColumn columnDepartment = new DataGridViewComboBoxColumn();
-                    columnDepartment.Name = "columndepartment";
-                    columnDepartment.HeaderText = "القسم";
-                    columnDepartment.DataPropertyName = "dep_name";
-                    columnDepartment.Items.Add("قسم الرياضيات");
-                    columnDepartment.Items.Add("قسم الكيمياء");
-                    columnDepartment.Items.Add("قسم الفيزياء");
-                    dataGridView2.Columns.Add(columnDepartment);
-
                     // باقي التنسيق
-                    dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                    dataGridView2.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                    dataGridView2.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    datagridviewstyle(dataGridView2);
                     dataGridView2.Columns["full_name"].HeaderText = "الإسم";
                     dataGridView2.Columns["university_number"].HeaderText = "الرقم الجامعي";
                     dataGridView2.Columns["description"].HeaderText = "الحالة";
@@ -545,6 +513,168 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         {
             UpdateStudentFromGrid(dataGridView2);
             button2_Click(null, null);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = null;
+            if (string.IsNullOrEmpty(textBox1.Text))
+            {
+                MessageBox.Show("يجب إدخال الرقم الجامعي أولا");
+                return;
+            }
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using(SqlConnection con = db.OpenConnection())
+                {
+                    string q = "SELECT " +
+                        " s.university_number," +
+                        "s.full_name," +
+                        "d.dep_name," +
+                        "s.current_year," +
+                        "t.description," +
+                        "s.gender," +
+                        "s.birth_date," +
+                        "s.nationality," +
+                        "s.exam_round " +
+                        "FROM Students s " +
+                        "JOIN Departments d ON s.department_id = d.department_id " +
+                        "JOIN Status t ON s.status_id = t.status_id " +
+                        "WHERE university_number = @university_number";
+                    using (SqlCommand cmd = new SqlCommand(q, con))
+                    {
+                        cmd.Parameters.AddWithValue("@university_number",textBox1.Text.Trim());
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        // أضف أعمدة نصية للعرض بدل تعديل الأعمدة الأصلية
+                        if (!dt.Columns.Contains("GenderText"))
+                            dt.Columns.Add("GenderText", typeof(string));
+                        if (!dt.Columns.Contains("ExamRoundText"))
+                            dt.Columns.Add("ExamRoundText", typeof(string));
+                        if (!dt.Columns.Contains("yearText"))
+                            dt.Columns.Add("yearText", typeof(string));
+
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            bool genderBool = Convert.ToBoolean(row["gender"]);
+                            row["GenderText"] = genderBool ? "ذكر" : "أنثى";
+
+                            bool roundBool = Convert.ToBoolean(row["exam_round"]);
+                            row["ExamRoundText"] = roundBool ? "الثاني" : "الأول";
+
+                            switch (row["current_year"].ToString())
+                            {
+                                case "1":
+                                    row["yearText"] = "سنة أولى";
+                                    break;
+                                case "2":
+                                    row["yearText"] = "سنة ثانية";
+                                    break;
+                                case "3":
+                                    row["yearText"] = "سنة ثالثة";
+                                    break;
+                                case "4":
+                                    row["yearText"] = "سنة رابعة";
+                                    break;
+                                default:
+                                    MessageBox.Show("شكل الإدخال يجب ان يكون مثل سنة أولى");
+                                    break;
+                            }
+
+                        }
+
+                        dataGridView1.DataSource = dt;
+
+                        dataGridView1.Columns["gender"].Visible = false;
+                        dataGridView1.Columns["current_year"].Visible = false;
+                        dataGridView1.Columns["exam_round"].Visible = false;
+
+                        datagridviewstyle(dataGridView1);
+                        setColumnReadOnly("university_number", dataGridView1);
+                        setColumnReadOnly("full_name", dataGridView1);
+                        setColumnReadOnly("dep_name", dataGridView1);
+                        setColumnReadOnly("yearText", dataGridView1);
+                        setColumnReadOnly("GenderText", dataGridView1);
+                        setColumnReadOnly("birth_date", dataGridView1);
+                        setColumnReadOnly("nationality", dataGridView1);
+                        setColumnReadOnly("ExamRoundText", dataGridView1);
+
+                        setColumnHeaderText("university_number", dataGridView1, "الرقم الجامعي");
+                        setColumnHeaderText("full_name", dataGridView1, "الإسم");
+                        setColumnHeaderText("dep_name", dataGridView1, "القسم");
+                        setColumnHeaderText("yearText", dataGridView1, "السنة");
+                        setColumnHeaderText("GenderText", dataGridView1, "الجنس");
+                        setColumnHeaderText("birth_date", dataGridView1, "تاريخ الميلاد");
+                        setColumnHeaderText("nationality", dataGridView1, "الجنسية");
+                        setColumnHeaderText("ExamRoundText", dataGridView1, "الدور");
+
+                        setColumnComboBox(dataGridView1, "description", "student_status", "الحالة الدراسية", "description", new List<string> {"مستمر", "مؤجل", "مستبعد", "خريج"});
+                    }
+                }
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show("there is error : " + ex.Message);
+            }
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                button5_Click(null, null);
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            UpdateStudentStatus(dataGridView1);
+            button5_Click(null,null);
+        }
+
+
+        public void UpdateStudentStatus(DataGridView dataGridView)
+        {
+            if (dataGridView.Rows.Count == 0 || dataGridView.Rows[0].IsNewRow)
+            {
+                MessageBox.Show("لا توجد بيانات لتحديثها.");
+                return;
+            }
+
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    DataGridViewRow row = dataGridView.Rows[0];
+
+                    string universitynumber = row.Cells["university_number"].Value?.ToString() ?? "";
+                    string statusDescription = row.Cells["student_status"].FormattedValue.ToString();
+                    int statusId = GetIdFromName("Status", "status_id", "description", statusDescription, con);
+                    string updateQuery = @"
+                        UPDATE Students SET
+                            status_id = @status_id
+                        WHERE university_number = @university_number";
+
+                    //ادخال البارمترات الى الاستعلام
+                    using (SqlCommand cmd = new SqlCommand(updateQuery, con))
+                    {
+                        cmd.Parameters.AddWithValue("@university_number", universitynumber);
+                        cmd.Parameters.AddWithValue("@status_id", statusId);
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        MessageBox.Show(rowsAffected > 0 ? "تم التحديث بنجاح." : "لم يتم التحديث.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
     }
 }
