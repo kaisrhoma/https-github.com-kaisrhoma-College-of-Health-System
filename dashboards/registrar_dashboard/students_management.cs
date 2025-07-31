@@ -611,7 +611,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         setColumnHeaderText("nationality", dataGridView1, "الجنسية");
                         setColumnHeaderText("ExamRoundText", dataGridView1, "الدور");
 
-                        setColumnComboBox(dataGridView1, "description", "student_status", "الحالة الدراسية", "description", new List<string> { "مسجل", "مؤجل", "مستبعد", "خريج"});
+                        setColumnComboBox(dataGridView1, "description", "student_status", "الحالة الدراسية", "description", new List<string> { "مستمر", "مؤجل", "مستبعد", "خريج"});
                     }
                 }
             }
