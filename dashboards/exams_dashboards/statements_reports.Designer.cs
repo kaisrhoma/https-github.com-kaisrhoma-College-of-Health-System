@@ -1,4 +1,6 @@
-﻿namespace college_of_health_sciences.dashboards.exams_dashboards
+﻿using System;
+
+namespace college_of_health_sciences.dashboards.exams_dashboards
 {
     partial class statements_reports
     {
@@ -37,6 +39,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox_Year2 = new System.Windows.Forms.ComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label9 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.txtUniversityNumber = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
@@ -57,7 +60,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).BeginInit();
@@ -203,6 +205,15 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "كشف التخرج";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(109, 359);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(49, 19);
+            this.label9.TabIndex = 20;
+            this.label9.Text = "label9";
+            // 
             // button4
             // 
             this.button4.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -216,6 +227,7 @@
             this.button4.TabIndex = 19;
             this.button4.Text = "طباعة الكشف";
             this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // txtUniversityNumber
             // 
@@ -464,15 +476,6 @@
             this.label5.TabIndex = 29;
             this.label5.Text = "تقارير النتائج";
             // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(109, 359);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(49, 19);
-            this.label9.TabIndex = 20;
-            this.label9.Text = "label9";
-            // 
             // statements_reports
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -498,6 +501,8 @@
             this.ResumeLayout(false);
 
         }
+
+     
 
         #endregion
 

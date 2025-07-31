@@ -969,7 +969,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             // نص الاتصال بقاعدة البيانات
             string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
 
-            // نص الاستعلام (بناءً على الكود القديم)
+         
             string query = @"
 SELECT 
     c.course_name AS 'اسم المادة',
