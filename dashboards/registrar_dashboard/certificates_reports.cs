@@ -202,5 +202,149 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             preview.Document = printDocument;
             preview.ShowDialog();
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if(string.IsNullOrEmpty(textBox1.Text))
+            {
+                MessageBox.Show("يرجى إدخال الرقم الجامعي اولا");
+                return;
+            }
+
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using(SqlConnection con = db.OpenConnection())
+                {
+                    string q = @"
+                               SELECT
+                                   s.full_name AS الإسم,
+                                   s.university_number AS الرقم_الجامعي,
+                                   s.college AS الكلية,
+                                   s.current_year AS السنة,
+                                   d.dep_name AS القسم,
+                                   
+                                   c.units AS الوحدات, 
+                                   c.course_id AS رقم_المادة,
+                                   c.course_name AS اسم_المادة,
+                                   c.theory_hours AS الساعات_النظرية,
+                                   c.practical_hours AS الساعات_العملية,
+                                   c.credit_hrs AS مجموع_الساعات,
+                               
+                                   cc.schedule AS اليوم, 
+                                   cc.group_number AS المجموعة,
+                                   cl.room_name AS القاعة,
+                               
+                                   i.full_name AS الدكتور
+                               
+                               FROM Students s
+                               JOIN Departments d ON s.department_id = d.department_id
+                               JOIN Registrations r ON s.student_id = r.student_id
+                               JOIN Courses c ON r.course_id = c.course_id
+                               JOIN Course_Classroom cc ON r.course_classroom_id = cc.id
+                               JOIN Classrooms cl ON cc.classroom_id = cl.classroom_id
+                               JOIN Course_Instructor ci ON c.course_id = ci.course_id
+                               JOIN Instructors i ON ci.instructor_id = i.instructor_id
+                               
+                               WHERE s.university_number = @university_number
+                               ";
+
+
+                    using (SqlCommand cmd = new SqlCommand(q, con))
+                    {
+                        cmd.Parameters.AddWithValue("@university_number", textBox1.Text.Trim());
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        printTable = dt;
+
+                        if (dt.Rows.Count > 0)
+                        {
+                            studentName = dt.Rows[0]["الإسم"].ToString();
+                        }
+
+                        dataGridView1.DataSource = dt;
+
+                        datagridviewstyle(dataGridView1);
+                        dataGridView1.Columns["الإسم"].Visible = false;
+                        dataGridView1.Columns["الرقم_الجامعي"].Visible = false;
+                        dataGridView1.Columns["الكلية"].Visible = false;
+                        dataGridView1.Columns["السنة"].Visible = false;
+                        dataGridView1.Columns["القسم"].Visible = false;
+                        
+
+
+                        dataGridView1.Columns["اسم_المادة"].ReadOnly = true;
+                        dataGridView1.Columns["رقم_المادة"].ReadOnly = true;
+                        dataGridView1.Columns["الوحدات"].ReadOnly = true;
+                        dataGridView1.Columns["الساعات_النظرية"].ReadOnly = true;
+                        dataGridView1.Columns["الساعات_العملية"].ReadOnly = true;
+                        dataGridView1.Columns["مجموع_الساعات"].ReadOnly = true;
+                        dataGridView1.Columns["المجموعة"].ReadOnly = true;
+                        dataGridView1.Columns["القاعة"].ReadOnly = true;
+                        dataGridView1.Columns["اليوم"].ReadOnly = true;
+                        dataGridView1.Columns["الدكتور"].ReadOnly = true;
+
+
+                        if (dataGridView1.Rows.Count == 0 || dataGridView1.Rows[0].IsNewRow)
+                        {
+                            MessageBox.Show("لايوجد طالب بهذا الرقم او ان الطالب قيده متوقف");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an error in :" + ex.Message);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (printTable == null || printTable.Rows.Count == 0)
+            {
+                MessageBox.Show("لا يوجد بيانات للطباعة.");
+                return;
+            }
+            PrintPreviewDialog preview = new PrintPreviewDialog();
+            printDocument1.PrintPage += printDocument1_PrintPage;
+            preview.Document = printDocument1;
+            preview.ShowDialog();
+        }
+
+        private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            Font headerfont = new Font("Arial", 18, FontStyle.Bold);
+            Font subheader = new Font("Arial",14, FontStyle.Bold);
+            Font textfont = new Font("Arial", 12, FontStyle.Bold);
+            Brush brush = Brushes.Black;
+            int margin = 50;
+            int x = 50;
+            int y = 50;
+            int pageh = e.PageBounds.Height;
+            int pagew = e.PageBounds.Width - 2 * margin;
+
+            StringFormat format = new StringFormat()
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center,
+                FormatFlags = StringFormatFlags.DirectionRightToLeft
+            };
+
+            e.Graphics.DrawString("جامعة غريان",headerfont, brush, new Rectangle(x, y, pagew, 30), format); y += 35;
+            e.Graphics.DrawString("كلية العلوم الصحية", headerfont,brush, new Rectangle(x, y, pagew, 30), format); y += 35 + x;
+            int colmnw = pagew / 4;
+            for(int i = 0 ; i < 4; i++)
+            {
+                int colindex = 4 - i;
+               Rectangle rect = new Rectangle(x + i * colmnw, y, colmnw,30);
+               
+               e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 230, 250)), rect);
+               e.Graphics.DrawRectangle(Pens.Black,rect);
+                e.Graphics.DrawString("قيس",textfont,brush,rect,format);
+            }
+            
+
+        }
     }
 }
