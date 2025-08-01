@@ -57,7 +57,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button3 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtUniversityNumber3 = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
@@ -389,7 +389,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.groupBox1.Controls.Add(this.dataGridView1);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.txtUniversityNumber3);
             this.groupBox1.Controls.Add(this.button5);
             this.groupBox1.Location = new System.Drawing.Point(27, 65);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
@@ -427,6 +427,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.button3.TabIndex = 29;
             this.button3.Text = "طباعة الكشف";
             this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label2
             // 
@@ -440,14 +441,14 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.label2.TabIndex = 25;
             this.label2.Text = "الرقم الجامعي";
             // 
-            // textBox1
+            // txtUniversityNumber3
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(394, 46);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(138, 26);
-            this.textBox1.TabIndex = 28;
+            this.txtUniversityNumber3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtUniversityNumber3.Location = new System.Drawing.Point(394, 46);
+            this.txtUniversityNumber3.Margin = new System.Windows.Forms.Padding(2);
+            this.txtUniversityNumber3.Name = "txtUniversityNumber3";
+            this.txtUniversityNumber3.Size = new System.Drawing.Size(138, 26);
+            this.txtUniversityNumber3.TabIndex = 28;
             // 
             // button5
             // 
@@ -462,6 +463,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.button5.TabIndex = 27;
             this.button5.Text = "إعداد الكشف\r\n";
             this.button5.UseVisualStyleBackColor = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // label5
             // 
@@ -532,7 +534,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtUniversityNumber3;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label9;
