@@ -341,7 +341,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                
                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 230, 250)), rect);
                e.Graphics.DrawRectangle(Pens.Black,rect);
-                e.Graphics.DrawString("قيس",textfont,brush,rect,format);
+                e.Graphics.DrawString("قيس ميلود",textfont,brush,rect,format);
             }
             
 
