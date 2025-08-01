@@ -202,5 +202,15 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             preview.Document = printDocument;
             preview.ShowDialog();
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
