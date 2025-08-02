@@ -27,13 +27,14 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                 // نص الاستعلامات
                 string query = @"
-            SELECT 
-                (SELECT COUNT(*) FROM Instructors) AS TotalInstructors,
-                (SELECT COUNT(*) FROM Departments) AS TotalDepartments,
-                (SELECT COUNT(*) FROM Students) AS TotalStudents,
-                (SELECT COUNT(*) FROM Courses) AS TotalCourses,
-                (SELECT COUNT(*) FROM Students WHERE status_id = 4) AS GraduatedStudents,
-                (SELECT COUNT(*) FROM Students WHERE current_year = 1) AS NewStudents;
+       SELECT 
+    (SELECT COUNT(*) FROM Instructors) AS TotalInstructors,
+    (SELECT COUNT(*) FROM Departments) AS TotalDepartments,
+    (SELECT COUNT(*) FROM Students) AS TotalStudents,
+    (SELECT COUNT(*) FROM Courses) AS TotalCourses,
+    (SELECT COUNT(*) FROM Students WHERE status_id = 4) AS GraduatedStudents,
+    (SELECT COUNT(*) FROM Students WHERE current_year = 1 AND exam_round = 0) AS NewStudents;
+
         ";
 
                 SqlCommand cmd = new SqlCommand(query, conn);

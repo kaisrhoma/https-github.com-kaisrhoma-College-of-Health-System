@@ -8,7 +8,9 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace college_of_health_sciences.dashboards.registrar_dashboard
 {
@@ -314,6 +316,11 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
         {
+            string stno = printTable.Rows[0]["الرقم_الجامعي"].ToString();
+            string styear = printTable.Rows[0]["السنة"].ToString();
+            string stdep = printTable.Rows[0]["القسم"].ToString();
+            string cuyear =DateTime.Now.ToString("yyyy/MM/dd");
+
             Font headerfont = new Font("Arial", 18, FontStyle.Bold);
             Font subheader = new Font("Arial",14, FontStyle.Bold);
             Font textfont = new Font("Arial", 12, FontStyle.Bold);
@@ -333,18 +340,72 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
             e.Graphics.DrawString("جامعة غريان",headerfont, brush, new Rectangle(x, y, pagew, 30), format); y += 35;
             e.Graphics.DrawString("كلية العلوم الصحية", headerfont,brush, new Rectangle(x, y, pagew, 30), format); y += 35 + x;
-            int colmnw = pagew / 4;
-            for(int i = 0 ; i < 4; i++)
+
+            int colmnw = pagew / 5;
+            int colmnh = 30;
+            string[] colheaders = {"العام الجامعي", "القسم", "السنة", "الإسم", "الرقم_الجامعي" };
+            string[] colvalues = {cuyear,stdep,styear,studentName,stno };
+
+
+            for (int i = 0 ; i < 5; i++)
             {
-                int colindex = 4 - i;
-               Rectangle rect = new Rectangle(x + i * colmnw, y, colmnw,30);
-               
+               int colindex = 4 - i;
+               Rectangle rect = new Rectangle(x + i * colmnw, y, colmnw, colmnh);
+               Rectangle rectv = new Rectangle(x + i * colmnw, y+colmnh, colmnw, colmnh);
+
                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 230, 250)), rect);
                e.Graphics.DrawRectangle(Pens.Black,rect);
-                e.Graphics.DrawString("قيس ميلود",textfont,brush,rect,format);
+               e.Graphics.DrawRectangle(Pens.Black, rectv);
+               e.Graphics.DrawString(colheaders[i],textfont,brush,rect,format);
+               e.Graphics.DrawString(colvalues[i], textfont, brush,rectv, format);
             }
-            
+            y += colmnh + 60;
 
+            int dheaderw = pagew / 6;
+            int dheaderh = 30;
+            string[] cheaders = { "قاعة", "يوم", "م", "وحدة", "المادة", "رقم المادة" };
+            for (int i = 0; i < cheaders.Length; i++)
+            {
+                Rectangle recth = new Rectangle(x + i * dheaderw, y, dheaderw, dheaderh);
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 230, 250)), recth);
+                e.Graphics.DrawRectangle(Pens.Black, recth);
+                e.Graphics.DrawString(cheaders[i], textfont, brush, recth, format);
+            }
+
+            string[] davalues = { "القاعة", "اليوم", "المجموعة", "الوحدات", "اسم_المادة", "رقم_المادة" };
+            y += colmnh;
+            StringFormat newformat = new StringFormat();
+            newformat.Alignment = StringAlignment.Center;
+            newformat.LineAlignment = StringAlignment.Center;
+            newformat.FormatFlags = StringFormatFlags.LineLimit; // يدعم الأسطر المتعددة
+            foreach (DataRow row2 in printTable.Rows)
+            {
+                for (int i = 0; i < cheaders.Length; i++)
+                {
+                    Rectangle rh = new Rectangle(x + i * dheaderw, y, dheaderw, dheaderh + 30);
+                    e.Graphics.DrawRectangle(Pens.Black, rh);
+
+                    string text = "";
+
+                    if (i == 4)
+                    {
+                        // عمود اسم المادة والدكتور في سطرين
+                        string t1 = row2["اسم_المادة"].ToString();
+                        string t2 = row2["الدكتور"].ToString();
+                        text = t1 + "\n" + t2;
+                    }
+                    else
+                    {
+                        // الأعمدة الأخرى
+                        text = row2[davalues[i]].ToString();
+                    }
+
+                    e.Graphics.DrawString(text, textfont, brush, rh, newformat);
+                }
+
+                y += dheaderh + 30;
+            }
+        
         }
     }
 }

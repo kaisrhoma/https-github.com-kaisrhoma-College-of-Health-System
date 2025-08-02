@@ -18,7 +18,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
     {
 
         private readonly string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
-        // SqlConnection conn = new SqlConnection("Data Source=.;Initial Catalog=Cohs_DB;Integrated Security=True");
+       
 
         private PrintDocument printDocument1 = new PrintDocument();
         private DataTable reportData;
@@ -39,7 +39,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 comboBox_Year.Items.Add("2");
                 comboBox_Year.Items.Add("3");
                 comboBox_Year.Items.Add("4");
-               // printDocument1.PrintPage += printDocument1_PrintPage;
+                printDocument1.PrintPage += printDocument1_PrintPage;
                 comboBox_Year.SelectedIndex = 0;
                 dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 
@@ -206,122 +206,6 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //try
-            //{
-            //    using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
-            //    {
-            //        conn.Open();
-            //        int updatedCount = 0, skippedCount = 0;
-
-            //        foreach (DataGridViewRow row in dataGridViewGrades.Rows)
-            //        {
-            //            if (row.IsNewRow) continue;
-
-            //            // استخراج رقم القيد بدلاً من رقم_الجامعية
-            //            string universityNumber = row.Cells["رقم القيد"].Value?.ToString();
-
-            //            if (string.IsNullOrEmpty(universityNumber))
-            //            {
-            //                skippedCount++;
-            //                continue;
-            //            }
-
-            //            // استخراج student_id من قاعدة البيانات بناءً على رقم القيد
-            //            int studentId = -1;
-            //            string getIdQuery = "SELECT student_id FROM Students WHERE university_number = @uniNum";
-            //            using (SqlCommand getIdCmd = new SqlCommand(getIdQuery, conn))
-            //            {
-            //                getIdCmd.Parameters.AddWithValue("@uniNum", universityNumber);
-            //                object result = getIdCmd.ExecuteScalar();
-            //                if (result == null)
-            //                {
-            //                    skippedCount++;
-            //                    continue;
-            //                }
-            //                studentId = Convert.ToInt32(result);
-            //            }
-
-            //            int courseId = Convert.ToInt32(comboCourse.SelectedValue);
-
-            //            // محاولة قراءة الدرجات، إذا كانت فارغة يتم اعتبارها 0
-            //            int.TryParse(row.Cells["درجة الأعمال"].Value?.ToString(), out int workGrade);
-            //            int.TryParse(row.Cells["درجة الامتحان النهائي"].Value?.ToString(), out int finalGrade);
-            //            int totalGrade = workGrade + finalGrade;
-
-            //            // تحقق من وجود سجل سابق
-            //            string checkQuery = "SELECT COUNT(*) FROM Grades WHERE student_id = @studentId AND course_id = @courseId";
-            //            using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
-            //            {
-            //                checkCmd.Parameters.AddWithValue("@studentId", studentId);
-            //                checkCmd.Parameters.AddWithValue("@courseId", courseId);
-            //                int exists = (int)checkCmd.ExecuteScalar();
-
-            //                if (exists > 0)
-            //                {
-            //                    // تحديث البيانات
-            //                    string updateQuery = @"
-            //                UPDATE Grades 
-            //                SET work_grade = @workGrade,
-            //                    final_grade = @finalGrade,
-            //                    total_grade = @totalGrade,
-            //                    success_status = CASE WHEN @totalGrade >= 50 THEN N'نجاح' ELSE N'رسوب' END
-            //                WHERE student_id = @studentId AND course_id = @courseId";
-
-            //                    using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
-            //                    {
-            //                        updateCmd.Parameters.AddWithValue("@workGrade", workGrade);
-            //                        updateCmd.Parameters.AddWithValue("@finalGrade", finalGrade);
-            //                        updateCmd.Parameters.AddWithValue("@totalGrade", totalGrade);
-            //                        updateCmd.Parameters.AddWithValue("@studentId", studentId);
-            //                        updateCmd.Parameters.AddWithValue("@courseId", courseId);
-            //                        updateCmd.ExecuteNonQuery();
-            //                    }
-
-            //                    // تسجيل في سجل العمليات
-            //                    string auditQuery = @"
-            //                INSERT INTO Audit_Log (user_id, action, table_name, record_id)
-            //                VALUES (@userId, 'UPDATE', 'Grades', @recordId)";
-            //                    using (SqlCommand auditCmd = new SqlCommand(auditQuery, conn))
-            //                    {
-            //                        auditCmd.Parameters.AddWithValue("@userId", Session.userID);
-            //                        auditCmd.Parameters.AddWithValue("@recordId", studentId);
-            //                        auditCmd.ExecuteNonQuery();
-            //                    }
-
-            //                    updatedCount++;
-            //                }
-            //                else
-            //                {
-            //                    // إنشاء سجل جديد
-            //                    string insertQuery = @"
-            //                INSERT INTO Grades (student_id, course_id, work_grade, final_grade, total_grade, success_status)
-            //                VALUES (@studentId, @courseId, @workGrade, @finalGrade, @totalGrade, 
-            //                CASE WHEN @totalGrade >= 50 THEN N'نجاح' ELSE N'رسوب' END)";
-            //                    using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
-            //                    {
-            //                        insertCmd.Parameters.AddWithValue("@studentId", studentId);
-            //                        insertCmd.Parameters.AddWithValue("@courseId", courseId);
-            //                        insertCmd.Parameters.AddWithValue("@workGrade", workGrade);
-            //                        insertCmd.Parameters.AddWithValue("@finalGrade", finalGrade);
-            //                        insertCmd.Parameters.AddWithValue("@totalGrade", totalGrade);
-            //                        insertCmd.ExecuteNonQuery();
-            //                    }
-
-            //                    updatedCount++;
-            //                }
-
-            //            }
-            //        }
-
-            //        MessageBox.Show($"✅ تم حفظ الدرجات بنجاح:\n📥 تم تحديث/إدخال: {updatedCount}\n⏭ تم تخطي: {skippedCount}");
-            //    }
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("❌ خطأ أثناء حفظ الدرجات:\n" + ex.Message);
-            //}
-
             try
             {
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
@@ -831,119 +715,123 @@ ORDER BY s.university_number, r.year_number, c.course_name;
 
 
 
-        private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
+       private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
+{
+    if (pages == null || pages.Count == 0 || currentPageIndex >= pages.Count)
+    {
+        e.HasMorePages = false;
+        return;
+    }
+
+    DataTable dt = pages[currentPageIndex];
+    DataRow firstRow = dt.Rows[0];
+
+    Font titleFont = new Font("Arial", 14, FontStyle.Bold);
+    Font headerFont = new Font("Arial", 12, FontStyle.Bold);
+    Font textFont = new Font("Arial", 11);
+    Brush brush = Brushes.Black;
+
+    int x = 50;
+    int y = 50;
+    int tableWidth = 680;
+
+    // --- رأس الصفحة ---
+    StringFormat centerFormat = new StringFormat { Alignment = StringAlignment.Center };
+    e.Graphics.DrawString("دولة ليبيا", titleFont, brush, x + tableWidth / 2, y, centerFormat); y += 30;
+    e.Graphics.DrawString("وزارة التعليم", titleFont, brush, x + tableWidth / 2, y, centerFormat); y += 30;
+    e.Graphics.DrawString("جامعة غريان", titleFont, brush, x + tableWidth / 2, y, centerFormat); y += 30;
+    e.Graphics.DrawString("كلية العلوم الصحية", titleFont, brush, x + tableWidth / 2, y, centerFormat); y += 30;
+    e.Graphics.DrawString("التاريخ: " + DateTime.Now.ToString("yyyy/MM/dd"), textFont, brush, x + tableWidth / 2, y, centerFormat); y += 40;
+
+    // --- بيانات المادة في جدول 2 صفوف و3 أعمدة ---
+    int colWidth = tableWidth / 3;
+    int rowHeight = 30;
+
+    string courseName = firstRow["اسم المادة"].ToString();
+    string courseId = firstRow["رقم المادة"].ToString();
+    string year = firstRow["السنة الدراسية"].ToString();
+    string group = "1"; // القيمة الافتراضية
+
+    if (dt.Columns.Contains("رقم المجموعة") && firstRow["رقم المجموعة"] != DBNull.Value && !string.IsNullOrEmpty(firstRow["رقم المجموعة"].ToString()))
+    {
+        group = firstRow["رقم المجموعة"].ToString();
+    }
+
+    string instructor = firstRow["اسم الأستاذ"]?.ToString() ?? "غير معروف";
+    string failedCount = dt.Rows.Count.ToString();
+
+    string[] infoTitles = { "اسم الأستاذ", "السنة الدراسية", "اسم المادة" };
+    string[] infoValues = { instructor, year, courseName };
+
+    string[] infoTitles2 = { "رقم المادة", "رقم المجموعة", "عدد الطلاب" };
+    string[] infoValues2 = { courseId, group, failedCount };
+
+    // الصف الأول
+    for (int i = 0; i < 3; i++)
+    {
+        int colX = x + i * colWidth;
+        Rectangle rectTitle = new Rectangle(colX, y, colWidth, rowHeight);
+        Rectangle rectValue = new Rectangle(colX, y + rowHeight, colWidth, rowHeight);
+
+        e.Graphics.DrawRectangle(Pens.Black, rectTitle);
+        e.Graphics.DrawString(infoTitles[i], headerFont, brush, rectTitle, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+
+        e.Graphics.DrawRectangle(Pens.Black, rectValue);
+        e.Graphics.DrawString(infoValues[i], textFont, brush, rectValue, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+    }
+
+    // الصف الثاني
+    y += 2 * rowHeight;
+    for (int i = 0; i < 3; i++)
+    {
+        int colX = x + i * colWidth;
+        Rectangle rectTitle = new Rectangle(colX, y, colWidth, rowHeight);
+        Rectangle rectValue = new Rectangle(colX, y + rowHeight, colWidth, rowHeight);
+
+        e.Graphics.DrawRectangle(Pens.Black, rectTitle);
+        e.Graphics.DrawString(infoTitles2[i], headerFont, brush, rectTitle, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+
+        e.Graphics.DrawRectangle(Pens.Black, rectValue);
+        e.Graphics.DrawString(infoValues2[i], textFont, brush, rectValue, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+    }
+
+    y += 2 * rowHeight + 20;
+
+    // --- جدول الطلاب ---
+    string[] headers = { "النتيجة", "الدرجة", "القسم", "الرقم الجامعي", "اسم الطالب" };
+    int[] columnWidths = { 80, 80, 150, 100, 270 }; // المجموع = 680
+    int rowHeightStudents = 30;
+
+    int tableX = x;
+    int tableY = y;
+
+    // رؤوس الأعمدة (يمين لليسار)
+    for (int i = 0; i < headers.Length; i++)
+    {
+        Rectangle rect = new Rectangle(tableX, tableY, columnWidths[i], rowHeightStudents);
+        e.Graphics.DrawRectangle(Pens.Black, rect);
+        e.Graphics.DrawString(headers[i], headerFont, brush,
+            new RectangleF(rect.X, rect.Y, rect.Width, rect.Height),
+            new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+        tableX += columnWidths[i];
+    }
+    tableY += rowHeightStudents;
+
+    int pageHeightLimit = e.MarginBounds.Bottom - 50;
+
+    // بيانات الطلاب
+    foreach (DataRow row in dt.Rows)
+    {
+        if (tableY + rowHeightStudents > pageHeightLimit)
         {
-            if (pages == null || pages.Count == 0 || currentPageIndex >= pages.Count)
-            {
-                e.HasMorePages = false;
-                return;
-            }
+            e.HasMorePages = true;
+            currentPageIndex++;
+            return;
+        }
 
-            DataTable dt = pages[currentPageIndex];
-            DataRow firstRow = dt.Rows[0];
-
-            Font titleFont = new Font("Arial", 14, FontStyle.Bold);
-            Font headerFont = new Font("Arial", 12, FontStyle.Bold);
-            Font textFont = new Font("Arial", 11);
-            Brush brush = Brushes.Black;
-
-            int x = 50;
-            int y = 50;
-            int tableWidth = 680;
-
-            // --- رأس الصفحة ---
-            StringFormat centerFormat = new StringFormat { Alignment = StringAlignment.Center };
-            e.Graphics.DrawString("دولة ليبيا", titleFont, brush, x + tableWidth / 2, y, centerFormat); y += 30;
-            e.Graphics.DrawString("وزارة التعليم", titleFont, brush, x + tableWidth / 2, y, centerFormat); y += 30;
-            e.Graphics.DrawString("جامعة غريان", titleFont, brush, x + tableWidth / 2, y, centerFormat); y += 30;
-            e.Graphics.DrawString("كلية العلوم الصحية", titleFont, brush, x + tableWidth / 2, y, centerFormat); y += 30;
-            e.Graphics.DrawString("التاريخ: " + DateTime.Now.ToString("yyyy/MM/dd"), textFont, brush, x + tableWidth / 2, y, centerFormat); y += 40;
-
-            // --- بيانات المادة في جدول 2 صفوف و3 أعمدة ---
-            int colWidth = tableWidth / 3;
-            int rowHeight = 30;
-
-            string courseName = firstRow["اسم المادة"].ToString();
-            string courseId = firstRow["رقم المادة"].ToString();
-            string year = firstRow["السنة الدراسية"].ToString();
-            string group = firstRow["رقم المجموعة"].ToString();
-            string instructor = firstRow["اسم الأستاذ"]?.ToString() ?? "غير معروف";
-            string failedCount = dt.Rows.Count.ToString();
-
-            string[] infoTitles = { "اسم الأستاذ", "السنة الدراسية", "اسم المادة" };
-            string[] infoValues = { instructor, year, courseName };
-
-            string[] infoTitles2 = { "رقم المادة", "رقم المجموعة", "عدد الطلاب" };
-            string[] infoValues2 = { failedCount, group, courseId };
-
-
-            // الصف الأول
-            for (int i = 0; i < 3; i++)
-            {
-                int colX = x + i * colWidth;
-                Rectangle rectTitle = new Rectangle(colX, y, colWidth, rowHeight);
-                Rectangle rectValue = new Rectangle(colX, y + rowHeight, colWidth, rowHeight);
-
-                e.Graphics.DrawRectangle(Pens.Black, rectTitle);
-                e.Graphics.DrawString(infoTitles[i], headerFont, brush, rectTitle, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-
-                e.Graphics.DrawRectangle(Pens.Black, rectValue);
-                e.Graphics.DrawString(infoValues[i], textFont, brush, rectValue, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-            }
-
-            // الصف الثاني
-            y += 2 * rowHeight;
-            for (int i = 0; i < 3; i++)
-            {
-                int colX = x + i * colWidth;
-                Rectangle rectTitle = new Rectangle(colX, y, colWidth, rowHeight);
-                Rectangle rectValue = new Rectangle(colX, y + rowHeight, colWidth, rowHeight);
-
-                e.Graphics.DrawRectangle(Pens.Black, rectTitle);
-                e.Graphics.DrawString(infoTitles2[i], headerFont, brush, rectTitle, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-
-                e.Graphics.DrawRectangle(Pens.Black, rectValue);
-                e.Graphics.DrawString(infoValues2[i], textFont, brush, rectValue, new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-            }
-
-            y += 2 * rowHeight + 20;
-
-            // --- جدول الطلاب ---
-            string[] headers = { "النتيجة", "الدرجة", "القسم", "الرقم الجامعي", "اسم الطالب" };
-            int[] columnWidths = { 80, 80, 150, 100, 270 }; // المجموع = 680
-            int rowHeightStudents = 30;
-
-            int tableX = x;
-            int tableY = y;
-
-            // رؤوس الأعمدة (يمين لليسار)
-            for (int i = 0; i < headers.Length; i++)
-            {
-                Rectangle rect = new Rectangle(tableX, tableY, columnWidths[i], rowHeightStudents);
-                e.Graphics.DrawRectangle(Pens.Black, rect);
-                e.Graphics.DrawString(headers[i], headerFont, brush,
-                    new RectangleF(rect.X, rect.Y, rect.Width, rect.Height),
-                    new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-                tableX += columnWidths[i];
-            }
-            tableY += rowHeightStudents;
-
-            int pageHeightLimit = e.MarginBounds.Bottom - 50;
-
-            // بيانات الطلاب
-            foreach (DataRow row in dt.Rows)
-            {
-                if (tableY + rowHeightStudents > pageHeightLimit)
-                {
-
-                    e.HasMorePages = true;
-                    currentPageIndex++;
-                    return;
-                }
-
-                tableX = x;
-                string[] values =
-                {
+        tableX = x;
+        string[] values =
+        {
             row["النتيجة"].ToString(),
             row["الدرجة"].ToString(),
             row["القسم"].ToString(),
@@ -951,102 +839,37 @@ ORDER BY s.university_number, r.year_number, c.course_name;
             row["اسم الطالب"].ToString()
         };
 
-                for (int i = 0; i < values.Length; i++)
-                {
-                    Rectangle rect = new Rectangle(tableX, tableY, columnWidths[i], rowHeightStudents);
-                    e.Graphics.DrawRectangle(Pens.Black, rect);
-                    e.Graphics.DrawString(values[i], textFont, brush,
-                        new RectangleF(rect.X, rect.Y, rect.Width, rect.Height),
-                        new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
-                    tableX += columnWidths[i];
-                }
-                tableY += rowHeightStudents;
-            }
-
-            currentPageIndex++;
-            e.HasMorePages = currentPageIndex < pages.Count;
+        for (int i = 0; i < values.Length; i++)
+        {
+            Rectangle rect = new Rectangle(tableX, tableY, columnWidths[i], rowHeightStudents);
+            e.Graphics.DrawRectangle(Pens.Black, rect);
+            e.Graphics.DrawString(values[i], textFont, brush,
+                new RectangleF(rect.X, rect.Y, rect.Width, rect.Height),
+                new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
+            tableX += columnWidths[i];
         }
+        tableY += rowHeightStudents;
+    }
+
+            // --- ترقيم الصفحة في الأسفل ---
+            currentPageIndex++;
+            Font pageNumberFont = new Font("Arial", 10, FontStyle.Regular);
+            string pageNumberText = $"الصفحة {currentPageIndex}";
+    float pageNumberX = x + tableWidth / 2;
+    float pageNumberY = e.MarginBounds.Bottom + 10;
+    StringFormat pageNumberFormat = new StringFormat { Alignment = StringAlignment.Center };
+
+    e.Graphics.DrawString(pageNumberText, pageNumberFont, brush, pageNumberX, pageNumberY, pageNumberFormat);
+
+ 
+    e.HasMorePages = currentPageIndex < pages.Count;
+}
+
 
 
 
         private void button5_Click(object sender, EventArgs e)
-
         {
-            //    if (comboBox_Year.SelectedItem == null)
-            //    {
-            //        MessageBox.Show("يرجى اختيار السنة الدراسية.");
-            //        return;
-            //    }
-
-            //    if (comboBox_Course.SelectedValue == null)
-            //    {
-            //        MessageBox.Show("يرجى اختيار المادة.");
-            //        return;
-            //    }
-
-            //    int selectedYear;
-            //    if (!int.TryParse(comboBox_Year.SelectedItem.ToString(), out selectedYear))
-            //    {
-            //        MessageBox.Show("السنة الدراسية غير صالحة.");
-            //        return;
-            //    }
-
-            //    int courseId = Convert.ToInt32(comboBox_Course.SelectedValue);
-
-            //    string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
-            //    using (SqlConnection conn = new SqlConnection(connectionString))
-            //    {
-            //        conn.Open();
-            //        string query = @"
-            //    SELECT 
-            //        s.student_id, 
-            //        s.university_number, 
-            //        s.full_name, 
-            //        d.dep_name, 
-            //        g.final_grade, 
-            //        g.success_status,
-            //        c.course_name, 
-            //        c.course_id,
-            //        i.full_name AS instructor_name
-            //    FROM Grades g
-            //    INNER JOIN Students s ON g.student_id = s.student_id
-            //    INNER JOIN Departments d ON s.department_id = d.department_id
-            //    INNER JOIN Courses c ON g.course_id = c.course_id
-            //    INNER JOIN Course_Instructor ci ON c.course_id = ci.course_id
-            //    INNER JOIN Instructors i ON ci.instructor_id = i.instructor_id
-            //    WHERE g.course_id = @courseId 
-            //      AND c.year_number = @year
-            //      AND g.success_status = N'رسوب'
-            //";
-
-            //    string query = @"
-            //SELECT s.student_id, s.full_name, s.university_number, g.final_grade, g.success_status
-            //FROM Grades g
-            //INNER JOIN Students s ON g.student_id = s.student_id
-            //INNER JOIN Courses c ON g.course_id = c.course_id
-            //WHERE g.course_id = @courseId 
-            //  AND c.year_number = @year
-            //  AND g.success_status = N'رسوب'";
-
-            //    using (SqlCommand cmd = new SqlCommand(query, conn))
-            //    {
-            //        cmd.Parameters.AddWithValue("@courseId", courseId);
-            //        cmd.Parameters.AddWithValue("@year", selectedYear);
-
-            //        SqlDataAdapter da = new SqlDataAdapter(cmd);
-            //        DataTable dt = new DataTable();
-            //        da.Fill(dt);
-            //        dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            //        dataGridView3.DataSource = dt;
-
-            //        if (dt.Rows.Count == 0)
-            //        {
-            //            MessageBox.Show("لا يوجد طلاب راسبين في هذه المادة والسنة الدراسية.");
-            //        }
-            //    }
-            //}
-            // التحقق من اختيار السنة والمادة
             if (comboBox_Year.SelectedItem == null)
             {
                 MessageBox.Show("يرجى اختيار السنة الدراسية.");
@@ -1078,7 +901,6 @@ SELECT
     c.course_name AS 'اسم المادة',
     c.course_id AS 'رقم المادة',
     c.year_number AS 'السنة الدراسية',
-    cc.group_number AS 'رقم المجموعة',
     i.full_name AS 'اسم الأستاذ',
     s.full_name AS 'اسم الطالب',
     s.university_number AS 'الرقم الجامعي',
@@ -1089,13 +911,12 @@ FROM Grades g
 INNER JOIN Students s ON g.student_id = s.student_id
 INNER JOIN Courses c ON g.course_id = c.course_id
 INNER JOIN Departments d ON s.department_id = d.department_id
-LEFT JOIN Course_Classroom cc ON c.course_id = cc.course_id
 LEFT JOIN Course_Instructor ci ON c.course_id = ci.course_id
 LEFT JOIN Instructors i ON ci.instructor_id = i.instructor_id
 WHERE c.year_number = @year
   AND c.course_id = @courseId
   AND g.success_status = N'رسوب'
-ORDER BY c.course_id, cc.group_number, s.university_number;";
+ORDER BY c.course_id,s.university_number;";
 
 
             // تنفيذ الاستعلام
@@ -1160,14 +981,15 @@ ORDER BY c.course_id, cc.group_number, s.university_number;";
 
             //printDocument1.PrintPage -= printDocument1_PrintPage;
 
-            printDocument1.PrintPage += printDocument1_PrintPage;
+            //printDocument1.PrintPage += printDocument1_PrintPage;
             currentPageIndex = 0;
-            printDocument1.Print();
-            //PrintPreviewDialog preview = new PrintPreviewDialog();
-            ////PrintPreviewDialog previewDialog = new PrintPreviewDialog();
-          
-            //preview.Document = printDocument1;
+            //printDocument1.Print();
 
+            PrintPreviewDialog previewDialog = new PrintPreviewDialog();
+
+            previewDialog.Document = printDocument1;
+
+            previewDialog.ShowDialog();
             //preview.ShowDialog();
 
         }
