@@ -1,4 +1,6 @@
-﻿using System;
+﻿using college_of_health_sciences.moduls;
+using DocumentFormat.OpenXml.Bibliography;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,7 +25,9 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         PrintDocument printDocument = new PrintDocument();
         DataTable printTable;
+        DataTable supjectTable;
         string studentName = "";
+        int stuid;
 
 
         public void datagridviewstyle(DataGridView datagrid)
@@ -165,6 +169,47 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         private void certificates_reports_Load(object sender, EventArgs e)
         {
             textBox2.Focus();
+            var study_year = new Dictionary<int, string>()
+            {
+                {1, "سنة اولى"},
+                {2, "سنة ثانية"},
+                {3, "سنة ثالثة"},
+                {4, "سنة رابعة"}
+            };
+
+            comboBox1.DataSource = new BindingSource(study_year, null);
+            comboBox1.DisplayMember = "Value";
+            comboBox1.ValueMember = "Key";
+
+            var departments = new Dictionary<int, string>()
+            {
+                {1, "قسم الرياضيات"},
+                {2, "قسم الكيمياء"},
+                {3, "قسم الفيزياء"}
+            };
+
+            comboBox2.DataSource = new BindingSource(departments, null);
+            comboBox2.DisplayMember = "Value";
+            comboBox2.ValueMember = "Key";
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using(SqlConnection con = db.OpenConnection())
+                {
+                    string q = "select * from Departments";
+                    SqlDataAdapter da = new SqlDataAdapter(q,con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    
+                    comboBox2.DataSource = new BindingSource(dt, null);
+                    comboBox2.DisplayMember = "dep_name";
+                    comboBox2.ValueMember = "department_id";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an Error : " + ex.Message);
+            }
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -406,6 +451,241 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 y += dheaderh + 30;
             }
         
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radioButton2.Checked)
+            {
+                panel2.Visible = false;
+
+                panel3.Visible = true;
+                dataGridView5.DataSource = null;
+            }
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked)
+            {
+                panel2.Visible = true;
+                panel3.Visible = false;
+                dataGridView5.DataSource = null;
+            }
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    string q = "SELECT " +
+                        "c.course_id AS رمز_المادة" +
+                        " , c.course_name AS اسم_المادة" +
+                        " FROM Courses c " +
+                        "JOIN Course_Department cd ON cd.course_id = c.course_id " +
+                        "WHERE c.year_number = @YearNumber AND cd.department_id = @DepartmentID";
+
+                    SqlCommand cmd = new SqlCommand(q, con);
+                    cmd.Parameters.AddWithValue("@YearNumber", comboBox1.SelectedValue);
+                    cmd.Parameters.AddWithValue("@DepartmentID", comboBox2.SelectedIndex + 1);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    supjectTable = dt;
+                    dataGridView4.DataSource = supjectTable;
+                    datagridviewstyle(dataGridView4);
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an Error : " + ex.Message);
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(comboBox2.SelectedItem != null)
+            {
+                comboBox2_SelectedIndexChanged(null,null);
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            dataGridView5.DataSource = null;
+            SearchStudent();
+        }
+        private void SearchStudent()
+        {
+            if (!string.IsNullOrEmpty(textBox3.Text))
+            {
+                conn.DatabaseConnection db2 = new conn.DatabaseConnection();
+                SqlConnection con2 = db2.OpenConnection();
+
+                string q2 = "SELECT s.student_id, s.university_number,s.full_name,d.dep_name AS القسم,s.current_year,t.description,s.gender,s.nationality,s.exam_round FROM Students s JOIN " +
+                    "Departments d ON s.department_id = d.department_id JOIN Status t ON s.status_id = t.status_id WHERE university_number = @university_number";
+
+                try
+                {
+                    SqlCommand cmd = new SqlCommand(q2, con2);
+                    cmd.Parameters.AddWithValue("@university_number", textBox3.Text.Trim());
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    // أضف أعمدة نصية للعرض بدل تعديل الأعمدة الأصلية
+                    if (!dt.Columns.Contains("GenderText"))
+                        dt.Columns.Add("GenderText", typeof(string));
+                    if (!dt.Columns.Contains("ExamRoundText"))
+                        dt.Columns.Add("ExamRoundText", typeof(string));
+                    if (!dt.Columns.Contains("yearText"))
+                        dt.Columns.Add("yearText", typeof(string));
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        bool genderBool = Convert.ToBoolean(row["gender"]);
+                        row["GenderText"] = genderBool ? "ذكر" : "أنثى";
+
+                        bool roundBool = Convert.ToBoolean(row["exam_round"]);
+                        row["ExamRoundText"] = roundBool ? "الثاني" : "الأول";
+
+                        switch (row["current_year"].ToString())
+                        {
+                            case "1":
+                                row["yearText"] = "سنة أولى";
+                                break;
+                            case "2":
+                                row["yearText"] = "سنة ثانية";
+                                break;
+                            case "3":
+                                row["yearText"] = "سنة ثالثة";
+                                break;
+                            case "4":
+                                row["yearText"] = "سنة رابعة";
+                                break;
+                            default:
+                                MessageBox.Show("شكل الإدخال يجب ان يكون مثل سنة أولى");
+                                break;
+                        }
+
+                    }
+
+                    dataGridView5.DataSource = dt;
+
+                    // إخفاء الأعمدة الأصلية
+                    dataGridView5.Columns["gender"].Visible = false;
+                    dataGridView5.Columns["exam_round"].Visible = false;
+                    dataGridView5.Columns["current_year"].Visible = false;
+
+
+                    // عرض الأعمدة النصية بدلاً منها
+                    dataGridView5.Columns["GenderText"].HeaderText = "الجنس";
+                    dataGridView5.Columns["ExamRoundText"].HeaderText = "الدور";
+                    dataGridView5.Columns["yearText"].HeaderText = "السنة";
+
+
+                    // باقي التنسيق
+                    datagridviewstyle(dataGridView5);
+                    dataGridView5.Columns["full_name"].HeaderText = "الإسم";
+                    dataGridView5.Columns["university_number"].HeaderText = "الرقم الجامعي";
+                    dataGridView5.Columns["description"].HeaderText = "الحالة";
+                    dataGridView5.Columns["description"].ReadOnly = true;
+                    dataGridView5.Columns["student_id"].Visible = false;
+                    dataGridView5.Columns["nationality"].HeaderText = "الجنسية";
+
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("حدث خطأ أثناء جلب البيانات: " + ex.Message);
+
+                }
+                finally
+                {
+                    db2.CloseConnection();
+                }
+            }
+            else
+            {
+                MessageBox.Show("يرجى إدخال رقم القيد أولاً.");
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (dataGridView5 == null || dataGridView5.Rows.Count == 0)
+            {
+                MessageBox.Show("لا يوجد بيانات لتخزينها، يرجى البحث عن الطالب قبل التخزين.");
+                return;
+            }
+
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    int studentId = Convert.ToInt32(dataGridView5.Rows[0].Cells["student_id"].Value);
+                    int year = Convert.ToInt32(comboBox1.SelectedValue);
+                    int dept = Convert.ToInt32(comboBox2.SelectedValue);
+
+                    // ✅ تحقق أولاً أن الطالب من نفس القسم
+                    SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Students WHERE student_id = @studentId AND department_id = @departmentId", con);
+                    checkCmd.Parameters.AddWithValue("@studentId", studentId);
+                    checkCmd.Parameters.AddWithValue("@departmentId", dept);
+
+                    int count = (int)checkCmd.ExecuteScalar();
+
+                    if (count == 0)
+                    {
+                        MessageBox.Show("خطأ: الطالب لا ينتمي إلى القسم المحدد، لا يمكن تنزيل المواد.");
+                        return;
+                    }
+
+                    // ✅ استعلام تنزيل المواد
+                    string q = @"
+            INSERT INTO Registrations (student_id, course_id, year_number, status, course_classroom_id)
+            SELECT @studentId, c.course_id, @yearNumber, N'مسجل',
+                   (SELECT TOP 1 cc.id FROM Course_Classroom cc WHERE cc.course_id = c.course_id)
+            FROM Courses c
+            JOIN Course_Department cd ON cd.course_id = c.course_id
+            WHERE c.year_number = @yearNumber AND cd.department_id = @departmentId
+            AND NOT EXISTS (
+                SELECT 1 FROM Registrations 
+                WHERE student_id = @studentId AND course_id = c.course_id
+            )";
+
+                    SqlCommand cmd = new SqlCommand(q, con);
+                    cmd.Parameters.AddWithValue("@studentId", studentId);
+                    cmd.Parameters.AddWithValue("@yearNumber", year);
+                    cmd.Parameters.AddWithValue("@departmentId", dept);
+
+                    int affected = cmd.ExecuteNonQuery();
+
+                    if (affected > 0)
+                    {
+                        MessageBox.Show("تم تنزيل المواد بنجاح.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("لم يتم تنزيل أي مادة. ربما المواد موجودة مسبقًا.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ: " + ex.Message);
+            }
+
         }
     }
 }

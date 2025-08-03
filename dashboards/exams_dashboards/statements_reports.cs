@@ -117,9 +117,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             string courseName = firstRow["اسم المادة"].ToString();
             string courseId = firstRow["رقم المادة"].ToString();
             string year = firstRow["السنة الدراسية"].ToString();
-            string group = dt.Columns.Contains("رقم المجموعة") && !string.IsNullOrEmpty(firstRow["رقم المجموعة"]?.ToString())
-                  ? firstRow["رقم المجموعة"].ToString()
-                  : "1";
+            string group = firstRow["رقم المجموعة"].ToString();
 
             string instructor = string.IsNullOrEmpty(firstRow["اسم الأستاذ"]?.ToString()) ? "غير معروف" : firstRow["اسم الأستاذ"].ToString();
             string failedCount = dt.Rows.Count.ToString();
@@ -287,6 +285,7 @@ SELECT
     c.course_name AS 'اسم المادة',
     c.course_id AS 'رقم المادة',
     c.year_number AS 'السنة الدراسية',
+    cc.group_number AS 'رقم المجموعة',
     i.full_name AS 'اسم الأستاذ',
     s.full_name AS 'اسم الطالب',
     s.university_number AS 'الرقم الجامعي',
@@ -295,12 +294,16 @@ SELECT
     g.success_status AS 'النتيجة'
 FROM Grades g
 INNER JOIN Students s ON g.student_id = s.student_id
-INNER JOIN Courses c ON g.course_id = c.course_id
+INNER JOIN Registrations r ON r.student_id = s.student_id AND r.course_id = g.course_id
+INNER JOIN Course_Classroom cc ON r.course_classroom_id = cc.id
+INNER JOIN Courses c ON cc.course_id = c.course_id
 INNER JOIN Departments d ON s.department_id = d.department_id
 LEFT JOIN Course_Instructor ci ON c.course_id = ci.course_id
 LEFT JOIN Instructors i ON ci.instructor_id = i.instructor_id
 WHERE c.year_number = @year
-ORDER BY c.course_id,s.university_number;";
+ORDER BY c.course_id, cc.group_number, s.university_number;
+
+";
 
 
             using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
@@ -586,7 +589,8 @@ ORDER BY c.year_number, c.course_name;";
             y += infoRowHeight * 2 + 20;
 
             // جدول الدرجات (معكوس: نبدأ من المادة يمينًا)
-            string[] gradeHeaders = { "المادة", "رمز المادة", "الدرجة", "عدد الوحدات", "عدد النقاط", "نتيجة المادة", "ملاحظة" };
+            string[] gradeHeaders = { " رمز المادة", "المادة", " عدد الوحدات", "عدد النقاط", "الدرجة", "نتيجة المادة", "ملاحظة" };
+
             int gradeColCount = gradeHeaders.Length;
             int gradeColWidth = pageWidth / gradeColCount;
             int gradeRowHeight = 25;
@@ -608,19 +612,20 @@ ORDER BY c.year_number, c.course_name;";
 
             foreach (DataRow row in dt.Rows)
             {
-                string subject = row["المادة"].ToString();
                 string code = row["رقم_المادة"].ToString();
-                int grade = Convert.ToInt32(row["الدرجة"]);
+                string subject = row["المادة"].ToString();
                 int units = Convert.ToInt32(row["الوحدات"]);
+                int grade = Convert.ToInt32(row["الدرجة"]);
+              
                 int points = grade * units;
-                string result = grade >= 50 ? "ناجح" : "راسب";
+                string result = grade >= 60 ? "ناجح" : "راسب";
                 string note = "";
 
                 sumPoints += points;
                 sumUnits += units;
-                if (grade >= 50) completedUnits += units;
+                if (grade >= 60) completedUnits += units;
 
-                string[] values = { subject, code, grade.ToString(), units.ToString(), points.ToString(), result, note };
+                string[] values = {  code, subject,  units.ToString(), points.ToString(), grade.ToString(), result, note };
 
                 for (int i = 0; i < values.Length; i++)
                 {
@@ -764,7 +769,7 @@ ORDER BY c.year_number, c.course_name;";
             y += infoRowHeight * 2 + 20;
 
             // جدول الدرجات (معكوس: نبدأ من المادة يمينًا)
-            string[] gradeHeaders = { "المادة", "رمز المادة", "الدرجة", "عدد الوحدات", "عدد النقاط", "نتيجة المادة", "ملاحظة" };
+            string[] gradeHeaders = { " رمز المادة", "المادة", " عدد الوحدات", "عدد النقاط", "الدرجة", "نتيجة المادة", "ملاحظة" };
             int gradeColCount = gradeHeaders.Length;
             int gradeColWidth = pageWidth / gradeColCount;
             int gradeRowHeight = 25;
@@ -791,14 +796,14 @@ ORDER BY c.year_number, c.course_name;";
                 int grade = Convert.ToInt32(row["الدرجة"]);
                 int units = Convert.ToInt32(row["الوحدات"]);
                 int points = grade * units;
-                string result = grade >= 50 ? "ناجح" : "راسب";
+                string result = grade >= 60 ? "ناجح" : "راسب";
                 string note = "";
 
                 sumPoints += points;
                 sumUnits += units;
-                if (grade >= 50) completedUnits += units;
+                if (grade >= 60) completedUnits += units;
 
-                string[] values = { subject, code, grade.ToString(), units.ToString(), points.ToString(), result, note };
+                string[] values = { code, subject, units.ToString(), points.ToString(), grade.ToString(), result, note };
 
                 for (int i = 0; i < values.Length; i++)
                 {
@@ -1021,12 +1026,12 @@ ORDER BY c.year_number, c.course_name;";
             currentPageIndex = 0;
 
             //// ✅ استخدم printDocument2 بدلًا من printDocument1
-            //PrintPreviewDialog preview = new PrintPreviewDialog();
-            //preview.Document = printDocument2;
-            //preview.ShowDialog();
+            PrintPreviewDialog preview = new PrintPreviewDialog();
+            preview.Document = printDocument3;
+            preview.ShowDialog();
 
             // أو لطباعة مباشرة:
-            printDocument3.Print();
+            // printDocument3.Print();
         }
 
         private void tabPage3_Click(object sender, EventArgs e)
@@ -1293,7 +1298,7 @@ ORDER BY c.year_number, c.course_name;";
                 int gradeValue = 0;
                 if (int.TryParse(grade, out gradeValue))
                 {
-                    status = gradeValue > 50 ? "ناجح" : "راسب";
+                    status = gradeValue >= 60 ? "ناجح" : "راسب";
                 }
 
                 string[] values = { numberingStr, studentName, studentNumber, grade, status };

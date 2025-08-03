@@ -44,6 +44,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 
 
+
                 dataGridViewGrades.CellValueChanged += dataGridViewGrades_CellValueChanged;
                 dataGridViewGrades.CurrentCellDirtyStateChanged += dataGridViewGrades_CurrentCellDirtyStateChanged;
             }
@@ -310,7 +311,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                                 SET work_grade = @workGrade,
                                     final_grade = @finalGrade,
                                     total_grade = @totalGrade,
-                                    success_status = CASE WHEN @totalGrade >= 50 THEN N'نجاح' ELSE N'رسوب' END
+                                    success_status = CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'رسوب' END
                                 WHERE student_id = @studentId AND course_id = @courseId";
 
                                         reader.Close(); // يجب إغلاق القارئ قبل تنفيذ أمر آخر
@@ -352,7 +353,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                                     string insertQuery = @"
                             INSERT INTO Grades (student_id, course_id, work_grade, final_grade, total_grade, success_status)
                             VALUES (@studentId, @courseId, @workGrade, @finalGrade, @totalGrade,
-                                    CASE WHEN @totalGrade >= 50 THEN N'نجاح' ELSE N'رسوب' END)";
+                                    CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'رسوب' END)";
 
                                     using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
                                     {
@@ -419,22 +420,23 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                     // استعلام لجلب بيانات الطالب مع المواد التي يسجلها والسنة، والدرجات (إن وجدت)
                     string query = @"
-                SELECT 
-                    s.university_number AS [رقم الجامعة],
-                    s.full_name AS [اسم الطالب],
-                    c.course_name AS [اسم المادة],
-                    r.year_number AS [السنة الدراسية],
-                    ISNULL(g.work_grade, 0) AS [درجة الأعمال],
-                    ISNULL(g.final_grade, 0) AS [الدرجة النهائية],
-                    ISNULL(g.total_grade, 0) AS [المجموع الكلي],
-                    ISNULL(g.success_status, N'غير محدد') AS [الحالة],
-                    g.grade_id
-                FROM Students s
-                INNER JOIN Registrations r ON s.student_id = r.student_id
-                INNER JOIN Courses c ON r.course_id = c.course_id
-                LEFT JOIN Grades g ON s.student_id = g.student_id AND c.course_id = g.course_id
-                WHERE s.university_number = @universityNumber AND r.status = N'مسجل'
-                ORDER BY r.year_number, c.course_name";
+SELECT 
+    s.university_number AS [رقم الجامعة],
+    s.full_name AS [اسم الطالب],
+    c.course_name AS [اسم المادة],
+    r.year_number AS [السنة الدراسية],
+    g.work_grade AS [درجة الأعمال],
+    g.final_grade AS [الدرجة النهائية],
+    g.total_grade AS [المجموع الكلي],
+    g.success_status AS [الحالة],
+    g.grade_id
+FROM Students s
+INNER JOIN Registrations r ON s.student_id = r.student_id
+INNER JOIN Courses c ON r.course_id = c.course_id
+LEFT JOIN Grades g ON s.student_id = g.student_id AND c.course_id = g.course_id
+WHERE s.university_number = @universityNumber AND r.status = N'مسجل'
+ORDER BY r.year_number, c.course_name;";
+
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -466,7 +468,9 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                         if (dataGridView2.Columns.Contains("grade_id"))
                             dataGridView2.Columns["grade_id"].Visible = false;
 
-                        dataGridViewGrades.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                        dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                      
                     }
                 }
             }
@@ -474,6 +478,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 MessageBox.Show("خطأ أثناء البحث: " + ex.Message);
             }
+          
 
 
         }
@@ -531,6 +536,7 @@ ORDER BY s.university_number, r.year_number, c.course_name;
             {
                 MessageBox.Show("خطأ أثناء تحميل البيانات: " + ex.Message);
             }
+          
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -634,7 +640,7 @@ ORDER BY s.university_number, r.year_number, c.course_name;
                 SET work_grade = @workGrade,
                     final_grade = @finalGrade,
                     total_grade = @totalGrade,
-                    success_status = CASE WHEN @totalGrade >= 50 THEN N'نجاح' ELSE N'رسوب' END
+                    success_status = CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'رسوب' END
                 WHERE grade_id = @gradeId";
 
                         using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
@@ -750,9 +756,9 @@ ORDER BY s.university_number, r.year_number, c.course_name;
     string courseName = firstRow["اسم المادة"].ToString();
     string courseId = firstRow["رقم المادة"].ToString();
     string year = firstRow["السنة الدراسية"].ToString();
-    string group = "1"; // القيمة الافتراضية
+            string group = firstRow["رقم المجموعة"].ToString();
 
-    if (dt.Columns.Contains("رقم المجموعة") && firstRow["رقم المجموعة"] != DBNull.Value && !string.IsNullOrEmpty(firstRow["رقم المجموعة"].ToString()))
+            if (dt.Columns.Contains("رقم المجموعة") && firstRow["رقم المجموعة"] != DBNull.Value && !string.IsNullOrEmpty(firstRow["رقم المجموعة"].ToString()))
     {
         group = firstRow["رقم المجموعة"].ToString();
     }
@@ -901,6 +907,7 @@ SELECT
     c.course_name AS 'اسم المادة',
     c.course_id AS 'رقم المادة',
     c.year_number AS 'السنة الدراسية',
+    cc.group_number AS 'رقم المجموعة',
     i.full_name AS 'اسم الأستاذ',
     s.full_name AS 'اسم الطالب',
     s.university_number AS 'الرقم الجامعي',
@@ -911,12 +918,15 @@ FROM Grades g
 INNER JOIN Students s ON g.student_id = s.student_id
 INNER JOIN Courses c ON g.course_id = c.course_id
 INNER JOIN Departments d ON s.department_id = d.department_id
+INNER JOIN Registrations r ON r.student_id = s.student_id AND r.course_id = c.course_id
+INNER JOIN Course_Classroom cc ON r.course_classroom_id = cc.id
 LEFT JOIN Course_Instructor ci ON c.course_id = ci.course_id
 LEFT JOIN Instructors i ON ci.instructor_id = i.instructor_id
 WHERE c.year_number = @year
   AND c.course_id = @courseId
   AND g.success_status = N'رسوب'
-ORDER BY c.course_id,s.university_number;";
+ORDER BY c.course_id, cc.group_number, s.university_number;
+";
 
 
             // تنفيذ الاستعلام
@@ -1234,7 +1244,7 @@ ORDER BY c.course_id,s.university_number;";
                                     SET work_grade = @workGrade,
                                         final_grade = @finalGrade,
                                         total_grade = @totalGrade,
-                                        success_status = CASE WHEN @totalGrade >= 50 THEN N'نجاح' ELSE N'رسوب' END
+                                        success_status = CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'رسوب' END
                                     WHERE student_id = @studentId AND course_id = @courseId";
 
                                             reader.Close();
@@ -1275,7 +1285,7 @@ ORDER BY c.course_id,s.university_number;";
                                         string insertQuery = @"
                                 INSERT INTO Grades (student_id, course_id, work_grade, final_grade, total_grade, success_status)
                                 VALUES (@studentId, @courseId, @workGrade, @finalGrade, @totalGrade,
-                                        CASE WHEN @totalGrade >= 50 THEN N'نجاح' ELSE N'رسوب' END)";
+                                        CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'رسوب' END)";
 
                                         using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
                                         {

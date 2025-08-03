@@ -33,7 +33,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
     (SELECT COUNT(*) FROM Students) AS TotalStudents,
     (SELECT COUNT(*) FROM Courses) AS TotalCourses,
     (SELECT COUNT(*) FROM Students WHERE status_id = 4) AS GraduatedStudents,
-    (SELECT COUNT(*) FROM Students WHERE current_year = 1 AND exam_round = 0) AS NewStudents;
+    (SELECT COUNT(*) FROM Students WHERE current_year = 1 AND exam_round = 'دور أول') AS NewStudents;
 
         ";
 
