@@ -115,7 +115,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 SqlConnection con = db.OpenConnection();
 
                 string q = "INSERT INTO Students (university_number, full_name, college, department_id, current_year, status_id, documents_path, gender, birth_date, nationality, exam_round) " +
-                           "VALUES (@university_number, @full_name, N'كلية العلوم الصحية', @department_id, @current_year, @status_id, NULL, @gender, @birth_date, @nationality,0)";
+                           "VALUES (@university_number, @full_name, N'كلية العلوم الصحية', @department_id, @current_year, @status_id, NULL, @gender, @birth_date, @nationality,N'دور أول')";
 
                 SqlCommand cmd = new SqlCommand(q, con);
                 cmd.Parameters.AddWithValue("@university_number", textBox3.Text.Trim());
@@ -294,8 +294,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     // أضف أعمدة نصية للعرض بدل تعديل الأعمدة الأصلية
                     if (!dt.Columns.Contains("GenderText"))
                         dt.Columns.Add("GenderText", typeof(string));
-                    if (!dt.Columns.Contains("ExamRoundText"))
-                        dt.Columns.Add("ExamRoundText", typeof(string));
                     if (!dt.Columns.Contains("yearText"))
                         dt.Columns.Add("yearText", typeof(string));
 
@@ -304,8 +302,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         bool genderBool = Convert.ToBoolean(row["gender"]);
                         row["GenderText"] = genderBool ? "ذكر" : "أنثى";
 
-                        bool roundBool = Convert.ToBoolean(row["exam_round"]);
-                        row["ExamRoundText"] = roundBool ? "الثاني" : "الأول";
 
                         switch (row["current_year"].ToString())
                         {
@@ -332,17 +328,16 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                     // إخفاء الأعمدة الأصلية
                     dataGridView2.Columns["gender"].Visible = false;
-                    dataGridView2.Columns["exam_round"].Visible = false;
                     dataGridView2.Columns["current_year"].Visible = false;
 
 
                     // عرض الأعمدة النصية بدلاً منها
                     dataGridView2.Columns["GenderText"].HeaderText = "الجنس";
-                    dataGridView2.Columns["ExamRoundText"].HeaderText = "الدور";
+                    dataGridView2.Columns["exam_round"].HeaderText = "الدور";
                     dataGridView2.Columns["yearText"].HeaderText = "السنة";
 
                     setColumnComboBox(dataGridView2, "yearText", "comboyear", "السنة", "yearText", new List<string> { "سنة أولى", "سنة ثانية", "سنة ثالثة", "سنة رابعة" });
-                    setColumnComboBox(dataGridView2, "ExamRoundText", "comboround", "الدور", "ExamRoundText", new List<string> { "الأول", "الثاني" });
+                    setColumnComboBox(dataGridView2, "exam_round", "comboround", "الدور", "exam_round", new List<string> { "دور أول", "دور ثاني", "إعادة سنة" , "مرحل" });
                     setColumnComboBox(dataGridView2, "GenderText", "combogender", "الجنس", "GenderText", new List<string> { "أنثى", "ذكر" });
                     setColumnComboBox(dataGridView2, "dep_name", "columndepartment", "القسم", "dep_name", new List<string> { "قسم الرياضيات", "قسم الكيمياء", "قسم الفيزياء" });
 
@@ -415,15 +410,13 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 {
                     DataGridViewRow row = dataGridView.Rows[0];
 
-                    bool sturound = true;
+                    
                     bool stugender = true;
                     int currentYear = 1;
 
                     //اخد البيانات من الجدول لاضافتها الى متفيرات
                     if (row.Cells["combogender"].FormattedValue.ToString() == "أنثى")
                         stugender = false;
-                    if (row.Cells["comboround"].FormattedValue.ToString() == "الأول")
-                        sturound = false;
                     switch (row.Cells["comboyear"].FormattedValue.ToString())
                     {
                         case "سنة ثانية": currentYear = 2; break;
@@ -432,6 +425,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         default: currentYear = 1; break;
                     }
                     string universitynumber = row.Cells["university_number"].Value?.ToString() ?? "";
+                    string sturound = row.Cells["comboround"].FormattedValue.ToString();
                     string depName = row.Cells["columndepartment"].FormattedValue.ToString();
                     string statusDescription = row.Cells["description"].FormattedValue.ToString();
                     string fullName = row.Cells["full_name"].Value?.ToString() ?? "";
@@ -552,8 +546,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         // أضف أعمدة نصية للعرض بدل تعديل الأعمدة الأصلية
                         if (!dt.Columns.Contains("GenderText"))
                             dt.Columns.Add("GenderText", typeof(string));
-                        if (!dt.Columns.Contains("ExamRoundText"))
-                            dt.Columns.Add("ExamRoundText", typeof(string));
                         if (!dt.Columns.Contains("yearText"))
                             dt.Columns.Add("yearText", typeof(string));
 
@@ -561,9 +553,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         {
                             bool genderBool = Convert.ToBoolean(row["gender"]);
                             row["GenderText"] = genderBool ? "ذكر" : "أنثى";
-
-                            bool roundBool = Convert.ToBoolean(row["exam_round"]);
-                            row["ExamRoundText"] = roundBool ? "الثاني" : "الأول";
 
                             switch (row["current_year"].ToString())
                             {
@@ -590,7 +579,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                         dataGridView1.Columns["gender"].Visible = false;
                         dataGridView1.Columns["current_year"].Visible = false;
-                        dataGridView1.Columns["exam_round"].Visible = false;
 
                         datagridviewstyle(dataGridView1);
                         setColumnReadOnly("university_number", dataGridView1);
@@ -600,7 +588,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         setColumnReadOnly("GenderText", dataGridView1);
                         setColumnReadOnly("birth_date", dataGridView1);
                         setColumnReadOnly("nationality", dataGridView1);
-                        setColumnReadOnly("ExamRoundText", dataGridView1);
+                        setColumnReadOnly("exam_round", dataGridView1);
 
                         setColumnHeaderText("university_number", dataGridView1, "الرقم الجامعي");
                         setColumnHeaderText("full_name", dataGridView1, "الإسم");
@@ -609,7 +597,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         setColumnHeaderText("GenderText", dataGridView1, "الجنس");
                         setColumnHeaderText("birth_date", dataGridView1, "تاريخ الميلاد");
                         setColumnHeaderText("nationality", dataGridView1, "الجنسية");
-                        setColumnHeaderText("ExamRoundText", dataGridView1, "الدور");
+                        setColumnHeaderText("exam_round", dataGridView1, "الدور");
 
                         setColumnComboBox(dataGridView1, "description", "student_status", "الحالة الدراسية", "description", new List<string> { "مستمر", "مؤجل", "مستبعد", "خريج"});
                     }

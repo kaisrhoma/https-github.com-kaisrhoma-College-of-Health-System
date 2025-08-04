@@ -1,4 +1,6 @@
-﻿using college_of_health_sciences.moduls;
+﻿using college_of_health_sciences;
+using college_of_health_sciences.moduls;
+using college_of_health_sciences.system_forms;
 using DocumentFormat.OpenXml.Bibliography;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Xml;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace college_of_health_sciences.dashboards.registrar_dashboard
 {
@@ -477,6 +480,81 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         private void button9_Click(object sender, EventArgs e)
         {
 
+            int year = Convert.ToInt32(comboBox1.SelectedValue);
+            int dept = Convert.ToInt32(comboBox2.SelectedValue);
+
+            conn.DatabaseConnection db = new conn.DatabaseConnection();
+            using (SqlConnection con = db.OpenConnection())
+            {
+                // جلب الطلاب الذين ليس لديهم أي تسجيل في جدول Registrations
+                string query = @"
+                               SELECT s.student_id , s.university_number AS الرقم_الجامعي,
+                                      s.full_name AS الإسم, d.dep_name AS القسم,
+                                      s.current_year AS السنة, s.gender AS الجنس, s.exam_round AS الدور
+                               FROM Students s
+                               JOIN Departments d ON s.department_id = d.department_id
+                               WHERE s.department_id = @dept
+                                     AND s.current_year = @year
+                                     AND NOT EXISTS (
+                                            SELECT 1 FROM Registrations r WHERE r.student_id = s.student_id
+                                     )";
+
+
+                SqlDataAdapter da = new SqlDataAdapter(query, con);
+                da.SelectCommand.Parameters.AddWithValue("@dept", dept);
+                da.SelectCommand.Parameters.AddWithValue("@year", year);
+
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                // أضف أعمدة نصية للعرض بدل تعديل الأعمدة الأصلية
+                if (!dt.Columns.Contains("GenderText"))
+                    dt.Columns.Add("GenderText", typeof(string));
+                if (!dt.Columns.Contains("yearText"))
+                    dt.Columns.Add("yearText", typeof(string));
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    bool genderBool = Convert.ToBoolean(row["الجنس"]);
+                    row["GenderText"] = genderBool ? "ذكر" : "أنثى";
+
+                    switch (row["السنة"].ToString())
+                    {
+                        case "1":
+                            row["yearText"] = "سنة أولى";
+                            break;
+                        case "2":
+                            row["yearText"] = "سنة ثانية";
+                            break;
+                        case "3":
+                            row["yearText"] = "سنة ثالثة";
+                            break;
+                        case "4":
+                            row["yearText"] = "سنة رابعة";
+                            break;
+                        default:
+                            MessageBox.Show("شكل الإدخال يجب ان يكون مثل سنة أولى");
+                            break;
+                    }
+
+                }
+
+                dataGridView5.DataSource = dt;
+                // إخفاء الأعمدة الأصلية
+                dataGridView5.Columns["الجنس"].Visible = false;
+                dataGridView5.Columns["السنة"].Visible = false;
+
+
+                // عرض الأعمدة النصية بدلاً منها
+                dataGridView5.Columns["GenderText"].HeaderText = "الجنس";
+                dataGridView5.Columns["yearText"].HeaderText = "السنة";
+
+
+                // باقي التنسيق
+                datagridviewstyle(dataGridView5);
+                dataGridView5.Columns["student_id"].Visible = false;
+
+            }
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -546,8 +624,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     // أضف أعمدة نصية للعرض بدل تعديل الأعمدة الأصلية
                     if (!dt.Columns.Contains("GenderText"))
                         dt.Columns.Add("GenderText", typeof(string));
-                    if (!dt.Columns.Contains("ExamRoundText"))
-                        dt.Columns.Add("ExamRoundText", typeof(string));
                     if (!dt.Columns.Contains("yearText"))
                         dt.Columns.Add("yearText", typeof(string));
 
@@ -555,9 +631,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     {
                         bool genderBool = Convert.ToBoolean(row["gender"]);
                         row["GenderText"] = genderBool ? "ذكر" : "أنثى";
-
-                        bool roundBool = Convert.ToBoolean(row["exam_round"]);
-                        row["ExamRoundText"] = roundBool ? "الثاني" : "الأول";
 
                         switch (row["current_year"].ToString())
                         {
@@ -584,13 +657,12 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                     // إخفاء الأعمدة الأصلية
                     dataGridView5.Columns["gender"].Visible = false;
-                    dataGridView5.Columns["exam_round"].Visible = false;
                     dataGridView5.Columns["current_year"].Visible = false;
 
 
                     // عرض الأعمدة النصية بدلاً منها
                     dataGridView5.Columns["GenderText"].HeaderText = "الجنس";
-                    dataGridView5.Columns["ExamRoundText"].HeaderText = "الدور";
+                    dataGridView5.Columns["exam_round"].HeaderText = "الدور";
                     dataGridView5.Columns["yearText"].HeaderText = "السنة";
 
 
@@ -623,6 +695,14 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         private void button7_Click(object sender, EventArgs e)
         {
+            if(radioButton1.Checked)
+                downloadForOneStudents();
+            else
+                downloadForMultiStudents();
+
+        }
+        public void downloadForOneStudents()
+        {
             if (dataGridView5 == null || dataGridView5.Rows.Count == 0)
             {
                 MessageBox.Show("لا يوجد بيانات لتخزينها، يرجى البحث عن الطالب قبل التخزين.");
@@ -638,8 +718,12 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     int year = Convert.ToInt32(comboBox1.SelectedValue);
                     int dept = Convert.ToInt32(comboBox2.SelectedValue);
 
-                    // ✅ تحقق أولاً أن الطالب من نفس القسم
-                    SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Students WHERE student_id = @studentId AND department_id = @departmentId", con);
+                    // ✅ تحقق أن الطالب من القسم المحدد
+                    SqlCommand checkCmd = new SqlCommand(@"
+            SELECT COUNT(*) 
+            FROM Students 
+            WHERE student_id = @studentId AND department_id = @departmentId", con);
+
                     checkCmd.Parameters.AddWithValue("@studentId", studentId);
                     checkCmd.Parameters.AddWithValue("@departmentId", dept);
 
@@ -651,33 +735,104 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         return;
                     }
 
-                    // ✅ استعلام تنزيل المواد
-                    string q = @"
-            INSERT INTO Registrations (student_id, course_id, year_number, status, course_classroom_id)
-            SELECT @studentId, c.course_id, @yearNumber, N'مسجل',
-                   (SELECT TOP 1 cc.id FROM Course_Classroom cc WHERE cc.course_id = c.course_id)
+                    // ✅ جلب المواد الخاصة بالسنة والقسم
+                    SqlCommand coursesCmd = new SqlCommand(@"
+            SELECT c.course_id, c.course_name
             FROM Courses c
             JOIN Course_Department cd ON cd.course_id = c.course_id
-            WHERE c.year_number = @yearNumber AND cd.department_id = @departmentId
-            AND NOT EXISTS (
-                SELECT 1 FROM Registrations 
-                WHERE student_id = @studentId AND course_id = c.course_id
-            )";
+            WHERE c.year_number = @year AND cd.department_id = @dept", con);
 
-                    SqlCommand cmd = new SqlCommand(q, con);
-                    cmd.Parameters.AddWithValue("@studentId", studentId);
-                    cmd.Parameters.AddWithValue("@yearNumber", year);
-                    cmd.Parameters.AddWithValue("@departmentId", dept);
+                    coursesCmd.Parameters.AddWithValue("@year", year);
+                    coursesCmd.Parameters.AddWithValue("@dept", dept);
 
-                    int affected = cmd.ExecuteNonQuery();
+                    SqlDataAdapter adapter = new SqlDataAdapter(coursesCmd);
+                    DataTable courses = new DataTable();
+                    adapter.Fill(courses);
 
-                    if (affected > 0)
+                    List<string> موادممتلئة = new List<string>();
+                    int عددالموادالمسجلة = 0;
+
+                    foreach (DataRow row in courses.Rows)
                     {
-                        MessageBox.Show("تم تنزيل المواد بنجاح.");
+                        int courseId = Convert.ToInt32(row["course_id"]);
+                        string courseName = row["course_name"].ToString();
+
+                        // ✅ جلب كل المجموعات المرتبطة بالمادة
+                        SqlCommand getGroupsCmd = new SqlCommand(@"
+                                                                SELECT cc.id, cr.capacity, cc.group_number
+                                                                FROM Course_Classroom cc
+                                                                JOIN Classrooms cr ON cc.classroom_id = cr.classroom_id
+                                                                WHERE cc.course_id = @courseId
+                                                                ORDER BY cc.group_number", con); // أو حسب cc.id إن أردت
+
+                        getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+
+                        SqlDataAdapter groupAdapter = new SqlDataAdapter(getGroupsCmd);
+                        DataTable groups = new DataTable();
+                        groupAdapter.Fill(groups);
+
+                        bool تمت_الإضافة = false;
+
+                        foreach (DataRow group in groups.Rows)
+                        {
+                            int groupId = Convert.ToInt32(group["id"]);
+                            int capacity = Convert.ToInt32(group["capacity"]);
+
+                            SqlCommand countCmd = new SqlCommand(@"
+                                                              SELECT COUNT(*) 
+                                                              FROM Registrations 
+                                                              WHERE course_classroom_id = @groupId", con);
+                            countCmd.Parameters.AddWithValue("@groupId", groupId);
+
+                            int currentCount = (int)countCmd.ExecuteScalar();
+
+                            if (currentCount < capacity)
+                            {
+                                SqlCommand insertCmd = new SqlCommand(@"
+                        IF NOT EXISTS (
+                            SELECT 1 FROM Registrations 
+                            WHERE student_id = @studentId AND course_id = @courseId
+                        )
+                        INSERT INTO Registrations 
+                        (student_id, course_id, year_number, status, course_classroom_id)
+                        VALUES 
+                        (@studentId, @courseId, @year, 'مسجل', @groupId)", con);
+
+                                insertCmd.Parameters.AddWithValue("@studentId", studentId);
+                                insertCmd.Parameters.AddWithValue("@courseId", courseId);
+                                insertCmd.Parameters.AddWithValue("@year", year);
+                                insertCmd.Parameters.AddWithValue("@groupId", groupId);
+
+                                int affected = insertCmd.ExecuteNonQuery();
+                                if (affected > 0)
+                                {
+                                    عددالموادالمسجلة++;
+                                    تمت_الإضافة = true;
+                                }
+
+                                break; // سجل الطالب، لا داعي لتجربة بقية المجموعات
+                            }
+                        }
+
+                        if (!تمت_الإضافة)
+                        {
+                            موادممتلئة.Add(courseName);
+                        }
+                    }
+
+                    // ✅ عرض النتيجة النهائية
+                    if (عددالموادالمسجلة == 0)
+                    {
+                        MessageBox.Show("لم يتم تسجيل أي مادة. الطالب قد يكون مسجلاً مسبقًا أو لا توجد مقاعد متاحة.");
+                    }
+                    else if (موادممتلئة.Count > 0)
+                    {
+                        MessageBox.Show("تم تسجيل الطالب، باستثناء المواد التالية التي لم يتوفر بها مقاعد:\n" +
+                                        string.Join("\n", موادممتلئة));
                     }
                     else
                     {
-                        MessageBox.Show("لم يتم تنزيل أي مادة. ربما المواد موجودة مسبقًا.");
+                        MessageBox.Show("تم تسجيل جميع المواد بنجاح.");
                     }
                 }
             }
@@ -685,7 +840,279 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             {
                 MessageBox.Show("حدث خطأ: " + ex.Message);
             }
-
         }
+
+
+
+        public void downloadForMultiStudents()
+        {
+            if (dataGridView5 == null || dataGridView5.Rows.Count == 0)
+            {
+                MessageBox.Show("لا يوجد بيانات لتخزينها.");
+                return;
+            }
+
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    int year = Convert.ToInt32(comboBox1.SelectedValue);
+                    int dept = Convert.ToInt32(comboBox2.SelectedValue);
+
+                    
+
+                    // ✅ جلب المواد الخاصة بالسنة والقسم
+                    SqlCommand coursesCmd = new SqlCommand(@"
+                                                           SELECT c.course_id, c.course_name
+                                                           FROM Courses c
+                                                           JOIN Course_Department cd ON cd.course_id = c.course_id
+                                                           WHERE c.year_number = @year AND cd.department_id = @dept", con);
+
+                    coursesCmd.Parameters.AddWithValue("@year", year);
+                    coursesCmd.Parameters.AddWithValue("@dept", dept);
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(coursesCmd);
+                    DataTable courses = new DataTable();
+                    adapter.Fill(courses);
+
+                    List<string> موادممتلئة = new List<string>();
+                    int عددالموادالمسجلة = 0;
+
+                    foreach (DataRow row in courses.Rows)
+                    {
+                        int courseId = Convert.ToInt32(row["course_id"]);
+                        string courseName = row["course_name"].ToString();
+
+                        // ✅ جلب كل المجموعات المرتبطة بالمادة
+                        SqlCommand getGroupsCmd = new SqlCommand(@"
+                                                                SELECT cc.id, cr.capacity, cc.group_number
+                                                                FROM Course_Classroom cc
+                                                                JOIN Classrooms cr ON cc.classroom_id = cr.classroom_id
+                                                                WHERE cc.course_id = @courseId
+                                                                ORDER BY cc.group_number", con); // أو حسب cc.id إن أردت
+
+                        getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+
+                        SqlDataAdapter groupAdapter = new SqlDataAdapter(getGroupsCmd);
+                        DataTable groups = new DataTable();
+                        groupAdapter.Fill(groups);
+
+                        bool تمت_الإضافة = false;
+                        foreach (DataGridViewRow strow in dataGridView5.Rows)
+                        {
+                            int studentId = Convert.ToInt32(strow.Cells["student_id"].Value);
+
+                            foreach (DataRow group in groups.Rows)
+                        {
+                            int groupId = Convert.ToInt32(group["id"]);
+                            int capacity = Convert.ToInt32(group["capacity"]);
+
+                            SqlCommand countCmd = new SqlCommand(@"
+                                                              SELECT COUNT(*) 
+                                                              FROM Registrations 
+                                                              WHERE course_classroom_id = @groupId", con);
+                            countCmd.Parameters.AddWithValue("@groupId", groupId);
+
+                            int currentCount = (int)countCmd.ExecuteScalar();
+
+                            
+
+                                if (currentCount < capacity)
+                                {
+                                    SqlCommand insertCmd = new SqlCommand(@"
+                        IF NOT EXISTS (
+                            SELECT 1 FROM Registrations 
+                            WHERE student_id = @studentId AND course_id = @courseId
+                        )
+                        INSERT INTO Registrations 
+                        (student_id, course_id, year_number, status, course_classroom_id)
+                        VALUES 
+                        (@studentId, @courseId, @year, 'مسجل', @groupId)", con);
+
+                                    insertCmd.Parameters.AddWithValue("@studentId", studentId);
+                                    insertCmd.Parameters.AddWithValue("@courseId", courseId);
+                                    insertCmd.Parameters.AddWithValue("@year", year);
+                                    insertCmd.Parameters.AddWithValue("@groupId", groupId);
+
+                                    int affected = insertCmd.ExecuteNonQuery();
+                                    if (affected > 0)
+                                    {
+                                        عددالموادالمسجلة++;
+                                        تمت_الإضافة = true;
+                                    }
+
+                                    break; // سجل الطالب، لا داعي لتجربة بقية المجموعات
+                                }
+                            }
+                        }
+
+                        if (!تمت_الإضافة)
+                        {
+                            موادممتلئة.Add(courseName);
+                        }
+                    }
+
+                    // ✅ عرض النتيجة النهائية
+                    if (عددالموادالمسجلة == 0)
+                    {
+                        MessageBox.Show("لم يتم تسجيل أي مادة. الطالب قد يكون مسجلاً مسبقًا أو لا توجد مقاعد متاحة.");
+                    }
+                    else if (موادممتلئة.Count > 0)
+                    {
+                        MessageBox.Show("تم تسجيل الطالب، باستثناء المواد التالية التي لم يتوفر بها مقاعد:\n" +
+                                        string.Join("\n", موادممتلئة));
+                    }
+                    else
+                    {
+                        MessageBox.Show("تم تسجيل جميع المواد بنجاح.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ: " + ex.Message);
+            }
+        }
+//        if (dataGridView5 == null || dataGridView5.Rows.Count == 0)
+//            {
+//                MessageBox.Show("لا يوجد طلاب.");
+//                return;
+//            }
+
+//            int year = Convert.ToInt32(comboBox1.SelectedValue);
+//        int dept = Convert.ToInt32(comboBox2.SelectedValue);
+
+//        // لائحة لمن لم يُسجل بسبب سعة كاملة
+//        List<string> notRegisteredStudents = new List<string>();
+
+//            // إنشاء progress form
+//            progressBar1.Minimum = 0;
+//            progressBar1.Maximum = dataGridView5.Rows.Count;
+//            progressBar1.Value = 0;
+//            progressBar1.Visible = true;
+            
+
+//            conn.DatabaseConnection db = new conn.DatabaseConnection();
+//            using (SqlConnection con = db.OpenConnection())
+//            {
+//                int step = 0;
+
+//                foreach (DataGridViewRow dgRow in dataGridView5.Rows)
+//                {
+//                    if (dgRow.IsNewRow) continue;
+//                    if (dgRow.Cells["student_id"].Value == null) continue;
+//                    if (dgRow.Cells["الإسم"].Value == null) continue;
+
+//                    int studentId = Convert.ToInt32(dgRow.Cells["student_id"].Value);
+//    string studentName = dgRow.Cells["الإسم"].Value.ToString();
+
+//    // شرط القسم والحالة
+//    SqlCommand checkCmd = new SqlCommand(@"
+//                                                       SELECT COUNT(*)
+//                                                       FROM Students s
+//                                                       JOIN Status st ON s.status_id = st.status_id
+//                                                       WHERE s.student_id = @sid AND
+//                                                             s.department_id = @dept AND
+//                                                             st.description = N'مستمر'", con);
+
+//    checkCmd.Parameters.AddWithValue("@sid", studentId);
+//                    checkCmd.Parameters.AddWithValue("@dept", dept);
+
+//                    int count = (int)checkCmd.ExecuteScalar();
+//                    if (count == 0)
+//                    {
+//                        step++;
+//                        progressBar1.Value = step;
+//                        continue;
+//                    }
+
+//// جلب مواد القسم والسنة
+//SqlCommand getCourses = new SqlCommand(@"
+//                                                           SELECT c.course_id, c.course_name
+//                                                           FROM Courses c
+//                                                           JOIN Course_Department cd ON cd.course_id = c.course_id
+//                                                           WHERE c.year_number = @year AND cd.department_id = @dept", con);
+
+//getCourses.Parameters.AddWithValue("@year", year);
+//getCourses.Parameters.AddWithValue("@dept", dept);
+
+//DataTable courses = new DataTable();
+//new SqlDataAdapter(getCourses).Fill(courses);
+
+//foreach (DataRow courseRow in courses.Rows)
+//{
+//    int courseId = Convert.ToInt32(courseRow["course_id"]);
+
+//    // هل مسجل مسبقًا؟
+//    SqlCommand existsCmd = new SqlCommand("SELECT COUNT(*) FROM Registrations WHERE student_id=@sid AND course_id=@cid", con);
+//    existsCmd.Parameters.AddWithValue("@sid", studentId);
+//    existsCmd.Parameters.AddWithValue("@cid", courseId);
+
+//    if ((int)existsCmd.ExecuteScalar() > 0)
+//        continue;
+
+//    // جلب المجموعات
+//    SqlCommand groupsCmd = new SqlCommand(@"
+//SELECT cc.id, cr.capacity
+//FROM Course_Classroom cc
+//JOIN Classrooms cr ON cc.classroom_id = cr.classroom_id
+//WHERE cc.course_id = @cid
+//ORDER BY cc.group_number", con);
+
+//    groupsCmd.Parameters.AddWithValue("@cid", courseId);
+
+//    DataTable groupsDT = new DataTable();
+//    new SqlDataAdapter(groupsCmd).Fill(groupsDT);
+
+//    bool inserted = false;
+
+//    foreach (DataRow g in groupsDT.Rows)
+//    {
+//        int groupId = Convert.ToInt32(g["id"]);
+//        int capacity = Convert.ToInt32(g["capacity"]);
+
+//        SqlCommand cnt = new SqlCommand("SELECT COUNT(*) FROM Registrations WHERE course_classroom_id=@gid", con);
+//        cnt.Parameters.AddWithValue("@gid", groupId);
+//        int cur = (int)cnt.ExecuteScalar();
+
+//        if (cur < capacity)
+//        {
+//            SqlCommand insCmd = new SqlCommand(@"
+//INSERT INTO Registrations (student_id, course_id, year_number, status, course_classroom_id)
+//VALUES (@sid, @cid, @year, N'مسجل', @gid)", con);
+
+//            insCmd.Parameters.AddWithValue("@sid", studentId);
+//            insCmd.Parameters.AddWithValue("@cid", courseId);
+//            insCmd.Parameters.AddWithValue("@year", year);
+//            insCmd.Parameters.AddWithValue("@gid", groupId);
+//            insCmd.ExecuteNonQuery();
+//            inserted = true;
+//            break;
+//        }
+//    }
+
+//    if (!inserted)
+//    {
+//        notRegisteredStudents.Add($"{studentName} - المادة {courseRow["course_name"]}");
+//    }
+//}
+
+//step++;
+//progressBar1.Value = step;
+//Application.DoEvents(); // لتحديث الـ UI
+//                }
+//            }
+
+//            progressBar1.Visible = false;
+//// عرض النتائج النهائية
+//if (notRegisteredStudents.Count == 0)
+//{
+//    MessageBox.Show("✅ تم تنزيل المواد لجميع الطلاب بنجاح");
+//}
+//else
+//{
+//    MessageBox.Show("⚠️  تمت العملية، لكن لم يُسجّل لبعض  الطلاب من الطالب:\n\n" + string.Join("\n", notRegisteredStudents + "الى اخر طالب في القائمة"));
+//}
     }
 }

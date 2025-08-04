@@ -16,42 +16,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         public registrar_home()
         {
             InitializeComponent();
-            LoadDashboardStatistics();
-        }
-        private void LoadDashboardStatistics()
-        {
-            string connStr = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                conn.Open();
-
-                // نص الاستعلامات
-                string query = @"
-       SELECT 
-    (SELECT COUNT(*) FROM Instructors) AS TotalInstructors,
-    (SELECT COUNT(*) FROM Departments) AS TotalDepartments,
-    (SELECT COUNT(*) FROM Students) AS TotalStudents,
-    (SELECT COUNT(*) FROM Courses) AS TotalCourses,
-    (SELECT COUNT(*) FROM Students WHERE status_id = 4) AS GraduatedStudents,
-    (SELECT COUNT(*) FROM Students WHERE current_year = 1 AND exam_round = 0) AS NewStudents;
-
-        ";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    labelInstructors1.Text = reader["TotalInstructors"].ToString();
-                    labelDepartments1.Text = reader["TotalDepartments"].ToString();
-                    Students1.Text = reader["TotalStudents"].ToString();
-                    labelCourses12.Text = reader["TotalCourses"].ToString();
-                    labelGraduated1.Text = reader["GraduatedStudents"].ToString();
-                    labelNewStudents1.Text = reader["NewStudents"].ToString();
-                }
-
-                reader.Close();
-            }
         }
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
