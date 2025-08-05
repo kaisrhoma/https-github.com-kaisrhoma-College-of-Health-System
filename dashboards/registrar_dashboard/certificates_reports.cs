@@ -175,7 +175,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             textBox2.Focus();
             var study_year = new Dictionary<int, string>()
             {
-                {1, "سنة اولى"},
+                {1, "سنة أولى"},
                 {2, "سنة ثانية"},
                 {3, "سنة ثالثة"},
                 {4, "سنة رابعة"}
@@ -185,16 +185,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";
 
-            var departments = new Dictionary<int, string>()
-            {
-                {1, "قسم الرياضيات"},
-                {2, "قسم الكيمياء"},
-                {3, "قسم الفيزياء"}
-            };
-
-            comboBox2.DataSource = new BindingSource(departments, null);
-            comboBox2.DisplayMember = "Value";
-            comboBox2.ValueMember = "Key";
             try
             {
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
@@ -278,11 +268,10 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                                    c.units AS الوحدات, 
                                    c.course_id AS رقم_المادة,
                                    c.course_name AS اسم_المادة,
-                                   c.theory_hours AS الساعات_النظرية,
-                                   c.practical_hours AS الساعات_العملية,
-                                   c.credit_hrs AS مجموع_الساعات,
-                               
-                                   cc.schedule AS اليوم, 
+                                   
+                                   cc.lecture_date AS يوم,
+                                   cc.start_time AS من_الساعة,
+                                   cc.end_time AS الى_الساعة, 
                                    cc.group_number AS المجموعة,
                                    cl.room_name AS القاعة,
                                
@@ -328,12 +317,8 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         dataGridView1.Columns["اسم_المادة"].ReadOnly = true;
                         dataGridView1.Columns["رقم_المادة"].ReadOnly = true;
                         dataGridView1.Columns["الوحدات"].ReadOnly = true;
-                        dataGridView1.Columns["الساعات_النظرية"].ReadOnly = true;
-                        dataGridView1.Columns["الساعات_العملية"].ReadOnly = true;
-                        dataGridView1.Columns["مجموع_الساعات"].ReadOnly = true;
                         dataGridView1.Columns["المجموعة"].ReadOnly = true;
                         dataGridView1.Columns["القاعة"].ReadOnly = true;
-                        dataGridView1.Columns["اليوم"].ReadOnly = true;
                         dataGridView1.Columns["الدكتور"].ReadOnly = true;
 
 
@@ -368,7 +353,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             string stno = printTable.Rows[0]["الرقم_الجامعي"].ToString();
             string styear = printTable.Rows[0]["السنة"].ToString();
             string stdep = printTable.Rows[0]["القسم"].ToString();
-            string cuyear =DateTime.Now.ToString("yyyy/MM/dd");
+            string cuyear = DateTime.Now.Month >= 9 ? DateTime.Now.Year.ToString() : (DateTime.Now.Year - 1).ToString(); ;
 
             System.Drawing.Font headerfont = new System.Drawing.Font("Arial", 18, FontStyle.Bold);
             System.Drawing.Font subheader = new System.Drawing.Font("Arial",14, FontStyle.Bold);
@@ -421,7 +406,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 e.Graphics.DrawString(cheaders[i], textfont, brush, recth, format);
             }
 
-            string[] davalues = { "القاعة", "اليوم", "المجموعة", "الوحدات", "اسم_المادة", "رقم_المادة" };
+            string[] davalues = { "القاعة", "يوم", "المجموعة", "الوحدات", "اسم_المادة", "رقم_المادة" };
             y += colmnh;
             StringFormat newformat = new StringFormat();
             newformat.Alignment = StringAlignment.Center;
@@ -713,6 +698,11 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 MessageBox.Show("لا يوجد بيانات لتخزينها، يرجى البحث عن الطالب قبل التخزين.");
                 return;
             }
+            if(comboBox1.SelectedValue.ToString() != dataGridView5.Rows[0].Cells["current_year"].Value.ToString())
+            {
+                MessageBox.Show("المواد اللتي تقوم بتنزيلها لا تناسب السنة الحالية للطالب");
+                return;
+            }
             if (dataGridView5.Rows[0].Cells["description"].Value.ToString() != "مستمر")
             {
                 MessageBox.Show("لا يمكن تنزيل مواد لطالب غير مستمر");
@@ -747,10 +737,10 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                     // ✅ جلب المواد الخاصة بالسنة والقسم
                     SqlCommand coursesCmd = new SqlCommand(@"
-            SELECT c.course_id, c.course_name
-            FROM Courses c
-            JOIN Course_Department cd ON cd.course_id = c.course_id
-            WHERE c.year_number = @year AND cd.department_id = @dept", con);
+                                                        SELECT c.course_id, c.course_name
+                                                        FROM Courses c
+                                                        JOIN Course_Department cd ON cd.course_id = c.course_id
+                                                        WHERE c.year_number = @year AND cd.department_id = @dept", con);
 
                     coursesCmd.Parameters.AddWithValue("@year", year);
                     coursesCmd.Parameters.AddWithValue("@dept", dept);
@@ -769,11 +759,13 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                         // ✅ جلب كل المجموعات المرتبطة بالمادة
                         SqlCommand getGroupsCmd = new SqlCommand(@"
-                                                                SELECT cc.id, cr.capacity, cc.group_number
+                                                                SELECT cc.id,
+                                                                cc.capacity,       
+                                                                cc.group_number
                                                                 FROM Course_Classroom cc
-                                                                JOIN Classrooms cr ON cc.classroom_id = cr.classroom_id
                                                                 WHERE cc.course_id = @courseId
-                                                                ORDER BY cc.group_number", con); // أو حسب cc.id إن أردت
+                                                                ORDER BY cc.group_number;
+                                                                ", con); // أو حسب cc.id إن أردت
 
                         getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
 
@@ -798,20 +790,24 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                             if (currentCount < capacity)
                             {
+                                int academicYearStart = DateTime.Now.Month >= 9 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+
                                 SqlCommand insertCmd = new SqlCommand(@"
-                        IF NOT EXISTS (
-                            SELECT 1 FROM Registrations 
-                            WHERE student_id = @studentId AND course_id = @courseId
-                        )
-                        INSERT INTO Registrations 
-                        (student_id, course_id, year_number, status, course_classroom_id)
-                        VALUES 
-                        (@studentId, @courseId, @year, N'مسجل', @groupId)", con);
+                                IF NOT EXISTS (
+                                    SELECT 1 FROM Registrations 
+                                    WHERE student_id = @studentId AND course_id = @courseId AND academic_year_start = @academicYearStart
+                                )
+                                INSERT INTO Registrations 
+                                (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
+                                VALUES 
+                                (@studentId, @courseId, @year, N'مسجل', @groupId, @academicYearStart)", con);
 
                                 insertCmd.Parameters.AddWithValue("@studentId", studentId);
                                 insertCmd.Parameters.AddWithValue("@courseId", courseId);
                                 insertCmd.Parameters.AddWithValue("@year", year);
                                 insertCmd.Parameters.AddWithValue("@groupId", groupId);
+                                insertCmd.Parameters.AddWithValue("@academicYearStart", academicYearStart);
+
 
                                 int affected = insertCmd.ExecuteNonQuery();
                                 if (affected > 0)
@@ -898,11 +894,12 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                         // ✅ جلب كل المجموعات المرتبطة بالمادة
                         SqlCommand getGroupsCmd = new SqlCommand(@"
-                                                                SELECT cc.id, cr.capacity, cc.group_number
+                                                                SELECT cc.id,
+                                                                cc.capacity,       
+                                                                cc.group_number
                                                                 FROM Course_Classroom cc
-                                                                JOIN Classrooms cr ON cc.classroom_id = cr.classroom_id
                                                                 WHERE cc.course_id = @courseId
-                                                                ORDER BY cc.group_number", con); // أو حسب cc.id إن أردت
+                                                                ORDER BY cc.group_number;", con); 
 
                         getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
 
@@ -939,20 +936,23 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                                 if (currentCount < capacity)
                                 {
+                                    int academicYearStart = DateTime.Now.Month >= 9 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+
                                     SqlCommand insertCmd = new SqlCommand(@"
-                                                                       IF NOT EXISTS (
-                                                                           SELECT 1 FROM Registrations 
-                                                                           WHERE student_id = @studentId AND course_id = @courseId
-                                                                       )
-                                                                       INSERT INTO Registrations 
-                                                                       (student_id, course_id, year_number, status, course_classroom_id)
-                                                                       VALUES 
-                                                                       (@studentId, @courseId, @year, N'مسجل', @groupId)", con);
+                                    IF NOT EXISTS (
+                                        SELECT 1 FROM Registrations 
+                                        WHERE student_id = @studentId AND course_id = @courseId AND academic_year_start = @academicYearStart
+                                    )
+                                    INSERT INTO Registrations 
+                                    (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
+                                    VALUES 
+                                    (@studentId, @courseId, @year, N'مسجل', @groupId, @academicYearStart)", con);
 
                                     insertCmd.Parameters.AddWithValue("@studentId", studentId);
                                     insertCmd.Parameters.AddWithValue("@courseId", courseId);
                                     insertCmd.Parameters.AddWithValue("@year", year);
                                     insertCmd.Parameters.AddWithValue("@groupId", groupId);
+                                    insertCmd.Parameters.AddWithValue("@academicYearStart", academicYearStart);
 
                                     int affected = insertCmd.ExecuteNonQuery();
                                     if (affected > 0)

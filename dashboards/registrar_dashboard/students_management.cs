@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -108,11 +109,42 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         {
             if (CheckNullFields())
             {
+                string fullName = textBox2.Text.Trim();
+                Regex regexName = new Regex(@"^[\p{L}\s]+$");
+                if (!regexName.IsMatch(fullName))
+                {
+                    label1.ForeColor = Color.Red;
+                    label1.Text = "⚠ الاسم يجب أن يحتوي على حروف فقط.!";
+                    return;
+                }
+
+                string uni = textBox3.Text.Trim();
+                if (!uni.All(char.IsDigit))
+                {
+                    label1.ForeColor = Color.Red;
+                    label1.Text = "⚠ الرقم الجامعي يجب أن يحتوي على أرقام فقط.!";
+                    return;
+                }
+
                 bool st_gender = false;
                 if (radioButton1.Checked) st_gender = true;
 
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
                 SqlConnection con = db.OpenConnection();
+
+                // ✅ أولاً: التحقق من أن الرقم الجامعي غير موجود بالفعل
+                string uniNum = textBox3.Text.Trim();
+                SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Students WHERE university_number = @uni", con);
+                checkCmd.Parameters.AddWithValue("@uni", uniNum);
+                int exists = (int)checkCmd.ExecuteScalar();
+                
+                if (exists > 0)
+                {
+                    label1.ForeColor = Color.Red;
+                    label1.Text = "⚠ الرقم الجامعي موجود مسبقًا!";
+                    db.CloseConnection();
+                    return; // وقف العملية
+                }
 
                 string q = "INSERT INTO Students (university_number, full_name, college, department_id, current_year, status_id, documents_path, gender, birth_date, nationality, exam_round) " +
                            "VALUES (@university_number, @full_name, N'كلية العلوم الصحية', @department_id, @current_year, @status_id, NULL, @gender, @birth_date, @nationality,N'دور أول')";
@@ -159,16 +191,25 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             label1.Text = "";
             textBox2.Focus();
 
-            var departments = new Dictionary<int, string>()
+            try
             {
-                {1, "قسم الرياضيات"},
-                {2, "قسم الكيمياء"},
-                {3, "قسم الفيزياء"}
-            };
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    string q = "select * from Departments";
+                    SqlDataAdapter da = new SqlDataAdapter(q, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
 
-            comboBox3.DataSource = new BindingSource(departments, null);
-            comboBox3.DisplayMember = "Value";
-            comboBox3.ValueMember = "Key";
+                    comboBox3.DataSource = new BindingSource(dt, null);
+                    comboBox3.DisplayMember = "dep_name";
+                    comboBox3.ValueMember = "department_id";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an Error : " + ex.Message);
+            }
 
 
             var study_year = new Dictionary<int, string>()
@@ -183,18 +224,26 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             comboBox4.DisplayMember = "Value";
             comboBox4.ValueMember = "Key";
 
-
-            var study_status = new Dictionary<int, string>()
+            try
             {
-                {1, "مستمر"},
-                {2, "مؤجل"},
-                {3, "مستبعد"},
-                {4, "خريج"}
-            };
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    string q = "select * from Status";
+                    SqlDataAdapter da = new SqlDataAdapter(q, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
 
-            comboBox5.DataSource = new BindingSource(study_status, null);
-            comboBox5.DisplayMember = "Value";
-            comboBox5.ValueMember = "Key";
+                    comboBox5.DataSource = new BindingSource(dt, null);
+                    comboBox5.DisplayMember = "description";
+                    comboBox5.ValueMember = "status_id";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an Error : " + ex.Message);
+            }
+            
         }
 
 
@@ -255,6 +304,41 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         {
             dgrid.Columns[column].HeaderText = text;
         }
+        public void setColumnComboBoxsyncwithDB(DataGridView data_grid, string removed_column, string newc_name, string newc_header, string property_name, string query, string displaymemper, string displayvalue)
+        {
+            // حذف العمود القديم إن وجد
+            if (data_grid.Columns.Contains(removed_column))
+                data_grid.Columns.Remove(removed_column);
+
+            DataGridViewComboBoxColumn combo = new DataGridViewComboBoxColumn
+            {
+                Name = newc_name,
+                HeaderText = newc_header,
+                DataPropertyName = property_name
+            };
+
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    combo.DataSource = dt;
+                    combo.DisplayMember = displaymemper;
+                    combo.ValueMember = displayvalue;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an Error : " + ex.Message);
+            }
+
+            data_grid.Columns.Add(combo); // ✅ الإضافة في النهاية
+        }
+
 
         public void setColumnComboBox(DataGridView data_grid, string removed_column, string newc_name, string newc_header, string property_name, List<string> arry)
         {
@@ -279,7 +363,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 conn.DatabaseConnection db2 = new conn.DatabaseConnection();
                 SqlConnection con2 = db2.OpenConnection();
 
-                string q2 = "SELECT s.student_id, s.university_number,s.full_name,d.dep_name,s.current_year,t.description,s.gender,s.birth_date,s.nationality,s.exam_round FROM Students s JOIN " +
+                string q2 = "SELECT s.student_id, s.university_number,s.full_name,d.dep_name AS dname,s.department_id,s.current_year,t.description,s.gender,s.birth_date,s.nationality,s.exam_round FROM Students s JOIN " +
                     "Departments d ON s.department_id = d.department_id JOIN Status t ON s.status_id = t.status_id WHERE university_number = @university_number";
 
                 try
@@ -339,7 +423,9 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     setColumnComboBox(dataGridView2, "yearText", "comboyear", "السنة", "yearText", new List<string> { "سنة أولى", "سنة ثانية", "سنة ثالثة", "سنة رابعة" });
                     setColumnComboBox(dataGridView2, "exam_round", "comboround", "الدور", "exam_round", new List<string> { "دور أول", "دور ثاني", "إعادة سنة" , "مرحل" });
                     setColumnComboBox(dataGridView2, "GenderText", "combogender", "الجنس", "GenderText", new List<string> { "أنثى", "ذكر" });
-                    setColumnComboBox(dataGridView2, "dep_name", "columndepartment", "القسم", "dep_name", new List<string> { "قسم الرياضيات", "قسم الكيمياء", "قسم الفيزياء" });
+                    //setColumnComboBox(dataGridView2, "dep_name", "columndepartment", "القسم", "dep_name", new List<string> { "قسم الرياضيات", "قسم الكيمياء", "قسم الفيزياء" });
+                    setColumnComboBoxsyncwithDB(dataGridView2, "department_id", "columndepartment", "القسم", "department_id","select * from Departments", "dep_name", "department_id");
+
 
                     if (dataGridView2.Columns.Contains("birth_date"))
                         dataGridView2.Columns.Remove("birth_date");
@@ -394,7 +480,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         }
 
 
-
+        
         public void UpdateStudentFromGrid(DataGridView dataGridView)
         {
             if (dataGridView.Rows.Count == 0 || dataGridView.Rows[0].IsNewRow)
@@ -402,7 +488,8 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 MessageBox.Show("لا توجد بيانات لتحديثها.");
                 return;
             }
-
+            string studentidforcheck = dataGridView2.Rows[0].Cells["student_id"].Value.ToString();
+ 
             try
             {
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
@@ -441,6 +528,30 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                     // جلب معرف القسم
                     int departmentId = GetIdFromName("Departments", "department_id", "dep_name", depName, con);
+
+                    // جلب القسم الحالي الموجود في قاعدة البيانات
+                    SqlCommand getOldDeptCmd = new SqlCommand(
+                        "SELECT department_id FROM Students WHERE student_id = @student_id", con);
+                    getOldDeptCmd.Parameters.AddWithValue("@student_id", studentidforcheck);
+
+                    int oldDeptId = Convert.ToInt32(getOldDeptCmd.ExecuteScalar());
+
+                    // إذا اختلف القسم الجديد عن القديم → تحقق من وجود مواد
+                    if (oldDeptId != departmentId)
+                    {
+                        SqlCommand regCheckCmd = new SqlCommand(
+                            "SELECT COUNT(*) FROM Registrations WHERE student_id = @student_id", con);
+                        regCheckCmd.Parameters.AddWithValue("@student_id", studentidforcheck);
+
+                        int regCount = (int)regCheckCmd.ExecuteScalar();
+
+                        if (regCount > 0)
+                        {
+                            MessageBox.Show("غير مسموح بتغيير قسم طالب مسجل بمواد.\nلحذف المواد أو تحويل الطالب، استخدم واجهة التحويل والترحيل.");
+                            return;  // منع عملية التحديث
+                        }
+                    }
+
 
                     // جلب معرف الحالة
                     int statusId = GetIdFromName("Status", "status_id", "description", statusDescription, con);
