@@ -423,7 +423,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     setColumnComboBox(dataGridView2, "yearText", "comboyear", "السنة", "yearText", new List<string> { "سنة أولى", "سنة ثانية", "سنة ثالثة", "سنة رابعة" });
                     setColumnComboBox(dataGridView2, "exam_round", "comboround", "الدور", "exam_round", new List<string> { "دور أول", "دور ثاني", "إعادة سنة" , "مرحل" });
                     setColumnComboBox(dataGridView2, "GenderText", "combogender", "الجنس", "GenderText", new List<string> { "أنثى", "ذكر" });
-                    //setColumnComboBox(dataGridView2, "dep_name", "columndepartment", "القسم", "dep_name", new List<string> { "قسم الرياضيات", "قسم الكيمياء", "قسم الفيزياء" });
                     setColumnComboBoxsyncwithDB(dataGridView2, "department_id", "columndepartment", "القسم", "department_id","select * from Departments", "dep_name", "department_id");
 
 
