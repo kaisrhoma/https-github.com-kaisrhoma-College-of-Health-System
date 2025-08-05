@@ -41,6 +41,16 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             comboBox_Year2.Items.Add("3");
             comboBox_Year2.Items.Add("4");
 
+            numericUpDownYear.Minimum = 1990;    // أقل سنة مسموح بها
+            numericUpDownYear.Maximum = 2100;    // أعلى سنة مسموح بها
+            numericUpDownYear.Value = DateTime.Now.Year;      // القيمة الافتراضية (مثلاً)
+            numericUpDownYear.Increment = 1;     // خطوة الزيادة/النقصان سنة واحدة
+            numericUpDownYear.ThousandsSeparator = false; // حسب رغبتك
+            int startYear = (int)numericUpDownYear.Value;
+            string academicYear = $"{startYear}-{startYear + 1}";
+
+
+
             comboBox_Year2.SelectedIndex = 0;
             dataGridViewGrades.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             printDocument1.PrintPage += printDocument1_PrintPage;
@@ -53,6 +63,17 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             comboBox_Year.SelectedIndex = 0;
             FillDepartmentComboBox();
             printDocument12.PrintPage += printDocument12_PrintPage;
+            numericUpDownYear1.Minimum = 1990;    // أقل سنة مسموح بها
+            numericUpDownYear1.Maximum = 2100;    // أعلى سنة مسموح بها
+            numericUpDownYear1.Value = DateTime.Now.Year;      // القيمة الافتراضية (مثلاً)
+            numericUpDownYear1.Increment = 1;     // خطوة الزيادة/النقصان سنة واحدة
+            numericUpDownYear1.ThousandsSeparator = false; // حسب رغبتك
+            int startYear1 = (int)numericUpDownYear1.Value;
+           
+          //
+          //string academicYear1 = $"{startYear1}-{startYear1 + 1}";
+
+
         }
         private int currentPageIndex = 0;
         private List<DataTable> pages = new List<DataTable>();
@@ -272,13 +293,69 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button8_Click(object sender, EventArgs e)
         {
+            //            if (comboBox_Year2.SelectedItem == null)
+            //            {
+            //                MessageBox.Show("يرجى اختيار السنة الدراسية.");
+            //                return;
+            //            }
+
+            //            int selectedYear = Convert.ToInt32(comboBox_Year2.SelectedItem);
+
+            //            string query = @"
+            //SELECT 
+            //    c.course_name AS 'اسم المادة',
+            //    c.course_id AS 'رقم المادة',
+            //    c.year_number AS 'السنة الدراسية',
+            //    cc.group_number AS 'رقم المجموعة',
+            //    i.full_name AS 'اسم الأستاذ',
+            //    s.full_name AS 'اسم الطالب',
+            //    s.university_number AS 'الرقم الجامعي',
+            //    d.dep_name AS 'القسم',
+            //    g.total_grade AS 'الدرجة',
+            //    g.success_status AS 'النتيجة'
+            //FROM Grades g
+            //INNER JOIN Students s ON g.student_id = s.student_id
+            //INNER JOIN Registrations r ON r.student_id = s.student_id AND r.course_id = g.course_id
+            //INNER JOIN Course_Classroom cc ON r.course_classroom_id = cc.id
+            //INNER JOIN Courses c ON cc.course_id = c.course_id
+            //INNER JOIN Departments d ON s.department_id = d.department_id
+            //LEFT JOIN Course_Instructor ci ON c.course_id = ci.course_id
+            //LEFT JOIN Instructors i ON ci.instructor_id = i.instructor_id
+            //WHERE c.year_number = @year
+            //ORDER BY c.course_id, cc.group_number, s.university_number;
+
+            //";
+
+
+            //            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            //            using (SqlCommand cmd = new SqlCommand(query, conn))
+            //            {
+            //                cmd.Parameters.AddWithValue("@year", selectedYear);
+
+            //                DataTable dt = new DataTable();
+            //                SqlDataAdapter da = new SqlDataAdapter(cmd);
+            //                da.Fill(dt);
+            //                dataGridViewGrades.DataSource = dt;
+            //                dataGridViewGrades.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            //                // احفظ البيانات لطباعتها لاحقاً
+            //                reportData = (DataTable)dataGridViewGrades.DataSource;
+
+            //                //// اربط دالة الطباعة بالـ PrintDocument
+            //                //printDocument1.PrintPage -= printDocument1_PrintPage; // لتجنب التكرار عند الطباعة أكثر من مرة
+            //                //printDocument1.PrintPage += printDocument1_PrintPage;
+
+
+
+            //            }
             if (comboBox_Year2.SelectedItem == null)
             {
                 MessageBox.Show("يرجى اختيار السنة الدراسية.");
                 return;
             }
 
-            int selectedYear = Convert.ToInt32(comboBox_Year2.SelectedItem);
+            int selectedYearNumber = Convert.ToInt32(comboBox_Year2.SelectedItem);
+            int selectedYear = (int)numericUpDownYear.Value;
+            string academicYear = $"{selectedYear}-{selectedYear + 1}";
 
             string query = @"
 SELECT 
@@ -300,33 +377,31 @@ INNER JOIN Courses c ON cc.course_id = c.course_id
 INNER JOIN Departments d ON s.department_id = d.department_id
 LEFT JOIN Course_Instructor ci ON c.course_id = ci.course_id
 LEFT JOIN Instructors i ON ci.instructor_id = i.instructor_id
-WHERE c.year_number = @year
+WHERE c.year_number = @year_number
+AND g.academic_year = @academic_year
 ORDER BY c.course_id, cc.group_number, s.university_number;
-
 ";
-
 
             using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                cmd.Parameters.AddWithValue("@year", selectedYear);
+                cmd.Parameters.AddWithValue("@year_number", selectedYearNumber);
+                cmd.Parameters.AddWithValue("@academic_year", academicYear);
 
                 DataTable dt = new DataTable();
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
+
                 dataGridViewGrades.DataSource = dt;
                 dataGridViewGrades.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                // احفظ البيانات لطباعتها لاحقاً
+
+                // حفظ البيانات لطباعتها لاحقاً
                 reportData = (DataTable)dataGridViewGrades.DataSource;
 
-                //// اربط دالة الطباعة بالـ PrintDocument
-                //printDocument1.PrintPage -= printDocument1_PrintPage; // لتجنب التكرار عند الطباعة أكثر من مرة
+                //// ربط دالة الطباعة بالـ PrintDocument (إذا تحتاج)
+                //printDocument1.PrintPage -= printDocument1_PrintPage;
                 //printDocument1.PrintPage += printDocument1_PrintPage;
-
-
-
             }
-
 
 
         }
@@ -1044,49 +1119,147 @@ ORDER BY c.year_number, c.course_name;";
         private void button6_Click(object sender, EventArgs e)
         {
 
-            selectedYear = comboBox_Year.SelectedItem?.ToString();
+            //    selectedYear = comboBox_Year.SelectedItem?.ToString();
+            //    if (!int.TryParse(selectedYear, out int yearNumber))
+            //    {
+            //        MessageBox.Show("السنة غير صالحة.");
+            //        return;
+            //    }
+
+            //    if (comboBox_Department.SelectedValue == null)
+            //    {
+            //        MessageBox.Show("يرجى اختيار القسم.");
+            //        return;
+            //    }
+
+            //    int departmentId = (int)comboBox_Department.SelectedValue; // استخدم ID
+
+            //    subjectPages.Clear();
+            //    currentPrintIndex = 0;
+            //    currentRowIndex = 0;  // تهيئة مؤشر الصف للطباعة
+            //    // تعديل رقم المجموعه
+            //    string query = @"
+            //SELECT 
+            //    s.full_name AS اسم_الطالب,
+            //    s.university_number AS الرقم_الجامعي,
+            //    c.course_name AS المادة,
+            //    c.course_id AS رمز_المادة,
+            //    c.units AS الوحدات,
+            //    g.total_grade AS الدرجة,
+            //    d.dep_name AS القسم,
+            //    i.full_name AS الأستاذ
+            //FROM Grades g
+            //INNER JOIN Students s ON g.student_id = s.student_id
+            //INNER JOIN Courses c ON g.course_id = c.course_id
+            //INNER JOIN Course_Department cd ON cd.course_id = c.course_id
+            //INNER JOIN Departments d ON d.department_id = cd.department_id
+            //LEFT JOIN Instructors i ON i.instructor_id = d.head_id
+            //WHERE c.year_number = @year AND cd.department_id = @deptId
+            //ORDER BY c.course_name, s.full_name";
+
+            //    using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            //    using (SqlCommand cmd = new SqlCommand(query, conn))
+            //    {
+            //        cmd.Parameters.AddWithValue("@year", yearNumber);
+            //        cmd.Parameters.AddWithValue("@deptId", departmentId);
+
+            //        SqlDataAdapter da = new SqlDataAdapter(cmd);
+            //        DataTable allData = new DataTable();
+            //        da.Fill(allData);
+
+            //        var groupedSubjects = allData.AsEnumerable()
+            //            .GroupBy(r => r["المادة"].ToString() + "|" + r["رمز_المادة"].ToString());
+
+            //        foreach (var group in groupedSubjects)
+            //        {
+            //            var distinctRows = group
+            //                .GroupBy(r => new
+            //                {
+            //                    StudentName = r["اسم_الطالب"].ToString(),
+            //                    UniversityNumber = r["الرقم_الجامعي"].ToString()
+            //                })
+            //                .Select(g => g.First());
+
+            //            DataTable dt = allData.Clone();
+            //            foreach (var row in distinctRows)
+            //                dt.ImportRow(row);
+            //            subjectPages.Add(dt);
+            //        }
+
+            //    }
+
+            //    if (subjectPages.Count == 0)
+            //    {
+            //        MessageBox.Show("لا توجد نتائج للعرض.");
+            //        return;
+            //    }
+
+            //    // ربط حدث تهيئة الطباعة إن لم يكن مرتبطاً مسبقاً
+
+
+            //    PrintPreviewDialog previewDialog = new PrintPreviewDialog();
+            //    previewDialog.Document = printDocument12;
+            //    previewDialog.WindowState = FormWindowState.Maximized;
+            //    previewDialog.ShowDialog();
+
+            //    // بدلاً من المعاينة، يمكن استخدام هذا للطباعة مباشرة:
+            //    // printDocument12.Print();
+            // قراءة السنة الدراسية (1, 2, 3, 4)
+            // تحقق من اختيار السنة الدراسية (1,2,3,4)
+
+            // تحقق من اختيار السنة الدراسية (1-4)
+            // قراءة السنة الدراسية (1, 2, 3, 4)
+            string selectedYear = comboBox_Year.SelectedItem?.ToString();
             if (!int.TryParse(selectedYear, out int yearNumber))
             {
-                MessageBox.Show("السنة غير صالحة.");
+                MessageBox.Show("يرجى اختيار السنة الدراسية صحيحة.");
                 return;
             }
 
+            // تحقق من اختيار القسم
             if (comboBox_Department.SelectedValue == null)
             {
                 MessageBox.Show("يرجى اختيار القسم.");
                 return;
             }
 
-            int departmentId = (int)comboBox_Department.SelectedValue; // استخدم ID
+            int departmentId = (int)comboBox_Department.SelectedValue;
+
+            // قراءة العام الدراسي من numericUpDown (مثلاً 2024)
+            int startYear = (int)numericUpDownYear1.Value;
+            string academicYear = $"{startYear}-{startYear + 1}";
 
             subjectPages.Clear();
             currentPrintIndex = 0;
             currentRowIndex = 0;  // تهيئة مؤشر الصف للطباعة
-            // تعديل رقم المجموعه
+
             string query = @"
-        SELECT 
-            s.full_name AS اسم_الطالب,
-            s.university_number AS الرقم_الجامعي,
-            c.course_name AS المادة,
-            c.course_id AS رمز_المادة,
-            c.units AS الوحدات,
-            g.total_grade AS الدرجة,
-            d.dep_name AS القسم,
-            i.full_name AS الأستاذ
-        FROM Grades g
-        INNER JOIN Students s ON g.student_id = s.student_id
-        INNER JOIN Courses c ON g.course_id = c.course_id
-        INNER JOIN Course_Department cd ON cd.course_id = c.course_id
-        INNER JOIN Departments d ON d.department_id = cd.department_id
-        LEFT JOIN Instructors i ON i.instructor_id = d.head_id
-        WHERE c.year_number = @year AND cd.department_id = @deptId
-        ORDER BY c.course_name, s.full_name";
+SELECT 
+    s.full_name AS اسم_الطالب,
+    s.university_number AS الرقم_الجامعي,
+    c.course_name AS المادة,
+    c.course_id AS رمز_المادة,
+    c.units AS الوحدات,
+    g.total_grade AS الدرجة,
+    d.dep_name AS القسم,
+    i.full_name AS الأستاذ
+FROM Grades g
+INNER JOIN Students s ON g.student_id = s.student_id
+INNER JOIN Courses c ON g.course_id = c.course_id
+INNER JOIN Course_Department cd ON cd.course_id = c.course_id
+INNER JOIN Departments d ON d.department_id = cd.department_id
+LEFT JOIN Instructors i ON i.instructor_id = d.head_id
+WHERE c.year_number = @yearNumber
+  AND cd.department_id = @deptId
+  AND g.academic_year = @academicYear
+ORDER BY c.course_name, s.full_name";
 
             using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                cmd.Parameters.AddWithValue("@year", yearNumber);
+                cmd.Parameters.AddWithValue("@yearNumber", yearNumber);
                 cmd.Parameters.AddWithValue("@deptId", departmentId);
+                cmd.Parameters.AddWithValue("@academicYear", academicYear);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable allData = new DataTable();
@@ -1110,25 +1283,23 @@ ORDER BY c.year_number, c.course_name;";
                         dt.ImportRow(row);
                     subjectPages.Add(dt);
                 }
-
             }
 
             if (subjectPages.Count == 0)
             {
-                MessageBox.Show("لا توجد نتائج للعرض.");
+                MessageBox.Show("لا توجد نتائج للعرض للسنة الدراسية والعام الدراسي والقسم المختارين.");
                 return;
             }
 
             // ربط حدث تهيئة الطباعة إن لم يكن مرتبطاً مسبقاً
-
 
             PrintPreviewDialog previewDialog = new PrintPreviewDialog();
             previewDialog.Document = printDocument12;
             previewDialog.WindowState = FormWindowState.Maximized;
             previewDialog.ShowDialog();
 
-            // بدلاً من المعاينة، يمكن استخدام هذا للطباعة مباشرة:
-            // printDocument12.Print();
+
+
         }
 
 

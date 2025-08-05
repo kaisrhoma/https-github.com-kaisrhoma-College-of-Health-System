@@ -59,6 +59,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.txtUniversityNumber3 = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
+            this.numericUpDownYear = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.numericUpDownYear1 = new System.Windows.Forms.NumericUpDown();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).BeginInit();
@@ -68,6 +72,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -90,6 +96,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.White;
+            this.tabPage1.Controls.Add(this.label9);
+            this.tabPage1.Controls.Add(this.numericUpDownYear);
             this.tabPage1.Controls.Add(this.button8);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.button1);
@@ -112,7 +120,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.button8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button8.ForeColor = System.Drawing.Color.White;
-            this.button8.Location = new System.Drawing.Point(364, 85);
+            this.button8.Location = new System.Drawing.Point(169, 88);
             this.button8.Margin = new System.Windows.Forms.Padding(2);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(94, 25);
@@ -302,6 +310,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.label10);
+            this.groupBox2.Controls.Add(this.numericUpDownYear1);
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.comboBox_Department);
             this.groupBox2.Controls.Add(this.button6);
@@ -320,7 +330,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(362, 51);
+            this.label8.Location = new System.Drawing.Point(380, 51);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(38, 19);
@@ -331,7 +341,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             // 
             this.comboBox_Department.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox_Department.FormattingEnabled = true;
-            this.comboBox_Department.Location = new System.Drawing.Point(212, 49);
+            this.comboBox_Department.Location = new System.Drawing.Point(230, 49);
             this.comboBox_Department.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox_Department.Name = "comboBox_Department";
             this.comboBox_Department.Size = new System.Drawing.Size(140, 27);
@@ -343,7 +353,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.button6.BackColor = System.Drawing.Color.LimeGreen;
             this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button6.ForeColor = System.Drawing.Color.White;
-            this.button6.Location = new System.Drawing.Point(100, 48);
+            this.button6.Location = new System.Drawing.Point(4, 50);
             this.button6.Margin = new System.Windows.Forms.Padding(2);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(93, 26);
@@ -469,6 +479,42 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.label5.TabIndex = 29;
             this.label5.Text = "تقارير النتائج";
             // 
+            // numericUpDownYear
+            // 
+            this.numericUpDownYear.Location = new System.Drawing.Point(284, 85);
+            this.numericUpDownYear.Name = "numericUpDownYear";
+            this.numericUpDownYear.Size = new System.Drawing.Size(131, 26);
+            this.numericUpDownYear.TabIndex = 16;
+            // 
+            // label9
+            // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(420, 88);
+            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(33, 19);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "العام";
+            // 
+            // label10
+            // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(193, 53);
+            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(33, 19);
+            this.label10.TabIndex = 22;
+            this.label10.Text = "العام";
+            // 
+            // numericUpDownYear1
+            // 
+            this.numericUpDownYear1.Location = new System.Drawing.Point(103, 50);
+            this.numericUpDownYear1.Name = "numericUpDownYear1";
+            this.numericUpDownYear1.Size = new System.Drawing.Size(85, 26);
+            this.numericUpDownYear1.TabIndex = 21;
+            // 
             // statements_reports
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -491,6 +537,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -528,5 +576,9 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         private System.Windows.Forms.TextBox txtUniversityNumber3;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.NumericUpDown numericUpDownYear;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown numericUpDownYear1;
     }
 }
