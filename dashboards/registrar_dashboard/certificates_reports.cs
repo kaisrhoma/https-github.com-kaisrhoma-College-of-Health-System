@@ -2,6 +2,7 @@
 using college_of_health_sciences.moduls;
 using college_of_health_sciences.system_forms;
 using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,8 +44,8 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         private void PrintDocument_PrintPage(object sender, PrintPageEventArgs e)
         {
-            Font headerFont = new Font("Arial", 14, FontStyle.Bold);
-            Font bodyFont = new Font("Arial", 10);
+            System.Drawing.Font headerFont = new System.Drawing.Font("Arial", 14, FontStyle.Bold);
+            System.Drawing.Font bodyFont = new System.Drawing.Font("Arial", 10);
             int startX = 50;
             int startY = 50;
             int offsetY = 0;
@@ -369,9 +370,9 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             string stdep = printTable.Rows[0]["القسم"].ToString();
             string cuyear =DateTime.Now.ToString("yyyy/MM/dd");
 
-            Font headerfont = new Font("Arial", 18, FontStyle.Bold);
-            Font subheader = new Font("Arial",14, FontStyle.Bold);
-            Font textfont = new Font("Arial", 12, FontStyle.Bold);
+            System.Drawing.Font headerfont = new System.Drawing.Font("Arial", 18, FontStyle.Bold);
+            System.Drawing.Font subheader = new System.Drawing.Font("Arial",14, FontStyle.Bold);
+            System.Drawing.Font textfont = new System.Drawing.Font("Arial", 12, FontStyle.Bold);
             Brush brush = Brushes.Black;
             int margin = 50;
             int x = 50;
@@ -401,7 +402,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                Rectangle rect = new Rectangle(x + i * colmnw, y, colmnw, colmnh);
                Rectangle rectv = new Rectangle(x + i * colmnw, y+colmnh, colmnw, colmnh);
 
-               e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 230, 250)), rect);
+               e.Graphics.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(220, 230, 250)), rect);
                e.Graphics.DrawRectangle(Pens.Black,rect);
                e.Graphics.DrawRectangle(Pens.Black, rectv);
                e.Graphics.DrawString(colheaders[i],textfont,brush,rect,format);
@@ -415,7 +416,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             for (int i = 0; i < cheaders.Length; i++)
             {
                 Rectangle recth = new Rectangle(x + i * dheaderw, y, dheaderw, dheaderh);
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 230, 250)), recth);
+                e.Graphics.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(220, 230, 250)), recth);
                 e.Graphics.DrawRectangle(Pens.Black, recth);
                 e.Graphics.DrawString(cheaders[i], textfont, brush, recth, format);
             }
@@ -495,6 +496,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                                JOIN Departments d ON s.department_id = d.department_id
                                WHERE s.department_id = @dept
                                      AND s.current_year = @year
+                                     AND s.status_id = '1'
                                      AND NOT EXISTS (
                                             SELECT 1 FROM Registrations r WHERE r.student_id = s.student_id
                                      )";
@@ -559,6 +561,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
+            dataGridView5.DataSource = null;
             try
             {
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
@@ -591,6 +594,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            dataGridView5.DataSource = null; 
             if(comboBox2.SelectedItem != null)
             {
                 comboBox2_SelectedIndexChanged(null,null);
@@ -703,9 +707,15 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         }
         public void downloadForOneStudents()
         {
+            
             if (dataGridView5 == null || dataGridView5.Rows.Count == 0)
             {
                 MessageBox.Show("لا يوجد بيانات لتخزينها، يرجى البحث عن الطالب قبل التخزين.");
+                return;
+            }
+            if (dataGridView5.Rows[0].Cells["description"].Value.ToString() != "مستمر")
+            {
+                MessageBox.Show("لا يمكن تنزيل مواد لطالب غير مستمر");
                 return;
             }
 
@@ -796,7 +806,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         INSERT INTO Registrations 
                         (student_id, course_id, year_number, status, course_classroom_id)
                         VALUES 
-                        (@studentId, @courseId, @year, 'مسجل', @groupId)", con);
+                        (@studentId, @courseId, @year, N'مسجل', @groupId)", con);
 
                                 insertCmd.Parameters.AddWithValue("@studentId", studentId);
                                 insertCmd.Parameters.AddWithValue("@courseId", courseId);
@@ -875,12 +885,14 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     SqlDataAdapter adapter = new SqlDataAdapter(coursesCmd);
                     DataTable courses = new DataTable();
                     adapter.Fill(courses);
-
-                    List<string> موادممتلئة = new List<string>();
-                    int عددالموادالمسجلة = 0;
+                    Dictionary<string, List<string>> downlodedcourses = new Dictionary<string, List<string>>();
+                    Dictionary<string,List<string>> fullcourses = new Dictionary<string,List<string>>();
+                    int countfullcourses = 0;
+                    
 
                     foreach (DataRow row in courses.Rows)
                     {
+                        int counRegisteredCourses = 0;
                         int courseId = Convert.ToInt32(row["course_id"]);
                         string courseName = row["course_name"].ToString();
 
@@ -898,13 +910,20 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         DataTable groups = new DataTable();
                         groupAdapter.Fill(groups);
 
-                        bool تمت_الإضافة = false;
+                        bool addcourse = true;
                         foreach (DataGridViewRow strow in dataGridView5.Rows)
                         {
+                            if(!addcourse)
+                            {
+                                break;
+                            }
+                            addcourse = false;
+                            if (strow.IsNewRow) continue;
+                            if (strow.Cells["student_id"].Value.ToString() == null) continue;
                             int studentId = Convert.ToInt32(strow.Cells["student_id"].Value);
 
                             foreach (DataRow group in groups.Rows)
-                        {
+                            {
                             int groupId = Convert.ToInt32(group["id"]);
                             int capacity = Convert.ToInt32(group["capacity"]);
 
@@ -921,14 +940,14 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                                 if (currentCount < capacity)
                                 {
                                     SqlCommand insertCmd = new SqlCommand(@"
-                        IF NOT EXISTS (
-                            SELECT 1 FROM Registrations 
-                            WHERE student_id = @studentId AND course_id = @courseId
-                        )
-                        INSERT INTO Registrations 
-                        (student_id, course_id, year_number, status, course_classroom_id)
-                        VALUES 
-                        (@studentId, @courseId, @year, 'مسجل', @groupId)", con);
+                                                                       IF NOT EXISTS (
+                                                                           SELECT 1 FROM Registrations 
+                                                                           WHERE student_id = @studentId AND course_id = @courseId
+                                                                       )
+                                                                       INSERT INTO Registrations 
+                                                                       (student_id, course_id, year_number, status, course_classroom_id)
+                                                                       VALUES 
+                                                                       (@studentId, @courseId, @year, N'مسجل', @groupId)", con);
 
                                     insertCmd.Parameters.AddWithValue("@studentId", studentId);
                                     insertCmd.Parameters.AddWithValue("@courseId", courseId);
@@ -938,8 +957,13 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                                     int affected = insertCmd.ExecuteNonQuery();
                                     if (affected > 0)
                                     {
-                                        عددالموادالمسجلة++;
-                                        تمت_الإضافة = true;
+                                        counRegisteredCourses ++;
+                                        // أول مرة
+                                        if (!downlodedcourses.ContainsKey(courseName))
+                                            downlodedcourses[courseName] = new List<string>();
+                                        downlodedcourses[courseName].Add(strow.Cells["الإسم"]?.Value.ToString() ?? "");
+
+                                        addcourse = true;
                                     }
 
                                     break; // سجل الطالب، لا داعي لتجربة بقية المجموعات
@@ -947,25 +971,61 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                             }
                         }
 
-                        if (!تمت_الإضافة)
+                        if (counRegisteredCourses < dataGridView5.Rows.Count)
                         {
-                            موادممتلئة.Add(courseName);
+                            for (int i = counRegisteredCourses ; i < dataGridView5.Rows.Count; i++)
+                            {
+                                if (dataGridView5.Rows[i].IsNewRow)continue;
+                                if (dataGridView5.Rows[i].Cells["الإسم"].Value.ToString() == null) continue;
+                                if (!fullcourses.ContainsKey(courseName))
+                                    fullcourses[courseName] = new List<string>();
+                                fullcourses[courseName].Add(dataGridView5.Rows[i].Cells["الإسم"].Value.ToString());
+                            }
+                            countfullcourses ++;
                         }
+
                     }
 
                     // ✅ عرض النتيجة النهائية
-                    if (عددالموادالمسجلة == 0)
+                    if (downlodedcourses.Count == 0)
                     {
-                        MessageBox.Show("لم يتم تسجيل أي مادة. الطالب قد يكون مسجلاً مسبقًا أو لا توجد مقاعد متاحة.");
+                        MessageBox.Show("لم يتم تسجيل أي مادة للطلاب. لا توجد مقاعد متاحة.");
                     }
-                    else if (موادممتلئة.Count > 0)
+                    else if (downlodedcourses.Count > 0 && fullcourses.Count > 0)
                     {
-                        MessageBox.Show("تم تسجيل الطالب، باستثناء المواد التالية التي لم يتوفر بها مقاعد:\n" +
-                                        string.Join("\n", موادممتلئة));
+                        string result = "";
+
+                        foreach (var prcourse in downlodedcourses)
+                        {
+                            result += $"Course: {prcourse.Key}\n";
+
+                            foreach (var student in prcourse.Value)
+                            {
+                                result += $"- {student}\n";
+                            }
+
+                            result += "------------------------\n";
+                        }
+                        string rt = "";
+
+                        foreach (var fucourse in fullcourses)
+                        {
+                            rt += $"Course: {fucourse.Key}\n";
+
+                            foreach (var fstudent in fucourse.Value)
+                            {
+                                rt += $"- {fstudent}\n";
+                            }
+
+                            rt += "------------------------\n";
+                        }
+
+                        MessageBox.Show("تم تنزيل الموالد الاتية لكل من : \n" + result + "\n لم يتم تنزيل المواد الاتية لكل من : \n" + rt );
+
                     }
                     else
                     {
-                        MessageBox.Show("تم تسجيل جميع المواد بنجاح.");
+                        MessageBox.Show("تم تسجيل جميع المواد لكل الطلبة بنجاح.");
                     }
                 }
             }

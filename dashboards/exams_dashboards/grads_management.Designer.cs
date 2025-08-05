@@ -56,6 +56,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.label5 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.comboExamRound = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).BeginInit();
@@ -85,6 +87,8 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.White;
+            this.tabPage1.Controls.Add(this.label8);
+            this.tabPage1.Controls.Add(this.comboExamRound);
             this.tabPage1.Controls.Add(this.button8);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.button1);
@@ -110,7 +114,7 @@
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button8.ForeColor = System.Drawing.Color.White;
             this.button8.Image = global::college_of_health_sciences.Properties.Resources.Carlosjj_Microsoft_Office_2013_Excel_48;
-            this.button8.Location = new System.Drawing.Point(28, 68);
+            this.button8.Location = new System.Drawing.Point(28, 349);
             this.button8.Margin = new System.Windows.Forms.Padding(2);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(131, 59);
@@ -463,6 +467,29 @@
             this.label5.TabIndex = 7;
             this.label5.Text = "إدارة الرسوب والإعادة";
             // 
+            // label8
+            // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.AutoSize = true;
+            this.label8.ForeColor = System.Drawing.Color.Black;
+            this.label8.Location = new System.Drawing.Point(192, 88);
+            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(36, 19);
+            this.label8.TabIndex = 9;
+            this.label8.Text = "الدور";
+            // 
+            // comboExamRound
+            // 
+            this.comboExamRound.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboExamRound.FormattingEnabled = true;
+            this.comboExamRound.Location = new System.Drawing.Point(59, 85);
+            this.comboExamRound.Margin = new System.Windows.Forms.Padding(2);
+            this.comboExamRound.Name = "comboExamRound";
+            this.comboExamRound.Size = new System.Drawing.Size(122, 27);
+            this.comboExamRound.TabIndex = 8;
+            this.comboExamRound.SelectedIndexChanged += new System.EventHandler(this.comboExamRound_SelectedIndexChanged);
+            // 
             // grads_management
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -516,5 +543,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox comboBox_Course;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox comboExamRound;
     }
 }
