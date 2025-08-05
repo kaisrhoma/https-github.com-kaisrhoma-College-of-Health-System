@@ -52,7 +52,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                
                 comboExamRound.Items.Add("دور أول");
                 comboExamRound.Items.Add("دور ثاني");
-               
+                comboExamRound.Items.Add("مرحل");
                 comboExamRound.SelectedIndex = 0; // اختيار افتراضي: كل الأدوار
 
                 // تحميل الطلاب لأول مرة
@@ -93,7 +93,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         {
             string selectedRound = null;
 
-            if (comboExamRound.SelectedIndex > 0) // 0 تعني "كل الأدوار"
+            if (comboExamRound.SelectedIndex >= 0) // 0 تعني "كل الأدوار"
             {
                 selectedRound = comboExamRound.SelectedItem.ToString();
             }
