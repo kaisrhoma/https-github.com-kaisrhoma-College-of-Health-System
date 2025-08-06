@@ -32,6 +32,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label9 = new System.Windows.Forms.Label();
+            this.numericUpDownYear = new System.Windows.Forms.NumericUpDown();
             this.button8 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
@@ -47,6 +49,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.label4 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.numericUpDownYear1 = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.comboBox_Department = new System.Windows.Forms.ComboBox();
             this.button6 = new System.Windows.Forms.Button();
@@ -59,21 +63,17 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.txtUniversityNumber3 = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
-            this.numericUpDownYear = new System.Windows.Forms.NumericUpDown();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.numericUpDownYear1 = new System.Windows.Forms.NumericUpDown();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).BeginInit();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewReport)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear1)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -113,6 +113,25 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "كشوف النتائج";
             this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
+            // 
+            // label9
+            // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(420, 88);
+            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(33, 19);
+            this.label9.TabIndex = 17;
+            this.label9.Text = "العام";
+            // 
+            // numericUpDownYear
+            // 
+            this.numericUpDownYear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownYear.Location = new System.Drawing.Point(284, 85);
+            this.numericUpDownYear.Name = "numericUpDownYear";
+            this.numericUpDownYear.Size = new System.Drawing.Size(131, 26);
+            this.numericUpDownYear.TabIndex = 16;
             // 
             // button8
             // 
@@ -326,6 +345,25 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "تقارير النتائج";
             // 
+            // label10
+            // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(193, 53);
+            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(33, 19);
+            this.label10.TabIndex = 22;
+            this.label10.Text = "العام";
+            // 
+            // numericUpDownYear1
+            // 
+            this.numericUpDownYear1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownYear1.Location = new System.Drawing.Point(103, 50);
+            this.numericUpDownYear1.Name = "numericUpDownYear1";
+            this.numericUpDownYear1.Size = new System.Drawing.Size(85, 26);
+            this.numericUpDownYear1.TabIndex = 21;
+            // 
             // label8
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -479,42 +517,6 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.label5.TabIndex = 29;
             this.label5.Text = "تقارير النتائج";
             // 
-            // numericUpDownYear
-            // 
-            this.numericUpDownYear.Location = new System.Drawing.Point(284, 85);
-            this.numericUpDownYear.Name = "numericUpDownYear";
-            this.numericUpDownYear.Size = new System.Drawing.Size(131, 26);
-            this.numericUpDownYear.TabIndex = 16;
-            // 
-            // label9
-            // 
-            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(420, 88);
-            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(33, 19);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "العام";
-            // 
-            // label10
-            // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(193, 53);
-            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(33, 19);
-            this.label10.TabIndex = 22;
-            this.label10.Text = "العام";
-            // 
-            // numericUpDownYear1
-            // 
-            this.numericUpDownYear1.Location = new System.Drawing.Point(103, 50);
-            this.numericUpDownYear1.Name = "numericUpDownYear1";
-            this.numericUpDownYear1.Size = new System.Drawing.Size(85, 26);
-            this.numericUpDownYear1.TabIndex = 21;
-            // 
             // statements_reports
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -526,6 +528,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
@@ -534,11 +537,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.tabPage3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear1)).EndInit();
             this.ResumeLayout(false);
 
         }
