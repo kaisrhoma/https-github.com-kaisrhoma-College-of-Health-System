@@ -43,7 +43,12 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 comboBox_Year.SelectedIndex = 0;
                 dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 
-
+                comboYear4.Items.Clear();
+                comboYear4.Items.Add(1);
+                comboYear4.Items.Add(2);
+                comboYear4.Items.Add(3);
+                comboYear4.Items.Add(4);
+                comboYear4.SelectedIndex = 0;
 
                 dataGridViewGrades.CellValueChanged += dataGridViewGrades_CellValueChanged;
                 dataGridViewGrades.CurrentCellDirtyStateChanged += dataGridViewGrades_CurrentCellDirtyStateChanged;
@@ -56,7 +61,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 comboExamRound.SelectedIndex = 0; // اختيار افتراضي: كل الأدوار
 
                 // تحميل الطلاب لأول مرة
-                LoadStudents((int)comboCourse.SelectedValue, "دور أول");
+              //  LoadStudents((int)comboCourse.SelectedValue, "دور أول");
 
 
 
@@ -97,11 +102,60 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 selectedRound = comboExamRound.SelectedItem.ToString();
             }
+            if (comboCourse.SelectedValue != null && int.TryParse(comboCourse.SelectedValue.ToString(), out int selectedCourseId))
+            {
+                LoadStudents(selectedCourseId, selectedRound);
+            }
+            //else
+            //{
+            //    MessageBox.Show("الرجاء اختيار القسم و مادة قبل تحميل الطلاب.");
+            //}
 
-            int selectedCourseId = (int)comboCourse.SelectedValue;
-            LoadStudents(selectedCourseId, selectedRound);
+            //int selectedCourseId = (int)comboCourse.SelectedValue;
+            //LoadStudents(selectedCourseId, selectedRound);
         }
-        private void LoadCourses(int departmentId)
+        //private void LoadCourses(int departmentId)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
+        //            SqlDataAdapter da = new SqlDataAdapter(
+        //                @"SELECT c.course_id, c.course_name 
+        //          FROM Courses c
+        //          INNER JOIN Course_Department cd ON c.course_id = cd.course_id
+        //          WHERE cd.department_id = @deptId", conn);
+
+        //            da.SelectCommand.Parameters.AddWithValue("@deptId", departmentId);
+        //            DataTable dt = new DataTable();
+        //            da.Fill(dt);
+
+        //            comboCourse.DisplayMember = "course_name";
+        //            comboCourse.ValueMember = "course_id";
+        //            comboCourse.DataSource = dt;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("حدث خطأ أثناء تحميل المواد: " + ex.Message);
+        //    }
+        //}
+
+        private void comboDepartmentOrYearChanged(object sender, EventArgs e)
+        {
+            if (comboDepartment.SelectedValue != null && comboYear4.SelectedItem != null)
+            {
+                int departmentId = Convert.ToInt32(comboDepartment.SelectedValue);
+                int year = Convert.ToInt32(comboYear4.SelectedItem);
+
+                LoadCourses(departmentId, year);
+            }
+        }
+        
+        
+
+        private void LoadCourses(int departmentId, int year)
         {
             try
             {
@@ -112,9 +166,12 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                         @"SELECT c.course_id, c.course_name 
                   FROM Courses c
                   INNER JOIN Course_Department cd ON c.course_id = cd.course_id
-                  WHERE cd.department_id = @deptId", conn);
+                  WHERE cd.department_id = @deptId
+                  AND c.year_number = @year", conn);
 
                     da.SelectCommand.Parameters.AddWithValue("@deptId", departmentId);
+                    da.SelectCommand.Parameters.AddWithValue("@year", year);
+
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
@@ -127,6 +184,9 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 MessageBox.Show("حدث خطأ أثناء تحميل المواد: " + ex.Message);
             }
+            comboDepartment.SelectedIndexChanged += comboDepartmentOrYearChanged;
+            comboYear4.SelectedIndexChanged += comboDepartmentOrYearChanged;
+
         }
 
         private void LoadStudents(int courseId, string examRound)
@@ -209,21 +269,34 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
         private void comboBoxDepartments_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-            if (comboDepartment.SelectedValue != null && int.TryParse(comboDepartment.SelectedValue.ToString(), out int departmentId))
+            if (comboDepartment.SelectedValue != null && comboYear4.SelectedItem != null)
             {
-                LoadCourses(departmentId);
+                int deptId = (int)comboDepartment.SelectedValue;
+                int year = Convert.ToInt32(comboYear4.SelectedItem);
+                LoadCourses(deptId, year);
+            }
+        }
+
+        private void comboYear_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboDepartment.SelectedValue != null && comboYear4.SelectedItem != null)
+            {
+                int deptId = (int)comboDepartment.SelectedValue;
+                int year = Convert.ToInt32(comboYear4.SelectedItem);
+                LoadCourses(deptId, year);
             }
 
 
 
+
         }
-      
 
 
 
-      
 
-            private void button1_Click(object sender, EventArgs e)
+
+
+        private void button1_Click(object sender, EventArgs e)
         {
             try
             {
@@ -455,40 +528,35 @@ WHERE student_id IN (
                             cmdUpdateExamRound.ExecuteNonQuery();
                         }
                     }
-                    else if (selectedRound == "دور ثاني")
+                    else if (selectedRound == "دور ثاني"|| selectedRound == "مرحل")
                     {
 
 
                         string examRoundUpdateQuer = @"
-           WITH CurrentFails AS (
-    SELECT student_id, COUNT(*) AS current_fails
-    FROM Grades
-    WHERE total_grade < 60
-    GROUP BY student_id
+        WITH CurrentYear AS (
+    SELECT MAX(academic_year_start) AS current_year FROM Registrations
 ),
-HistoryFails AS (
-    SELECT student_id, COUNT(*) AS previous_fails
-    FROM FailedHistory
-    WHERE is_resolved = 0
-    GROUP BY student_id
-),
-TotalFails AS (
+CurrentYearFails AS (
     SELECT 
         s.student_id,
-        ISNULL(cf.current_fails, 0) + ISNULL(hf.previous_fails, 0) AS total_fails
+        COUNT(CASE WHEN g.total_grade < 60 THEN 1 END) AS current_year_fails
     FROM Students s
-    LEFT JOIN CurrentFails cf ON s.student_id = cf.student_id
-    LEFT JOIN HistoryFails hf ON s.student_id = hf.student_id
+    INNER JOIN Registrations r ON s.student_id = r.student_id
+    LEFT JOIN Grades g ON r.course_id = g.course_id AND r.student_id = g.student_id
+    CROSS JOIN CurrentYear cy
+    WHERE r.academic_year_start = cy.current_year
+      AND r.status = N'مسجل'
+    GROUP BY s.student_id
 )
 UPDATE s
-SET exam_round = CASE 
-    WHEN tf.total_fails = 0 THEN N'دور أول'
-    WHEN tf.total_fails BETWEEN 1 AND 2 THEN N'مرحل'
-    WHEN tf.total_fails >= 3 THEN N'إعادة سنة'
-    ELSE s.exam_round
+SET exam_round = CASE
+    WHEN cf.current_year_fails >= 3 THEN N'إعادة سنة'
+    WHEN cf.current_year_fails BETWEEN 1 AND 2 THEN N'مرحل'
+    ELSE s.exam_round  -- لا نغير حالة الطالب إذا لم يرسب في أي مادة
 END
 FROM Students s
-INNER JOIN TotalFails tf ON s.student_id = tf.student_id;
+INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;
+
 
 
 
@@ -499,31 +567,7 @@ INNER JOIN TotalFails tf ON s.student_id = tf.student_id;
                         {
                             cmdUpdateExamRound.ExecuteNonQuery();
                         }
-                        string examRoundUpdateQuery = @"
-       INSERT INTO FailedHistory (student_id, course_id, fail_year)
-SELECT 
-    g.student_id,
-    g.course_id,
-    s.current_year
-FROM Grades g
-INNER JOIN Students s ON g.student_id = s.student_id
-WHERE s.exam_round = N'مرحل'
-  AND g.total_grade < 60
-  AND NOT EXISTS (
-      SELECT 1 FROM FailedHistory fh
-      WHERE fh.student_id = g.student_id 
-        AND fh.course_id = g.course_id 
-        AND fh.is_resolved = 0
-  );
-
-
-
-                ";
-
-                        using (SqlCommand cmdUpdateExamRound = new SqlCommand(examRoundUpdateQuery, conn))
-                        {
-                            cmdUpdateExamRound.ExecuteNonQuery();
-                        }
+                     
                     }
                     MessageBox.Show($"✅ تم الحفظ:\n📥 تم الإدخال: {insertedCount}\n✏️ تم التحديث: {updatedCount}\n⏭ تم التخطي: {skippedCount}");
                     LoadStudents(courseId, selectedRound);
@@ -835,20 +879,6 @@ ORDER BY s.university_number, r.year_number, c.course_name;
                                         cmdUpdateRound.ExecuteNonQuery();
                                     }
 
-                                    string updateFailedHistoryQuery = @"
-                            UPDATE FailedHistory
-                            SET is_resolved = 1
-                            WHERE student_id = @studentId 
-                              AND course_id = (
-                                  SELECT course_id FROM Grades WHERE grade_id = @gradeId
-                              ) AND is_resolved = 0";
-
-                                    using (SqlCommand cmdUpdateFailedHistory = new SqlCommand(updateFailedHistoryQuery, conn))
-                                    {
-                                        cmdUpdateFailedHistory.Parameters.AddWithValue("@studentId", studentId);
-                                        cmdUpdateFailedHistory.Parameters.AddWithValue("@gradeId", gradeId);
-                                        cmdUpdateFailedHistory.ExecuteNonQuery();
-                                    }
                                 }
                                 else if (examRound == "دور ثاني" && totalGrade >= 60 && studentId != -1)
                                 {
