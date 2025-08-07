@@ -30,6 +30,8 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label10 = new System.Windows.Forms.Label();
+            this.comboYear4 = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.comboExamRound = new System.Windows.Forms.ComboBox();
             this.button8 = new System.Windows.Forms.Button();
@@ -58,8 +60,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.label5 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.comboYear4 = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).BeginInit();
@@ -90,6 +91,7 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.White;
+            this.tabPage1.Controls.Add(this.label11);
             this.tabPage1.Controls.Add(this.label10);
             this.tabPage1.Controls.Add(this.comboYear4);
             this.tabPage1.Controls.Add(this.label8);
@@ -112,12 +114,34 @@
             this.tabPage1.Text = "إدخال نتائج الإمتحانات";
             this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
             // 
+            // label10
+            // 
+            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label10.AutoSize = true;
+            this.label10.ForeColor = System.Drawing.Color.Black;
+            this.label10.Location = new System.Drawing.Point(293, 91);
+            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(38, 19);
+            this.label10.TabIndex = 11;
+            this.label10.Text = "السنة";
+            // 
+            // comboYear4
+            // 
+            this.comboYear4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboYear4.FormattingEnabled = true;
+            this.comboYear4.Location = new System.Drawing.Point(167, 86);
+            this.comboYear4.Margin = new System.Windows.Forms.Padding(2);
+            this.comboYear4.Name = "comboYear4";
+            this.comboYear4.Size = new System.Drawing.Size(122, 27);
+            this.comboYear4.TabIndex = 10;
+            // 
             // label8
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
             this.label8.ForeColor = System.Drawing.Color.Black;
-            this.label8.Location = new System.Drawing.Point(192, 88);
+            this.label8.Location = new System.Drawing.Point(128, 89);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(36, 19);
@@ -128,7 +152,7 @@
             // 
             this.comboExamRound.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboExamRound.FormattingEnabled = true;
-            this.comboExamRound.Location = new System.Drawing.Point(59, 85);
+            this.comboExamRound.Location = new System.Drawing.Point(6, 85);
             this.comboExamRound.Margin = new System.Windows.Forms.Padding(2);
             this.comboExamRound.Name = "comboExamRound";
             this.comboExamRound.Size = new System.Drawing.Size(122, 27);
@@ -137,12 +161,11 @@
             // 
             // button8
             // 
-            this.button8.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button8.BackColor = System.Drawing.Color.White;
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button8.ForeColor = System.Drawing.Color.White;
             this.button8.Image = global::college_of_health_sciences.Properties.Resources.Carlosjj_Microsoft_Office_2013_Excel_48;
-            this.button8.Location = new System.Drawing.Point(28, 349);
+            this.button8.Location = new System.Drawing.Point(2, 22);
             this.button8.Margin = new System.Windows.Forms.Padding(2);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(131, 59);
@@ -200,7 +223,7 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(375, 88);
+            this.label2.Location = new System.Drawing.Point(458, 90);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(38, 19);
@@ -211,7 +234,7 @@
             // 
             this.comboCourse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboCourse.FormattingEnabled = true;
-            this.comboCourse.Location = new System.Drawing.Point(242, 85);
+            this.comboCourse.Location = new System.Drawing.Point(335, 86);
             this.comboCourse.Margin = new System.Windows.Forms.Padding(2);
             this.comboCourse.Name = "comboCourse";
             this.comboCourse.Size = new System.Drawing.Size(122, 27);
@@ -222,7 +245,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(614, 88);
+            this.label1.Location = new System.Drawing.Point(628, 90);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 19);
@@ -233,10 +256,10 @@
             // 
             this.comboDepartment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboDepartment.FormattingEnabled = true;
-            this.comboDepartment.Location = new System.Drawing.Point(427, 85);
+            this.comboDepartment.Location = new System.Drawing.Point(504, 87);
             this.comboDepartment.Margin = new System.Windows.Forms.Padding(2);
             this.comboDepartment.Name = "comboDepartment";
-            this.comboDepartment.Size = new System.Drawing.Size(176, 27);
+            this.comboDepartment.Size = new System.Drawing.Size(119, 27);
             this.comboDepartment.TabIndex = 0;
             this.comboDepartment.SelectedIndexChanged += new System.EventHandler(this.comboBoxDepartments_SelectedIndexChanged);
             // 
@@ -495,27 +518,15 @@
             this.label5.TabIndex = 7;
             this.label5.Text = "إدارة الرسوب والإعادة";
             // 
-            // label10
+            // label11
             // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label10.AutoSize = true;
-            this.label10.ForeColor = System.Drawing.Color.Black;
-            this.label10.Location = new System.Drawing.Point(375, 48);
-            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(38, 19);
-            this.label10.TabIndex = 11;
-            this.label10.Text = "السنة";
-            // 
-            // comboYear4
-            // 
-            this.comboYear4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboYear4.FormattingEnabled = true;
-            this.comboYear4.Location = new System.Drawing.Point(242, 45);
-            this.comboYear4.Margin = new System.Windows.Forms.Padding(2);
-            this.comboYear4.Name = "comboYear4";
-            this.comboYear4.Size = new System.Drawing.Size(122, 27);
-            this.comboYear4.TabIndex = 10;
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label11.AutoSize = true;
+            this.label11.ForeColor = System.Drawing.Color.Lime;
+            this.label11.Location = new System.Drawing.Point(572, 346);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(0, 19);
+            this.label11.TabIndex = 12;
             // 
             // grads_management
             // 
@@ -574,5 +585,6 @@
         private System.Windows.Forms.ComboBox comboExamRound;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox comboYear4;
+        private System.Windows.Forms.Label label11;
     }
 }
