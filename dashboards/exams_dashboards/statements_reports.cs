@@ -136,7 +136,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             DataRow firstRow = dt.Rows[0];
 
             string courseName = firstRow["اسم المادة"].ToString();
-            string courseId = firstRow["رقم المادة"].ToString();
+            string courseId = firstRow["رمز المادة"].ToString();
             string year = firstRow["السنة الدراسية"].ToString();
             string group = firstRow["رقم المجموعة"].ToString();
 
@@ -307,7 +307,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             string query = @"
 SELECT 
     c.course_name AS 'اسم المادة',
-    c.course_id AS 'رقم المادة',
+    c.course_code AS 'رمز المادة',
     c.year_number AS 'السنة الدراسية',
     cc.group_number AS 'رقم المجموعة',
     i.full_name AS 'اسم الأستاذ',
@@ -352,7 +352,7 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
         {
             pages.Clear();
             var grouped = data.AsEnumerable()
-                .GroupBy(r => r["رقم المادة"].ToString());
+                .GroupBy(r => r["رمز المادة"].ToString());
 
             foreach (var group in grouped)
             {
@@ -444,7 +444,7 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
     s.full_name AS اسم_الطالب,
     s.university_number AS الرقم_الجامعي,
     c.year_number AS السنة,
-    c.course_id AS رقم_المادة,
+    c.course_code AS رمز_المادة,
     c.course_name AS المادة,
     c.units AS الوحدات,
     g.total_grade AS الدرجة
@@ -630,11 +630,12 @@ ORDER BY c.year_number, c.course_name;";
 
             foreach (DataRow row in dt.Rows)
             {
-                string code = row["رقم_المادة"].ToString();
+                string code = row["رمز_المادة"].ToString();
                 string subject = row["المادة"].ToString();
-                int units = Convert.ToInt32(row["الوحدات"]);
-                int grade = Convert.ToInt32(row["الدرجة"]);
-              
+                int units = row["الوحدات"] != DBNull.Value ? Convert.ToInt32(row["الوحدات"]) : 0;
+                int grade = row["الدرجة"] != DBNull.Value ? Convert.ToInt32(row["الدرجة"]) : 0;
+
+
                 int points = grade * units;
                 string result = grade >= 60 ? "ناجح" : "راسب";
                 string note = "";
@@ -666,8 +667,9 @@ ORDER BY c.year_number, c.course_name;";
             {
                 foreach (DataRow row in page.Rows)
                 {
-                    int g = Convert.ToInt32(row["الدرجة"]);
-                    int u = Convert.ToInt32(row["الوحدات"]);
+                    int g = row["الدرجة"] != DBNull.Value ? Convert.ToInt32(row["الدرجة"]) : 0;
+                    int u = row["الوحدات"] != DBNull.Value ? Convert.ToInt32(row["الوحدات"]) : 0;
+
                     totalPoints += g * u;
                     totalUnits += u;
                 }
@@ -810,9 +812,10 @@ ORDER BY c.year_number, c.course_name;";
             foreach (DataRow row in dt.Rows)
             {
                 string subject = row["المادة"].ToString();
-                string code = row["رقم_المادة"].ToString();
-                int grade = Convert.ToInt32(row["الدرجة"]);
-                int units = Convert.ToInt32(row["الوحدات"]);
+                string code = row["رمز_المادة"].ToString();
+                int units = row["الوحدات"] != DBNull.Value ? Convert.ToInt32(row["الوحدات"]) : 0;
+                int grade = row["الدرجة"] != DBNull.Value ? Convert.ToInt32(row["الدرجة"]) : 0;
+
                 int points = grade * units;
                 string result = grade >= 60 ? "ناجح" : "راسب";
                 string note = "";
@@ -844,8 +847,9 @@ ORDER BY c.year_number, c.course_name;";
             {
                 foreach (DataRow row in page.Rows)
                 {
-                    int g = Convert.ToInt32(row["الدرجة"]);
-                    int u = Convert.ToInt32(row["الوحدات"]);
+                    int g = row["الدرجة"] != DBNull.Value ? Convert.ToInt32(row["الدرجة"]) : 0;
+                    int u = row["الوحدات"] != DBNull.Value ? Convert.ToInt32(row["الوحدات"]) : 0;
+
                     totalPoints += g * u;
                     totalUnits += u;
                 }
@@ -945,7 +949,7 @@ ORDER BY c.year_number, c.course_name;";
     s.full_name AS اسم_الطالب,
     s.university_number AS الرقم_الجامعي,
     c.year_number AS السنة,
-    c.course_id AS رقم_المادة,
+    c.course_code AS رمز_المادة,
     c.course_name AS المادة,
     c.units AS الوحدات,
     g.total_grade AS الدرجة
@@ -1090,7 +1094,7 @@ SELECT
     s.full_name AS اسم_الطالب,
     s.university_number AS الرقم_الجامعي,
     c.course_name AS المادة,
-    c.course_id AS رمز_المادة,
+    c.course_code AS رمز_المادة,
     c.units AS الوحدات,
     g.total_grade AS الدرجة,
     d.dep_name AS القسم,
