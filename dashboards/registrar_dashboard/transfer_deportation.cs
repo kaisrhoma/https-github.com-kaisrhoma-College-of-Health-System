@@ -27,6 +27,17 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             datagrid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
 
+        public class DownloadResult
+        {
+            public int StudentId { get; set; }
+            public int RegisteredCourses { get; set; }
+            public List<string> FullCourses { get; set; } = new List<string>();
+
+            public bool HasAnyRegistered => RegisteredCourses > 0;
+            public bool AllCoursesFull => FullCourses.Count > 0 && RegisteredCourses == 0;
+            public bool SomeCoursesFull => FullCourses.Count > 0 && RegisteredCourses > 0;
+        }
+
         private void SearchStudent()
         {
             if (!string.IsNullOrEmpty(textBox1.Text))
@@ -270,6 +281,118 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             dataGridView1.DataSource = null;
         }
 
+        public DownloadResult DownloadForOneStudent(int studentId, int newYear, int departmentId)
+        {
+            DownloadResult result = new DownloadResult { StudentId = studentId };
+
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    SqlCommand checkCmd = new SqlCommand(@"
+                    SELECT COUNT(*) 
+                    FROM Students 
+                    WHERE student_id = @studentId AND department_id = @departmentId", con);
+
+                    checkCmd.Parameters.AddWithValue("@studentId", studentId);
+                    checkCmd.Parameters.AddWithValue("@departmentId", departmentId);
+
+                    int count = (int)checkCmd.ExecuteScalar();
+                    if (count == 0)
+                        return result;
+
+                    SqlCommand coursesCmd = new SqlCommand(@"
+                    SELECT c.course_id, c.course_name
+                    FROM Courses c
+                    JOIN Course_Department cd ON cd.course_id = c.course_id
+                    WHERE c.year_number = @year AND cd.department_id = @dept", con);
+
+                    coursesCmd.Parameters.AddWithValue("@year", newYear);
+                    coursesCmd.Parameters.AddWithValue("@dept", departmentId);
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(coursesCmd);
+                    DataTable courses = new DataTable();
+                    adapter.Fill(courses);
+
+                    foreach (DataRow row in courses.Rows)
+                    {
+                        int courseId = Convert.ToInt32(row["course_id"]);
+                        string courseName = row["course_name"].ToString();
+
+                        SqlCommand getGroupsCmd = new SqlCommand(@"
+                     SELECT cc.id, cc.capacity, cc.group_number
+                     FROM Course_Classroom cc
+                     WHERE cc.course_id = @courseId
+                     ORDER BY cc.group_number", con);
+
+                        getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+                        SqlDataAdapter groupAdapter = new SqlDataAdapter(getGroupsCmd);
+                        DataTable groups = new DataTable();
+                        groupAdapter.Fill(groups);
+
+                        bool registered = false;
+
+                        foreach (DataRow group in groups.Rows)
+                        {
+                            int groupId = Convert.ToInt32(group["id"]);
+                            int capacity = Convert.ToInt32(group["capacity"]);
+
+                            SqlCommand countCmd = new SqlCommand(@"
+                SELECT COUNT(*) 
+                FROM Registrations 
+                WHERE course_classroom_id = @groupId", con);
+                            countCmd.Parameters.AddWithValue("@groupId", groupId);
+
+                            int currentCount = (int)countCmd.ExecuteScalar();
+                            if (currentCount < capacity)
+                            {
+                                int month2;
+                                using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1", con))
+                                {
+                                    month2 = Convert.ToInt32(cmddate.ExecuteScalar());
+                                }
+                                int academicYearStart = DateTime.Now.Month >= month2 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+
+                                SqlCommand insertCmd = new SqlCommand(@"
+                    IF NOT EXISTS (
+                        SELECT 1 FROM Registrations 
+                        WHERE student_id = @studentId AND course_id = @courseId AND academic_year_start = @academicYearStart
+                    )
+                    INSERT INTO Registrations 
+                    (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
+                    VALUES 
+                    (@studentId, @courseId, @year, N'مسجل', @groupId, @academicYearStart)", con);
+
+                                insertCmd.Parameters.AddWithValue("@studentId", studentId);
+                                insertCmd.Parameters.AddWithValue("@courseId", courseId);
+                                insertCmd.Parameters.AddWithValue("@year", newYear);
+                                insertCmd.Parameters.AddWithValue("@groupId", groupId);
+                                insertCmd.Parameters.AddWithValue("@academicYearStart", academicYearStart); 
+                                int affected = insertCmd.ExecuteNonQuery();
+                                if (affected > 0)
+                                {
+                                    result.RegisteredCourses++;
+                                    registered = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!registered)
+                        {
+                            result.FullCourses.Add(courseName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error : " + ex.Message);
+            }
+
+            return result;
+        }
 
         public void downloadForOneStudents(int st_update_id,int newYear,int dep_id)
         {
@@ -423,6 +546,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         private void button6_Click(object sender, EventArgs e)
         {
+            label1.Visible = true;
             progressBar1.Visible = true;
             progressBar1.Style = ProgressBarStyle.Marquee;
             button6.Enabled = false;
@@ -443,6 +567,10 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                     DataTable students = new DataTable();
                     adapter.Fill(students);
+                    int promoted = 0;
+                    int failedDownload = 0;
+                    int partialDownload = 0;
+                    int fullSuccess = 0;
 
                     foreach (DataRow row in students.Rows)
                     {
@@ -450,32 +578,65 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         int currentYear = Convert.ToInt32(row["current_year"]);
                         int departmentId = Convert.ToInt32(row["department_id"]);
 
-                        int newYear;
-                        if (currentYear == 1)
-                            newYear = 2;
-                        else if (currentYear == 2)
-                            newYear = 3;
-                        else if (currentYear == 3)
-                            newYear = 4;
-                        else
-                            newYear = currentYear; // بدون تغيير
+                        int newYear = (currentYear == 1) ? 2 : (currentYear == 2) ? 3 : (currentYear == 3) ? 4 : currentYear;
 
-
-                        // ترقية الطالب في الجدول
-                        SqlCommand updateCmd = new SqlCommand(@"
-                    UPDATE Students
-                    SET current_year = @newYear
-                    WHERE student_id = @studentId", con);
-
+                        // Update student year
+                        SqlCommand updateCmd = new SqlCommand(@"UPDATE Students SET current_year = @newYear WHERE student_id = @studentId", con);
                         updateCmd.Parameters.AddWithValue("@newYear", newYear);
                         updateCmd.Parameters.AddWithValue("@studentId", studentId);
                         updateCmd.ExecuteNonQuery();
 
-                        // ثم تنزيل المواد له
-                        downloadForOneStudents(studentId, newYear, departmentId);
-                    }
+                        // Download courses
+                        var result = DownloadForOneStudent(studentId, newYear, departmentId);
+                        promoted++;
 
-                    MessageBox.Show("تمت ترقية وتنزيل المواد لجميع طلاب الدور الاول بنجاح.");
+                        if (result.AllCoursesFull)
+                            failedDownload++;
+                        else if (result.SomeCoursesFull)
+                            partialDownload++;
+                        else if (result.HasAnyRegistered)
+                            fullSuccess++;
+                    }
+                    MessageBox.Show($@"نتيجة الترقية:
+                                    ✔️ عدد الطلاب الذين تمت ترقيتهم: {promoted}
+                                    ✅ نجاح كامل (تم تسجيل جميع المواد): {fullSuccess}
+                                    ⚠️ نجاح جزئي (تم تسجيل بعض المواد فقط): {partialDownload}
+                                    ❌ فشل في تسجيل أي مادة: {failedDownload}");
+
+
+
+                    //foreach (DataRow row in students.Rows)
+                    //{
+                    //    int studentId = Convert.ToInt32(row["student_id"]);
+                    //    int currentYear = Convert.ToInt32(row["current_year"]);
+                    //    int departmentId = Convert.ToInt32(row["department_id"]);
+
+                    //    int newYear;
+                    //    if (currentYear == 1)
+                    //        newYear = 2;
+                    //    else if (currentYear == 2)
+                    //        newYear = 3;
+                    //    else if (currentYear == 3)
+                    //        newYear = 4;
+                    //    else
+                    //        newYear = currentYear; // بدون تغيير
+
+
+                    //    // ترقية الطالب في الجدول
+                    //    SqlCommand updateCmd = new SqlCommand(@"
+                    //UPDATE Students
+                    //SET current_year = @newYear
+                    //WHERE student_id = @studentId", con);
+
+                    //    updateCmd.Parameters.AddWithValue("@newYear", newYear);
+                    //    updateCmd.Parameters.AddWithValue("@studentId", studentId);
+                    //    updateCmd.ExecuteNonQuery();
+
+                    //    // ثم تنزيل المواد له
+                    //    downloadForOneStudents(studentId, newYear, departmentId);
+                    //}
+
+                    //MessageBox.Show("تمت ترقية وتنزيل المواد لجميع طلاب الدور الاول بنجاح.");
                 }
             }
             catch (Exception ex)
@@ -674,6 +835,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
             progressBar1.Visible = false;
             button6.Enabled = true;
+            label1.Visible = false;
         }
     }
 }
