@@ -30,6 +30,7 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button9 = new System.Windows.Forms.Button();
             this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.comboYear4 = new System.Windows.Forms.ComboBox();
@@ -61,7 +62,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.label5 = new System.Windows.Forms.Label();
-            this.button9 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).BeginInit();
@@ -116,6 +116,21 @@
             this.tabPage1.Text = "إدخال نتائج الإمتحانات";
             this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
             // 
+            // button9
+            // 
+            this.button9.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.button9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.button9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button9.ForeColor = System.Drawing.SystemColors.Window;
+            this.button9.Location = new System.Drawing.Point(196, 362);
+            this.button9.Margin = new System.Windows.Forms.Padding(2);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(131, 34);
+            this.button9.TabIndex = 13;
+            this.button9.Text = "احتساب";
+            this.button9.UseVisualStyleBackColor = false;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
             // label11
             // 
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -147,6 +162,7 @@
             this.comboYear4.Name = "comboYear4";
             this.comboYear4.Size = new System.Drawing.Size(122, 27);
             this.comboYear4.TabIndex = 10;
+            this.comboYear4.SelectedIndexChanged += new System.EventHandler(this.comboYear4_SelectedIndexChanged);
             // 
             // label8
             // 
@@ -252,6 +268,7 @@
             this.comboCourse.Size = new System.Drawing.Size(122, 27);
             this.comboCourse.TabIndex = 2;
             this.comboCourse.SelectedIndexChanged += new System.EventHandler(this.comboBoxCourse_SelectedIndexChanged);
+            this.comboCourse.CursorChanged += new System.EventHandler(this.comboCourse_CursorChanged);
             // 
             // label1
             // 
@@ -529,21 +546,6 @@
             this.label5.Size = new System.Drawing.Size(186, 26);
             this.label5.TabIndex = 7;
             this.label5.Text = "إدارة الرسوب والإعادة";
-            // 
-            // button9
-            // 
-            this.button9.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.button9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button9.ForeColor = System.Drawing.SystemColors.Window;
-            this.button9.Location = new System.Drawing.Point(196, 362);
-            this.button9.Margin = new System.Windows.Forms.Padding(2);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(131, 34);
-            this.button9.TabIndex = 13;
-            this.button9.Text = "احتساب";
-            this.button9.UseVisualStyleBackColor = false;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // grads_management
             // 

@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Bibliography;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -43,6 +44,9 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 printDocument1.PrintPage += printDocument1_PrintPage;
                 comboBox_Year.SelectedIndex = 0;
                 dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                comboDepartment.SelectedIndexChanged += comboDepartmentOrYearChanged;
+                comboYear4.SelectedIndexChanged += comboDepartmentOrYearChanged;
+                LoadDepartments();
 
                 comboYear4.Items.Clear();
                 comboYear4.Items.Add(1);
@@ -107,55 +111,55 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 LoadStudents(selectedCourseId, selectedRound);
             }
-            //else
-            //{
-            //    MessageBox.Show("الرجاء اختيار القسم و مادة قبل تحميل الطلاب.");
-            //}
+            else
+            {
+                MessageBox.Show("الرجاء اختيار القسم و مادة قبل تحميل الطلاب.");
+            }
 
-            //int selectedCourseId = (int)comboCourse.SelectedValue;
-            //LoadStudents(selectedCourseId, selectedRound);
+        
         }
-        //private void LoadCourses(int departmentId)
-        //{
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connectionString))
-        //        {
-        //            conn.Open();
-        //            SqlDataAdapter da = new SqlDataAdapter(
-        //                @"SELECT c.course_id, c.course_name 
-        //          FROM Courses c
-        //          INNER JOIN Course_Department cd ON c.course_id = cd.course_id
-        //          WHERE cd.department_id = @deptId", conn);
+      
+        private void comboCourse_CursorChanged(object sender, EventArgs e)
+        {
+          
+            
+        }
 
-        //            da.SelectCommand.Parameters.AddWithValue("@deptId", departmentId);
-        //            DataTable dt = new DataTable();
-        //            da.Fill(dt);
+        private void comboYear4_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
-        //            comboCourse.DisplayMember = "course_name";
-        //            comboCourse.ValueMember = "course_id";
-        //            comboCourse.DataSource = dt;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("حدث خطأ أثناء تحميل المواد: " + ex.Message);
-        //    }
-        //}
+            if (comboDepartment.SelectedValue != null && comboYear4.SelectedItem != null &&
+      int.TryParse(comboDepartment.SelectedValue.ToString(), out int deptId) &&
+      int.TryParse(comboYear4.SelectedItem.ToString(), out int year))
+            {
+                LoadCourses(deptId, year);
+            }
+            string selectedRound = null;
+
+            if (comboExamRound.SelectedIndex >= 0) // 0 تعني "كل الأدوار"
+            {
+                selectedRound = comboExamRound.SelectedItem.ToString();
+            }
+
+            if (comboCourse.SelectedValue != null && int.TryParse(comboCourse.SelectedValue.ToString(), out int selectedCourseId))
+            {
+                LoadStudents(selectedCourseId, selectedRound);
+            }
+        }
 
         private void comboDepartmentOrYearChanged(object sender, EventArgs e)
         {
-            if (comboDepartment.SelectedValue != null && comboYear4.SelectedItem != null)
+            if (comboDepartment.SelectedValue != null && comboYear4.SelectedItem != null &&
+         int.TryParse(comboDepartment.SelectedValue.ToString(), out int deptId) &&
+         int.TryParse(comboYear4.SelectedItem.ToString(), out int year))
             {
-                int departmentId = Convert.ToInt32(comboDepartment.SelectedValue);
-                int year = Convert.ToInt32(comboYear4.SelectedItem);
-
-                LoadCourses(departmentId, year);
+                LoadCourses(deptId, year);
             }
         }
-        
-        
 
+
+
+   
         private void LoadCourses(int departmentId, int year)
         {
             try
@@ -178,17 +182,26 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                     comboCourse.DisplayMember = "course_name";
                     comboCourse.ValueMember = "course_id";
-                    comboCourse.DataSource = dt;
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        comboCourse.DataSource = dt;
+                    }
+                    else
+                    {
+                        comboCourse.DataSource = null;
+                        comboCourse.Items.Clear();
+                        comboCourse.Items.Add("لا توجد مواد");
+                        comboCourse.SelectedIndex = 0;
+                    }
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("حدث خطأ أثناء تحميل المواد: " + ex.Message);
             }
-            comboDepartment.SelectedIndexChanged += comboDepartmentOrYearChanged;
-            comboYear4.SelectedIndexChanged += comboDepartmentOrYearChanged;
-
         }
+
 
         private void LoadStudents(int courseId, string examRound)
         {
@@ -213,6 +226,7 @@ LEFT JOIN Grades g ON s.student_id = g.student_id AND g.course_id = r.course_id
 WHERE r.course_id = @courseId
   AND r.status = N'مسجل'
 AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
+
 ";
 
                     if (!string.IsNullOrEmpty(examRound))
@@ -1660,6 +1674,7 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;
             }
         }
 
+     
     }
 
 }

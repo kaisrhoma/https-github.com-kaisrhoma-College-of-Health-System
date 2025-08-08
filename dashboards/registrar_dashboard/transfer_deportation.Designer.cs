@@ -92,6 +92,7 @@
             this.label1.Size = new System.Drawing.Size(121, 23);
             this.label1.TabIndex = 30;
             this.label1.Text = "جار الترحيل ......";
+            this.label1.Visible = false;
             // 
             // progressBar1
             // 
@@ -101,6 +102,7 @@
             this.progressBar1.Size = new System.Drawing.Size(441, 32);
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar1.TabIndex = 19;
+            this.progressBar1.Visible = false;
             // 
             // button6
             // 
