@@ -280,7 +280,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                                    c.course_name AS اسم_المادة,
                                    c.units AS الوحدات,
 
-                                   CASE cc.lecture_date
+                                   CASE cc.lecture_day
                                         WHEN 1 THEN N'الأحد'
                                         WHEN 2 THEN N'الإثنين'
                                         WHEN 3 THEN N'الثلاثاء'

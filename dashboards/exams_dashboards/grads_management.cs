@@ -1241,7 +1241,7 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                 MessageBox.Show("لا توجد بيانات للطباعة.");
                 return;
             }
-
+            
             PreparePagesByCourse(dt);
 
             if (pages == null || pages.Count == 0)
@@ -1249,9 +1249,6 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                 MessageBox.Show("لا توجد صفحات للطباعة.");
                 return;
             }
-
-
-
 
             //printDocument1.PrintPage -= printDocument1_PrintPage;
 
