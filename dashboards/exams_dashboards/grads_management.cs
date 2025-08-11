@@ -1572,8 +1572,8 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
 UPDATE s
 SET exam_round = CASE 
     WHEN fc.fail_count = 0 THEN N'دور أول'
-    WHEN fc.fail_count BETWEEN 1 AND 2 THEN N'دور ثاني'
-    WHEN fc.fail_count >= 3 THEN N'إعادة سنة'
+    WHEN fc.fail_count >= 1 THEN N'دور ثاني'
+   
     ELSE s.exam_round
 END
 FROM Students s
@@ -1599,6 +1599,7 @@ INNER JOIN (
 ) AS fc ON s.student_id = fc.student_id;
 
 -- تصفير درجات الطلاب الذين تحولوا إلى دور ثاني
+-- تصفير درجات الطلاب فقط للمواد الراسبة
 UPDATE g
 SET g.work_grade = NULL,
     g.final_grade = NULL,
@@ -1614,7 +1615,8 @@ WHERE s.exam_round = N'دور ثاني'
   AND c.year_number = @year
   AND r.academic_year_start = @academicYearStart
   AND r.status = N'مسجل'
-  AND g.total_grade IS NOT NULL;
+  AND g.total_grade < 60;  -- فقط المواد التي رسب فيها
+
 ";
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {
