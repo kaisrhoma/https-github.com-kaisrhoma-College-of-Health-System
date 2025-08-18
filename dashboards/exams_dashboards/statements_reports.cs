@@ -4,11 +4,14 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+
 
 
 namespace college_of_health_sciences.dashboards.exams_dashboards
@@ -99,65 +102,107 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             }
 
             DataTable dt = pages[currentPageIndex];
-            string departmentName = dt.ExtendedProperties["Department"].ToString();
-            string yearName = dt.ExtendedProperties["Year"].ToString();
 
-            Font headerFont = new Font("Arial", 16, FontStyle.Bold);
+            string departmentName = dt.ExtendedProperties.Contains("Department") ? dt.ExtendedProperties["Department"]?.ToString() : string.Empty;
+            string yearName = dt.ExtendedProperties.Contains("Year") ? dt.ExtendedProperties["Year"]?.ToString() : string.Empty;
+
+            Font headerFont = new Font("Arial", 18, FontStyle.Bold);
             Font tableHeaderFont = new Font("Arial", 12, FontStyle.Bold);
-            Font tableFont = new Font("Arial", 11);
+            Font tableFont = new Font("Arial", 10);
             Brush brush = Brushes.Black;
 
-            int x = e.MarginBounds.Right; // نبدأ من اليمين
+            int xRight = e.MarginBounds.Right; // بداية من اليمين
             int y = 50;
-            int rowHeight = 30;
+            int defaultRowHeight = 28;
 
             // عنوان الصفحة
             e.Graphics.DrawString("كلية العلوم الصحية", headerFont, brush,
-                e.MarginBounds.Width / 2 + e.MarginBounds.Left, y,
+                e.MarginBounds.Left + e.MarginBounds.Width / 2, y,
                 new StringFormat { Alignment = StringAlignment.Center });
-            y += 40;
-            e.Graphics.DrawString($"القسم: {departmentName}", tableFont, brush, e.MarginBounds.Width / 2 + e.MarginBounds.Left, y,
+            y += 30;
+
+            e.Graphics.DrawString($"القسم: {departmentName}", headerFont, brush,
+                e.MarginBounds.Left + e.MarginBounds.Width / 2, y,
                 new StringFormat { Alignment = StringAlignment.Center });
             y += 25;
-            e.Graphics.DrawString($"السنة الدراسية: {yearName}", tableFont, brush, e.MarginBounds.Width / 2 + e.MarginBounds.Left, y,
+
+            e.Graphics.DrawString($"السنة الدراسية: {yearName}", headerFont, brush,
+                e.MarginBounds.Left + e.MarginBounds.Width / 2, y,
                 new StringFormat { Alignment = StringAlignment.Center });
+            y += 30;
+            e.Graphics.DrawString($"التاريخ: {DateTime.Now.ToString("yyyy/MM/dd")}", tableHeaderFont, brush,
+          e.MarginBounds.Left + e.MarginBounds.Width / 8, y,
+          new StringFormat { Alignment = StringAlignment.Center });
             y += 40;
 
             // تحديد عرض الأعمدة
+            int fixedColCount = 4; // رقم، اسم الطالب، الرقم الجامعي، النتيجة
             int[] colWidths = new int[dt.Columns.Count];
-            colWidths[0] = 40;  // رقم
-            colWidths[1] = 120; // الرقم الجامعي
-            colWidths[2] = 200; // اسم الطالب
-            int remainingWidth = e.MarginBounds.Width - (colWidths[0] + colWidths[1] + colWidths[2] + 100);
-            int subjectColWidth = remainingWidth / (dt.Columns.Count - 4);
-            for (int i = 3; i < dt.Columns.Count - 1; i++)
-                colWidths[i] = subjectColWidth;
+
+            colWidths[0] = 40;   // رقم
+            colWidths[1] = 180;  // اسم الطالب
+            colWidths[2] = 120;  // الرقم الجامعي
             colWidths[dt.Columns.Count - 1] = 100; // النتيجة
 
-            // طباعة رأس الجدول
-            int colX = x;
+            int availableWidth = e.MarginBounds.Width - (colWidths[0] + colWidths[1] + colWidths[2] + colWidths[dt.Columns.Count - 1]);
+            int subjectsCount = dt.Columns.Count - fixedColCount;
+            int subjectColWidth = subjectsCount > 0 ? Math.Max(30, availableWidth / subjectsCount) : 0; // أقل عرض 30 px
+
+            for (int i = 3; i < dt.Columns.Count - 1; i++)
+                colWidths[i] = subjectColWidth;
+
+            // حساب ارتفاع رأس الجدول بسبب تدوير أسماء المواد
+            int headerRowHeight = defaultRowHeight;
+            for (int i = 3; i < dt.Columns.Count - 1; i++)
+            {
+                SizeF size = e.Graphics.MeasureString(dt.Columns[i].ColumnName, tableHeaderFont);
+                headerRowHeight = Math.Max(headerRowHeight, (int)Math.Ceiling(size.Width) + 10);
+            }
+
+            // رسم رأس الجدول
+            int colX = xRight;
             for (int i = 0; i < dt.Columns.Count; i++)
             {
                 colX -= colWidths[i];
-                Rectangle rect = new Rectangle(colX, y, colWidths[i], rowHeight);
+                Rectangle rect = new Rectangle(colX, y, colWidths[i], headerRowHeight);
                 e.Graphics.FillRectangle(Brushes.LightGray, rect);
                 e.Graphics.DrawRectangle(Pens.Black, rect);
-                e.Graphics.DrawString(dt.Columns[i].ColumnName, tableHeaderFont, brush, rect,
-                    new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
-            }
-            y += rowHeight;
 
-            // صفوف الجدول
+                StringFormat formatCenter = new StringFormat
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center
+                };
+
+                if (i >= 3 && i < dt.Columns.Count - 1)
+                {
+                    GraphicsState state = e.Graphics.Save();
+                    e.Graphics.TranslateTransform(rect.X + rect.Width / 2f, rect.Y + rect.Height / 2f);
+                    e.Graphics.RotateTransform(-90);
+                    Rectangle textRect = new Rectangle(-rect.Height / 2, -rect.Width / 2, rect.Height, rect.Width);
+                    e.Graphics.DrawString(dt.Columns[i].ColumnName, tableHeaderFont, brush, textRect, formatCenter);
+                    e.Graphics.Restore(state);
+                }
+                else
+                {
+                    e.Graphics.DrawString(dt.Columns[i].ColumnName, tableHeaderFont, brush, rect, formatCenter);
+                }
+            }
+            y += headerRowHeight;
+
+            // صفوف الطلاب
             bool isAlternate = false;
             while (currentRowIndex < dt.Rows.Count)
             {
+                int rowHeight = defaultRowHeight;
+
                 if (y + rowHeight > e.MarginBounds.Bottom)
                 {
                     e.HasMorePages = true;
                     return;
                 }
 
-                colX = x;
+                colX = xRight;
                 Brush rowBackBrush = isAlternate ? new SolidBrush(Color.FromArgb(235, 241, 255)) : Brushes.White;
                 isAlternate = !isAlternate;
 
@@ -170,14 +215,14 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                     StringFormat format = new StringFormat
                     {
-                        LineAlignment = StringAlignment.Center,
-                        Alignment = StringAlignment.Center
+                        Alignment = StringAlignment.Center,
+                        LineAlignment = StringAlignment.Center
                     };
 
-                    if (i == 2) // اسم الطالب محاذاة يمين
-                        format.Alignment = StringAlignment.Near;
+                    if (i == 1) format.Alignment = StringAlignment.Center ; // اسم الطالب
 
-                    e.Graphics.DrawString(dt.Rows[currentRowIndex][i].ToString(), tableFont, brush, rect, format);
+                    string cellText = dt.Rows[currentRowIndex][i]?.ToString() ?? "-";
+                    e.Graphics.DrawString(cellText, tableFont, brush, rect, format);
                 }
 
                 y += rowHeight;
@@ -188,6 +233,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             currentPageIndex++;
             e.HasMorePages = currentPageIndex < pages.Count;
         }
+
 
 
 
