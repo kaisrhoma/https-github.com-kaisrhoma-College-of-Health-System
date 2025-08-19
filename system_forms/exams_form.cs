@@ -66,5 +66,13 @@ namespace college_of_health_sciences.system_forms
             ehome.Dock = DockStyle.Fill;
             panel4.Controls.Add(ehome);
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            panel4.Controls.Clear();
+            departments_management depman = new departments_management();
+            depman.Dock = DockStyle.Fill;
+            panel4.Controls.Add(depman);
+        }
     }
 }
