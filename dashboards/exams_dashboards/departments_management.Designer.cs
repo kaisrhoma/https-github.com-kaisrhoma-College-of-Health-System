@@ -33,19 +33,19 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBoxHead2 = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label11 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.txtDeptName2 = new System.Windows.Forms.TextBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button5 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label10 = new System.Windows.Forms.Label();
+            this.lblMessage = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboBoxHead = new System.Windows.Forms.ComboBox();
             this.button3 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.txtDeptName = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -137,20 +137,20 @@
             this.button22 = new System.Windows.Forms.Button();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.label46 = new System.Windows.Forms.Label();
-            this.comboBox14 = new System.Windows.Forms.ComboBox();
-            this.comboBox13 = new System.Windows.Forms.ComboBox();
+            this.comboBoxType = new System.Windows.Forms.ComboBox();
+            this.comboBoxYear = new System.Windows.Forms.ComboBox();
             this.label45 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
-            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownPractical = new System.Windows.Forms.NumericUpDown();
             this.label43 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.numericUpDownUnits = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownTheory = new System.Windows.Forms.NumericUpDown();
+            this.txtCourseName = new System.Windows.Forms.TextBox();
             this.label39 = new System.Windows.Forms.Label();
             this.button23 = new System.Windows.Forms.Button();
             this.label40 = new System.Windows.Forms.Label();
-            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.txtCourseCode = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
@@ -180,9 +180,9 @@
             this.groupBox11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView7)).BeginInit();
             this.groupBox12.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPractical)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnits)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTheory)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -229,10 +229,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.comboBox1);
+            this.groupBox2.Controls.Add(this.comboBoxHead2);
             this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.label11);
-            this.groupBox2.Controls.Add(this.textBox2);
+            this.groupBox2.Controls.Add(this.txtDeptName2);
             this.groupBox2.Controls.Add(this.dataGridView1);
             this.groupBox2.Controls.Add(this.button5);
             this.groupBox2.Location = new System.Drawing.Point(29, 193);
@@ -257,6 +257,7 @@
             this.button2.TabIndex = 37;
             this.button2.Text = "تحديث القسم";
             this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label1
             // 
@@ -269,15 +270,15 @@
             this.label1.TabIndex = 36;
             this.label1.Text = "رئيس القسم";
             // 
-            // comboBox1
+            // comboBoxHead2
             // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(155, 34);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(167, 27);
-            this.comboBox1.TabIndex = 35;
+            this.comboBoxHead2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxHead2.FormattingEnabled = true;
+            this.comboBoxHead2.Location = new System.Drawing.Point(155, 34);
+            this.comboBoxHead2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboBoxHead2.Name = "comboBoxHead2";
+            this.comboBoxHead2.Size = new System.Drawing.Size(167, 27);
+            this.comboBoxHead2.TabIndex = 35;
             // 
             // button1
             // 
@@ -292,6 +293,7 @@
             this.button1.TabIndex = 34;
             this.button1.Text = "حذف القسم";
             this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label11
             // 
@@ -305,14 +307,14 @@
             this.label11.TabIndex = 32;
             this.label11.Text = "إسم القسم";
             // 
-            // textBox2
+            // txtDeptName2
             // 
-            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(402, 34);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(138, 26);
-            this.textBox2.TabIndex = 33;
+            this.txtDeptName2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDeptName2.Location = new System.Drawing.Point(402, 34);
+            this.txtDeptName2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtDeptName2.Name = "txtDeptName2";
+            this.txtDeptName2.Size = new System.Drawing.Size(138, 26);
+            this.txtDeptName2.TabIndex = 33;
             // 
             // dataGridView1
             // 
@@ -328,6 +330,7 @@
             this.dataGridView1.RowTemplate.Height = 24;
             this.dataGridView1.Size = new System.Drawing.Size(586, 82);
             this.dataGridView1.TabIndex = 26;
+            this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             // 
             // button5
             // 
@@ -342,17 +345,18 @@
             this.button5.TabIndex = 27;
             this.button5.Text = "عرض جميع الاقسام";
             this.button5.UseVisualStyleBackColor = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.label10);
+            this.groupBox1.Controls.Add(this.lblMessage);
             this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.comboBox2);
+            this.groupBox1.Controls.Add(this.comboBoxHead);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.txtDeptName);
             this.groupBox1.Location = new System.Drawing.Point(29, 61);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox1.Name = "groupBox1";
@@ -362,20 +366,18 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "إضافة قسم";
             // 
-            // label10
+            // lblMessage
             // 
-            this.label10.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.ForeColor = System.Drawing.Color.Red;
-            this.label10.Location = new System.Drawing.Point(263, 86);
-            this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(110, 19);
-            this.label10.TabIndex = 32;
-            this.label10.Text = "القسم موجود مسبقا !";
-            this.label10.Visible = false;
-            this.label10.Click += new System.EventHandler(this.label10_Click);
+            this.lblMessage.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.lblMessage.AutoSize = true;
+            this.lblMessage.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMessage.ForeColor = System.Drawing.Color.Red;
+            this.lblMessage.Location = new System.Drawing.Point(311, 86);
+            this.lblMessage.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblMessage.Name = "lblMessage";
+            this.lblMessage.Size = new System.Drawing.Size(0, 19);
+            this.lblMessage.TabIndex = 32;
+            this.lblMessage.Click += new System.EventHandler(this.label10_Click);
             // 
             // label8
             // 
@@ -388,15 +390,15 @@
             this.label8.TabIndex = 31;
             this.label8.Text = "رئيس القسم";
             // 
-            // comboBox2
+            // comboBoxHead
             // 
-            this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(134, 38);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(178, 27);
-            this.comboBox2.TabIndex = 30;
+            this.comboBoxHead.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxHead.FormattingEnabled = true;
+            this.comboBoxHead.Location = new System.Drawing.Point(134, 38);
+            this.comboBoxHead.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboBoxHead.Name = "comboBoxHead";
+            this.comboBoxHead.Size = new System.Drawing.Size(178, 27);
+            this.comboBoxHead.TabIndex = 30;
             // 
             // button3
             // 
@@ -411,6 +413,7 @@
             this.button3.TabIndex = 29;
             this.button3.Text = "اضافة";
             this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label2
             // 
@@ -424,14 +427,14 @@
             this.label2.TabIndex = 25;
             this.label2.Text = "إسم القسم";
             // 
-            // textBox1
+            // txtDeptName
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(410, 38);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(138, 26);
-            this.textBox1.TabIndex = 28;
+            this.txtDeptName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDeptName.Location = new System.Drawing.Point(410, 38);
+            this.txtDeptName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtDeptName.Name = "txtDeptName";
+            this.txtDeptName.Size = new System.Drawing.Size(138, 26);
+            this.txtDeptName.TabIndex = 28;
             // 
             // label5
             // 
@@ -1547,6 +1550,7 @@
             this.button20.TabIndex = 37;
             this.button20.Text = "تحديث مادة";
             this.button20.UseVisualStyleBackColor = false;
+            this.button20.Click += new System.EventHandler(this.button20_Click);
             // 
             // button21
             // 
@@ -1561,6 +1565,7 @@
             this.button21.TabIndex = 34;
             this.button21.Text = "حذف مادة";
             this.button21.UseVisualStyleBackColor = false;
+            this.button21.Click += new System.EventHandler(this.button21_Click);
             // 
             // label37
             // 
@@ -1582,6 +1587,7 @@
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(138, 26);
             this.textBox6.TabIndex = 33;
+            this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
             // dataGridView7
             // 
@@ -1597,6 +1603,7 @@
             this.dataGridView7.RowTemplate.Height = 24;
             this.dataGridView7.Size = new System.Drawing.Size(586, 45);
             this.dataGridView7.TabIndex = 26;
+            this.dataGridView7.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView7_CellClick);
             // 
             // button22
             // 
@@ -1611,26 +1618,27 @@
             this.button22.TabIndex = 27;
             this.button22.Text = "عرض جميع المواد";
             this.button22.UseVisualStyleBackColor = false;
+            this.button22.Click += new System.EventHandler(this.button22_Click);
             // 
             // groupBox12
             // 
             this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox12.Controls.Add(this.label46);
-            this.groupBox12.Controls.Add(this.comboBox14);
-            this.groupBox12.Controls.Add(this.comboBox13);
+            this.groupBox12.Controls.Add(this.comboBoxType);
+            this.groupBox12.Controls.Add(this.comboBoxYear);
             this.groupBox12.Controls.Add(this.label45);
             this.groupBox12.Controls.Add(this.label44);
-            this.groupBox12.Controls.Add(this.numericUpDown4);
+            this.groupBox12.Controls.Add(this.numericUpDownPractical);
             this.groupBox12.Controls.Add(this.label43);
             this.groupBox12.Controls.Add(this.label15);
-            this.groupBox12.Controls.Add(this.numericUpDown3);
-            this.groupBox12.Controls.Add(this.numericUpDown2);
-            this.groupBox12.Controls.Add(this.textBox10);
+            this.groupBox12.Controls.Add(this.numericUpDownUnits);
+            this.groupBox12.Controls.Add(this.numericUpDownTheory);
+            this.groupBox12.Controls.Add(this.txtCourseName);
             this.groupBox12.Controls.Add(this.label39);
             this.groupBox12.Controls.Add(this.button23);
             this.groupBox12.Controls.Add(this.label40);
-            this.groupBox12.Controls.Add(this.textBox9);
+            this.groupBox12.Controls.Add(this.txtCourseCode);
             this.groupBox12.Location = new System.Drawing.Point(29, 58);
             this.groupBox12.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox12.Name = "groupBox12";
@@ -1651,25 +1659,25 @@
             this.label46.TabIndex = 43;
             this.label46.Text = "النوع";
             // 
-            // comboBox14
+            // comboBoxType
             // 
-            this.comboBox14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox14.FormattingEnabled = true;
-            this.comboBox14.Location = new System.Drawing.Point(16, 76);
-            this.comboBox14.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.comboBox14.Name = "comboBox14";
-            this.comboBox14.Size = new System.Drawing.Size(168, 27);
-            this.comboBox14.TabIndex = 42;
+            this.comboBoxType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxType.FormattingEnabled = true;
+            this.comboBoxType.Location = new System.Drawing.Point(16, 76);
+            this.comboBoxType.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboBoxType.Name = "comboBoxType";
+            this.comboBoxType.Size = new System.Drawing.Size(168, 27);
+            this.comboBoxType.TabIndex = 42;
             // 
-            // comboBox13
+            // comboBoxYear
             // 
-            this.comboBox13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox13.FormattingEnabled = true;
-            this.comboBox13.Location = new System.Drawing.Point(16, 38);
-            this.comboBox13.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.comboBox13.Name = "comboBox13";
-            this.comboBox13.Size = new System.Drawing.Size(168, 27);
-            this.comboBox13.TabIndex = 41;
+            this.comboBoxYear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxYear.FormattingEnabled = true;
+            this.comboBoxYear.Location = new System.Drawing.Point(16, 38);
+            this.comboBoxYear.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboBoxYear.Name = "comboBoxYear";
+            this.comboBoxYear.Size = new System.Drawing.Size(168, 27);
+            this.comboBoxYear.TabIndex = 41;
             // 
             // label45
             // 
@@ -1693,14 +1701,14 @@
             this.label44.TabIndex = 39;
             this.label44.Text = "السنة";
             // 
-            // numericUpDown4
+            // numericUpDownPractical
             // 
-            this.numericUpDown4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDown4.Location = new System.Drawing.Point(247, 71);
-            this.numericUpDown4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.numericUpDown4.Name = "numericUpDown4";
-            this.numericUpDown4.Size = new System.Drawing.Size(58, 26);
-            this.numericUpDown4.TabIndex = 38;
+            this.numericUpDownPractical.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownPractical.Location = new System.Drawing.Point(247, 71);
+            this.numericUpDownPractical.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.numericUpDownPractical.Name = "numericUpDownPractical";
+            this.numericUpDownPractical.Size = new System.Drawing.Size(58, 26);
+            this.numericUpDownPractical.TabIndex = 38;
             // 
             // label43
             // 
@@ -1724,32 +1732,32 @@
             this.label15.TabIndex = 36;
             this.label15.Text = "الساعات النظرية";
             // 
-            // numericUpDown3
+            // numericUpDownUnits
             // 
-            this.numericUpDown3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDown3.Location = new System.Drawing.Point(486, 103);
-            this.numericUpDown3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(58, 26);
-            this.numericUpDown3.TabIndex = 35;
+            this.numericUpDownUnits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownUnits.Location = new System.Drawing.Point(486, 103);
+            this.numericUpDownUnits.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.numericUpDownUnits.Name = "numericUpDownUnits";
+            this.numericUpDownUnits.Size = new System.Drawing.Size(58, 26);
+            this.numericUpDownUnits.TabIndex = 35;
             // 
-            // numericUpDown2
+            // numericUpDownTheory
             // 
-            this.numericUpDown2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDown2.Location = new System.Drawing.Point(247, 40);
-            this.numericUpDown2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(58, 26);
-            this.numericUpDown2.TabIndex = 34;
+            this.numericUpDownTheory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDownTheory.Location = new System.Drawing.Point(247, 40);
+            this.numericUpDownTheory.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.numericUpDownTheory.Name = "numericUpDownTheory";
+            this.numericUpDownTheory.Size = new System.Drawing.Size(58, 26);
+            this.numericUpDownTheory.TabIndex = 34;
             // 
-            // textBox10
+            // txtCourseName
             // 
-            this.textBox10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox10.Location = new System.Drawing.Point(410, 70);
-            this.textBox10.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(138, 26);
-            this.textBox10.TabIndex = 33;
+            this.txtCourseName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCourseName.Location = new System.Drawing.Point(410, 70);
+            this.txtCourseName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtCourseName.Name = "txtCourseName";
+            this.txtCourseName.Size = new System.Drawing.Size(138, 26);
+            this.txtCourseName.TabIndex = 33;
             // 
             // label39
             // 
@@ -1775,6 +1783,7 @@
             this.button23.TabIndex = 29;
             this.button23.Text = "اضافة";
             this.button23.UseVisualStyleBackColor = false;
+            this.button23.Click += new System.EventHandler(this.button23_Click);
             // 
             // label40
             // 
@@ -1788,14 +1797,14 @@
             this.label40.TabIndex = 25;
             this.label40.Text = "إسم المادة";
             // 
-            // textBox9
+            // txtCourseCode
             // 
-            this.textBox9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox9.Location = new System.Drawing.Point(410, 38);
-            this.textBox9.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(138, 26);
-            this.textBox9.TabIndex = 28;
+            this.txtCourseCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCourseCode.Location = new System.Drawing.Point(410, 38);
+            this.txtCourseCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtCourseCode.Name = "txtCourseCode";
+            this.txtCourseCode.Size = new System.Drawing.Size(138, 26);
+            this.txtCourseCode.TabIndex = 28;
             // 
             // label41
             // 
@@ -1873,9 +1882,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView7)).EndInit();
             this.groupBox12.ResumeLayout(false);
             this.groupBox12.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPractical)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUnits)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTheory)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1887,11 +1896,11 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox comboBoxHead;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtDeptName;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label3;
@@ -1903,13 +1912,13 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label lblMessage;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBoxHead2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txtDeptName2;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button6;
@@ -1990,22 +1999,22 @@
         private System.Windows.Forms.DataGridView dataGridView7;
         private System.Windows.Forms.Button button22;
         private System.Windows.Forms.GroupBox groupBox12;
-        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.TextBox txtCourseName;
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.Button button23;
         private System.Windows.Forms.Label label40;
-        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.TextBox txtCourseCode;
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label label42;
         private System.Windows.Forms.Label label44;
-        private System.Windows.Forms.NumericUpDown numericUpDown4;
+        private System.Windows.Forms.NumericUpDown numericUpDownPractical;
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.NumericUpDown numericUpDown3;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.NumericUpDown numericUpDownUnits;
+        private System.Windows.Forms.NumericUpDown numericUpDownTheory;
         private System.Windows.Forms.Label label46;
-        private System.Windows.Forms.ComboBox comboBox14;
-        private System.Windows.Forms.ComboBox comboBox13;
+        private System.Windows.Forms.ComboBox comboBoxType;
+        private System.Windows.Forms.ComboBox comboBoxYear;
         private System.Windows.Forms.Label label45;
     }
 }
