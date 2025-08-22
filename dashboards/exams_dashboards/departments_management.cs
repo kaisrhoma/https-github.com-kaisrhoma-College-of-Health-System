@@ -17,12 +17,17 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         private DataTable dtCourses = new DataTable();
         private DataRow selectedCourse = null;
         private bool isSelecting = false;
+        DataTable dt;
+        SqlDataAdapter da;
+
+        DataTable dtInstructors;
         public departments_management()
         {
             InitializeComponent();
             LoadInstructors();
             LoadYearComboBox();
             LoadTypeComboBox();
+            InitializeControls();
 
         }
         private void LoadInstructors()
@@ -131,11 +136,12 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         private int selectedDeptId = -1; // نخزن ID القسم
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+      
             if (e.RowIndex >= 0)
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                // تحقق من أن العمود ليس DBNull
+                // الحصول على الـdepartment_id المحدد
                 if (row.Cells["department_id"].Value != DBNull.Value)
                 {
                     selectedDeptId = Convert.ToInt32(row.Cells["department_id"].Value);
@@ -147,45 +153,40 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                 txtDeptName2.Text = row.Cells["dep_name"].Value?.ToString() ?? "";
 
-                // تحميل رئيس القسم فقط في الكمبو بوكس
-                if (row.Cells["head_id"].Value != DBNull.Value)
+                try
                 {
-                    try
+                    con.Open();
+
+                    // جلب كل الأساتذة بدون أي استثناء
+                    SqlDataAdapter da = new SqlDataAdapter(
+                        "SELECT instructor_id, full_name FROM Instructors", con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    comboBoxHead2.DataSource = dt;
+                    comboBoxHead2.DisplayMember = "full_name";
+                    comboBoxHead2.ValueMember = "instructor_id";
+
+                    // تعيين الرئيس الحالي للقسم إن وجد
+                    if (row.Cells["head_id"].Value != DBNull.Value)
                     {
-                        con.Open();
-
-                        // جلب جميع الأساتذة
-                        SqlDataAdapter da = new SqlDataAdapter(
-                            "SELECT instructor_id, full_name FROM Instructors", con);
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-
-                        comboBoxHead2.DataSource = dt;
-                        comboBoxHead2.DisplayMember = "full_name";
-                        comboBoxHead2.ValueMember = "instructor_id";
-
-                        // تعيين رئيس القسم كاختيار افتراضي
-                        if (row.Cells["head_id"].Value != DBNull.Value)
-                        {
-                            comboBoxHead2.SelectedValue = row.Cells["head_id"].Value;
-                        }
+                        comboBoxHead2.SelectedValue = row.Cells["head_id"].Value;
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        MessageBox.Show("خطأ في تحميل رئيس القسم: " + ex.Message);
+                        comboBoxHead2.SelectedIndex = -1; // لا يوجد رئيس حالياً
                     }
-                    finally
-                    {
-                        con.Close();
-                    }
-
                 }
-                else
+                catch (Exception ex)
                 {
-                    comboBoxHead2.DataSource = null;
+                    MessageBox.Show("خطأ في تحميل رئيس القسم: " + ex.Message);
                 }
+                finally
+                {
+                    con.Close();
+                }
+
             }
-
         }
         private void LoadDepartments()
         {
@@ -528,20 +529,26 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                         dtCourses.Rows[dataGridView7.CurrentRow.Index].Delete();
 
                         MessageBox.Show("تم حذف المادة وجميع البيانات المرتبطة بها بنجاح!");
-                        LoadCourses();
+                        
                     }
                 }
 
                 catch (Exception ex)
                 {
                     MessageBox.Show("خطأ أثناء الحذف: " + ex.Message);
+             
+                }
+                finally
+                {
                     con.Close();
                 }
+                LoadCourses();
             }
             else
             {
                 MessageBox.Show("الرجاء تحديد مادة أولاً للحذف.");
             }
+
 
 
         }
@@ -552,42 +559,612 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 con.Open();
 
-                foreach (DataRow row in dtCourses.Rows)
+                foreach (DataGridViewRow row in dataGridView7.Rows)
                 {
-                    if (row.IsNull("course_id") || row.IsNull("course_name")) continue;
+                    if (row.IsNewRow) continue; // تجاهل الصف الفارغ
 
-                    string sql = @"UPDATE Courses 
-                                   SET course_name=@name, 
-                                       credit_hrs=@credit, 
-                                       year_number=@year, 
-                                       type=@type, 
-                                       units=@units, 
-                                       course_code=@code 
-                                   WHERE course_id=@id";
+                    int id = Convert.ToInt32(row.Cells["course_id"].Value);
+                    string name = row.Cells["course_name"].Value?.ToString() ?? "";
+                    int credit = Convert.ToInt32(row.Cells["credit_hrs"].Value ?? 0);
+                    int year = Convert.ToInt32(row.Cells["year_number"].Value ?? 1);
+                    string type = row.Cells["type"].Value?.ToString() ?? "";
+                    int units = Convert.ToInt32(row.Cells["units"].Value ?? 0);
+                    string code = row.Cells["course_code"].Value?.ToString() ?? "";
 
-                    SqlCommand cmd = new SqlCommand(sql, con);
-                    cmd.Parameters.AddWithValue("@name", row["course_name"]);
-                    cmd.Parameters.AddWithValue("@credit", row["credit_hrs"]);
-                    cmd.Parameters.AddWithValue("@year", row["year_number"]);
-                    cmd.Parameters.AddWithValue("@type", row["type"]);
-                    cmd.Parameters.AddWithValue("@units", row["units"]);
-                    cmd.Parameters.AddWithValue("@code", row["course_code"]);
-                    cmd.Parameters.AddWithValue("@id", row["course_id"]);
+                    SqlCommand cmd = new SqlCommand(@"
+            UPDATE Courses 
+            SET course_name=@name, 
+                credit_hrs=@credit, 
+                year_number=@year, 
+                type=@type, 
+                units=@units, 
+                course_code=@code 
+            WHERE course_id=@id", con);
+
+                    cmd.Parameters.AddWithValue("@name", name);
+                    cmd.Parameters.AddWithValue("@credit", credit);
+                    cmd.Parameters.AddWithValue("@year", year);
+                    cmd.Parameters.AddWithValue("@type", type);
+                    cmd.Parameters.AddWithValue("@units", units);
+                    cmd.Parameters.AddWithValue("@code", code);
+                    cmd.Parameters.AddWithValue("@id", id);
 
                     cmd.ExecuteNonQuery();
                 }
 
-                con.Close();
                 MessageBox.Show("تم تحديث جميع البيانات بنجاح!");
-                LoadCourses();
+              
             }
             catch (Exception ex)
             {
                 MessageBox.Show("خطأ أثناء التحديث: " + ex.Message);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+            LoadCourses();
+
+        }
+        //4 اداره القاعات
+        private void button15_Click(object sender, EventArgs e)
+        {
+            string roomName = textBox7.Text.Trim();   // اسم القاعة
+            string location = textBox8.Text.Trim();   // الموقع
+
+            if (string.IsNullOrEmpty(roomName))
+            {
+                label26.Text = "يرجى إدخال اسم القاعة";
+                label26.ForeColor = System.Drawing.Color.Red;
+                return;
+            }
+
+            try
+            {
+                con.Open();
+
+                // التحقق إذا الاسم موجود مسبقاً
+                SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Classrooms WHERE room_name = @name", con);
+                checkCmd.Parameters.AddWithValue("@name", roomName);
+
+                int exists = (int)checkCmd.ExecuteScalar();
+
+                if (exists > 0)
+                {
+                    label26.Text = "القاعة موجودة مسبقاً";
+                    label26.ForeColor = System.Drawing.Color.Red;
+                }
+                else
+                {
+                    // إضافة القاعة
+                    SqlCommand insertCmd = new SqlCommand(
+                        "INSERT INTO Classrooms (room_name, location) VALUES (@name, @location)", con);
+                    insertCmd.Parameters.AddWithValue("@name", roomName);
+                    insertCmd.Parameters.AddWithValue("@location", location);
+
+                    int rows = insertCmd.ExecuteNonQuery();
+
+                    if (rows > 0)
+                    {
+                        label26.Text = "تم الحفظ";
+                        label26.ForeColor = System.Drawing.Color.Green;
+
+                        // تفريغ الحقول
+                        textBox7.Clear();
+                        textBox8.Clear();
+                    }
+                    else
+                    {
+                        label26.Text = "فشل الحفظ";
+                        label26.ForeColor = System.Drawing.Color.Red;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                label26.Text = "خطأ: " + ex.Message;
+                label26.ForeColor = System.Drawing.Color.Red;
+            }
+            finally
+            {
                 con.Close();
+            }
+        }
+        //part2
+        // 1️⃣ عرض القاعات
+        private void showClassrooms()
+        {
+            try
+            {
+                con.Open();
+                da = new SqlDataAdapter("SELECT classroom_id, room_name, location FROM Classrooms", con);
+                SqlCommandBuilder cb = new SqlCommandBuilder(da);
+                dt = new DataTable();
+                da.Fill(dt);
+
+                dataGridView5.DataSource = dt;
+
+                // تعديل رؤوس الأعمدة للعربي
+                dataGridView5.Columns["classroom_id"].HeaderText = "الرقم";
+                dataGridView5.Columns["room_name"].HeaderText = "اسم القاعة";
+                dataGridView5.Columns["location"].HeaderText = "الموقع";
+
+                // إخفاء classroom_id لو تحب
+                dataGridView5.Columns["classroom_id"].Visible = false;
+
+                dataGridView5.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ: " + ex.Message);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+        private void button14_Click(object sender, EventArgs e)
+        {
+            showClassrooms();
+
+
+        }
+        // 2️⃣ تحديث التعديلات من DataGridView إلى قاعدة البيانات
+        private void button12_Click(object sender, EventArgs e)
+        {
+            if (dataGridView5.Rows.Count == 0)
+            {
+                label10.Text = "لا توجد بيانات للتحديث";
+                label10.ForeColor = Color.Red;
+                return;
+            }
+
+            bool anySkipped = false; // متغير لتحديد إذا تم تخطي أي صف بسبب الاسم المكرر
+
+            try
+            {
+                con.Open();
+
+                foreach (DataGridViewRow row in dataGridView5.Rows)
+                {
+                    if (row.IsNewRow) continue;
+
+                    int id = Convert.ToInt32(row.Cells["classroom_id"].Value);
+                    string newName = row.Cells["room_name"].Value.ToString().Trim();
+                    string location = row.Cells["location"].Value.ToString();
+
+                    // التحقق إذا الاسم موجود مسبقاً في صف آخر
+                    SqlCommand checkCmd = new SqlCommand(
+                        "SELECT COUNT(*) FROM Classrooms WHERE room_name=@name AND classroom_id<>@id", con);
+                    checkCmd.Parameters.AddWithValue("@name", newName);
+                    checkCmd.Parameters.AddWithValue("@id", id);
+
+                    int exists = (int)checkCmd.ExecuteScalar();
+
+                    if (exists > 0)
+                    {
+                        anySkipped = true; // تم تخطي هذا الصف
+                        continue; // تخطي هذا الصف وعدم تحديثه
+                    }
+
+                    // التحديث
+                    SqlCommand cmd = new SqlCommand(
+                        "UPDATE Classrooms SET room_name=@name, location=@location WHERE classroom_id=@id", con);
+                    cmd.Parameters.AddWithValue("@name", newName);
+                    cmd.Parameters.AddWithValue("@location", location);
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                // الرسالة النهائية
+                if (anySkipped)
+                {
+                    label10.Text = "اسم القاعة موجود مسبقاً";
+                    label10.ForeColor = Color.Red;
+                }
+                else
+                {
+                    label10.Text = "تم تحديث البيانات بنجاح";
+                    label10.ForeColor = Color.Green;
+                }
+            }
+            catch (Exception ex)
+            {
+                label10.Text = "خطأ: " + ex.Message;
+                label10.ForeColor = Color.Red;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+            // إعادة تحميل القاعات بعد التحديث
+            showClassrooms();
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            if (dataGridView5.SelectedCells.Count == 0)
+            {
+                label10.Text = "يرجى تحديد صف للحذف";
+                label10.ForeColor = Color.Red;
+                return;
+            }
+
+            int rowIndex = dataGridView5.SelectedCells[0].RowIndex;
+
+            // تحقق من أن الصف ليس NewRow
+            if (dataGridView5.Rows[rowIndex].IsNewRow)
+            {
+                label10.Text = "لا يمكن الحذف من الصف الفارغ";
+                label10.ForeColor = Color.Red;
+                return;
+            }
+
+            int classroomId = Convert.ToInt32(dataGridView5.Rows[rowIndex].Cells["classroom_id"].Value);
+
+            try
+            {
+                con.Open();
+                SqlTransaction tran = con.BeginTransaction();
+
+                try
+                {
+                    // حذف من Course_Classroom
+                    SqlCommand delCC = new SqlCommand("DELETE FROM Course_Classroom WHERE classroom_id=@id", con, tran);
+                    delCC.Parameters.AddWithValue("@id", classroomId);
+                    delCC.ExecuteNonQuery();
+
+                    // حذف من Classrooms
+                    SqlCommand delC = new SqlCommand("DELETE FROM Classrooms WHERE classroom_id=@id", con, tran);
+                    delC.Parameters.AddWithValue("@id", classroomId);
+                    int rows = delC.ExecuteNonQuery();
+
+                    tran.Commit();
+
+                    if (rows > 0)
+                    {
+                        label10.Text = "تم الحذف بنجاح";
+                        label10.ForeColor = Color.Green;
+                    }
+                    else
+                    {
+                        label10.Text = "لم يتم العثور على القاعة";
+                        label10.ForeColor = Color.Red;
+                    }
+                }
+                catch (Exception ex1)
+                {
+                    tran.Rollback();
+                    MessageBox.Show("خطأ أثناء الحذف: " + ex1.Message);
+                }
+            }
+            catch (Exception ex2)
+            {
+                MessageBox.Show("خطأ: " + ex2.Message);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+            showClassrooms();
+        }
+        //ادارخ الدكاتره
+        private void InitializeControls()
+        {
+            // تعبئة كومبو بوكس الدرجة العلمية
+            comboBoxDegree.Items.Clear();
+            comboBoxDegree.Items.Add("بكالوريوس");
+            comboBoxDegree.Items.Add("ماجستير");
+            comboBoxDegree.Items.Add("دكتوراه");
+            comboBoxDegree.SelectedIndex = 0; // قيمة افتراضية
+
+            // الراديو بوتون للنوع
+            radioButtonMale.Checked = true; // افتراضي ذكر
+            radioButtonFemale.Checked = false; // افتراضي أنثى غير محدد
+        }
+        private void button11_Click(object sender, EventArgs e)
+        {
+            string name = textBoxName.Text.Trim();
+            string specialization = textBoxSpecialization.Text.Trim();
+            string degree = comboBoxDegree.SelectedItem.ToString();
+            DateTime birthDate = dateTimePickerBirth.Value;
+
+            // تحديد الجنس من الراديو بوتون
+            bool gender;
+            if (radioButtonMale.Checked)
+                gender = true; // ذكر
+            else if (radioButtonFemale.Checked)
+                gender = false; // أنثى
+            else
+            {
+                label38.Text = "يرجى تحديد الجنس";
+                label38.ForeColor = Color.Red;
+                return;
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                label38.Text = "يرجى إدخال اسم المدرس";
+                label38.ForeColor = Color.Red;
+                return;
+            }
+
+            try
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand(
+                    "INSERT INTO Instructors (full_name, specialization, gender, birth_date, academic_degree) " +
+                    "VALUES (@name, @spec, @gender, @birth, @degree)", con);
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@spec", specialization);
+                cmd.Parameters.AddWithValue("@gender", gender);
+                cmd.Parameters.AddWithValue("@birth", birthDate);
+                cmd.Parameters.AddWithValue("@degree", degree);
+
+                int rows = cmd.ExecuteNonQuery();
+
+                if (rows > 0)
+                {
+                    label38.Text = "تم إضافة المدرس بنجاح";
+                    label38.ForeColor = Color.Green;
+
+                    textBoxName.Clear();
+                    textBoxSpecialization.Clear();
+                    comboBoxDegree.SelectedIndex = 0;
+                    radioButtonMale.Checked = true; // إعادة التحديد الافتراضي للذكر
+                }
+                else
+                {
+                    label38.Text = "فشل إضافة المدرس";
+                    label38.ForeColor = Color.Red;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ: " + ex.Message);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
             }
 
         }
-    }
+        // part2
+        // 1️⃣ عرض جميع المدرسين
+        // 1️⃣ عرض جميع المدرسين مع ترقيم وتغيير الهيدرز
+        private void ShowAllInstructors()
+        {
+            try
+            {
+                con.Open();
+                da = new SqlDataAdapter("SELECT * FROM Instructors", con);
+                dtInstructors = new DataTable();
+                da.Fill(dtInstructors);
 
+                DataTable dtWithIndex = new DataTable();
+                dtWithIndex.Columns.Add("الرقم", typeof(int));
+                dtWithIndex.Columns.Add("الاسم", typeof(string));
+                dtWithIndex.Columns.Add("التخصص", typeof(string));
+                dtWithIndex.Columns.Add("الجنس", typeof(string));
+                dtWithIndex.Columns.Add("تاريخ الميلاد", typeof(DateTime));
+                dtWithIndex.Columns.Add("الدرجة العلمية", typeof(string));
+                dtWithIndex.Columns.Add("instructor_id", typeof(int)); // مخفي
+
+                int index = 1;
+                foreach (DataRow row in dtInstructors.Rows)
+                {
+                    string genderStr = (bool)row["gender"] ? "ذكر" : "أنثى";
+                    dtWithIndex.Rows.Add(index++, row["full_name"], row["specialization"], genderStr, row["birth_date"], row["academic_degree"], row["instructor_id"]);
+                }
+
+                dataGridViewInstructors.DataSource = dtWithIndex;
+                dataGridViewInstructors.Columns["instructor_id"].Visible = false;
+                dataGridViewInstructors.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridViewInstructors.Columns["الرقم"].Width = 50;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ: " + ex.Message);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            ShowAllInstructors();
+
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            string searchText = textBoxSearchName.Text.Trim();
+            if (string.IsNullOrEmpty(searchText))
+            {
+                ShowAllInstructors();
+                return;
+            }
+
+            try
+            {
+                con.Open();
+                da = new SqlDataAdapter("SELECT * FROM Instructors WHERE full_name LIKE @name", con);
+                da.SelectCommand.Parameters.AddWithValue("@name", "%" + searchText + "%");
+                dtInstructors = new DataTable();
+                da.Fill(dtInstructors);
+
+                // إعادة نفس الترقيم والهيدرز
+                DataTable dtWithIndex = new DataTable();
+                dtWithIndex.Columns.Add("الرقم", typeof(int));
+                dtWithIndex.Columns.Add("الاسم", typeof(string));
+                dtWithIndex.Columns.Add("التخصص", typeof(string));
+                dtWithIndex.Columns.Add("الجنس", typeof(string));
+                dtWithIndex.Columns.Add("تاريخ الميلاد", typeof(DateTime));
+                dtWithIndex.Columns.Add("الدرجة العلمية", typeof(string));
+                dtWithIndex.Columns.Add("instructor_id", typeof(int)); // مخفي
+
+                int index = 1;
+                foreach (DataRow row in dtInstructors.Rows)
+                {
+                    string genderStr = (bool)row["gender"] ? "ذكر" : "أنثى";
+                    dtWithIndex.Rows.Add(index++, row["full_name"], row["specialization"], genderStr, row["birth_date"], row["academic_degree"], row["instructor_id"]);
+                }
+
+                dataGridViewInstructors.DataSource = dtWithIndex;
+                dataGridViewInstructors.Columns["instructor_id"].Visible = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ: " + ex.Message);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewInstructors.Rows.Count == 0)
+            {
+                label47.Text = "لا توجد بيانات للتحديث";
+                label47.ForeColor = Color.Red;
+                return;
+            }
+
+            try
+            {
+                con.Open();
+                foreach (DataGridViewRow row in dataGridViewInstructors.Rows)
+                {
+                    if (row.IsNewRow) continue;
+
+                    int id = Convert.ToInt32(row.Cells["instructor_id"].Value);
+                    string fullName = row.Cells["الاسم"].Value?.ToString() ?? "";
+                    string specialization = row.Cells["التخصص"].Value?.ToString() ?? "";
+                    string degree = row.Cells["الدرجة العلمية"].Value?.ToString() ?? "";
+                    bool gender = row.Cells["الجنس"].Value?.ToString() == "ذكر";
+                    DateTime birth = Convert.ToDateTime(row.Cells["تاريخ الميلاد"].Value);
+
+                    SqlCommand cmd = new SqlCommand(
+                        "UPDATE Instructors SET full_name=@name, specialization=@spec, gender=@gender, birth_date=@birth, academic_degree=@degree WHERE instructor_id=@id", con);
+                    cmd.Parameters.AddWithValue("@name", fullName);
+                    cmd.Parameters.AddWithValue("@spec", specialization);
+                    cmd.Parameters.AddWithValue("@gender", gender);
+                    cmd.Parameters.AddWithValue("@birth", birth);
+                    cmd.Parameters.AddWithValue("@degree", degree);
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                label47.Text = "تم تحديث بيانات المدرسين بنجاح";
+                label47.ForeColor = Color.Green;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ: " + ex.Message);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+            ShowAllInstructors();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+       
+    if (dataGridViewInstructors.SelectedCells.Count == 0)
+            {
+                label47.Text = "يرجى تحديد صف للحذف";
+                label47.ForeColor = Color.Red;
+                return;
+            }
+
+            int rowIndex = dataGridViewInstructors.SelectedCells[0].RowIndex;
+
+            // تحقق من أن الصف ليس NewRow
+            if (dataGridViewInstructors.Rows[rowIndex].IsNewRow)
+            {
+                label47.Text = "لا يمكن الحذف من الصف الفارغ";
+                label47.ForeColor = Color.Red;
+                return;
+            }
+
+            int instructorId = Convert.ToInt32(dataGridViewInstructors.Rows[rowIndex].Cells["instructor_id"].Value);
+
+            try
+            {
+                con.Open();
+                SqlTransaction tran = con.BeginTransaction();
+
+                try
+                {
+                    // إزالة instructor_id من Course_Instructor للمواد التي يدرسها فقط
+                    SqlCommand updateCourses = new SqlCommand(
+                        "UPDATE Course_Instructor SET instructor_id=NULL WHERE instructor_id=@id", con, tran);
+                    updateCourses.Parameters.AddWithValue("@id", instructorId);
+                    updateCourses.ExecuteNonQuery();
+
+                    // تحديث Departments إذا كان رئيس قسم
+                    SqlCommand updateDepartments = new SqlCommand(
+                        "UPDATE Departments SET head_id=NULL WHERE head_id=@id", con, tran);
+                    updateDepartments.Parameters.AddWithValue("@id", instructorId);
+                    updateDepartments.ExecuteNonQuery();
+
+                    // حذف المدرس
+                    SqlCommand delCmd = new SqlCommand(
+                        "DELETE FROM Instructors WHERE instructor_id=@id", con, tran);
+                    delCmd.Parameters.AddWithValue("@id", instructorId);
+                    int rows = delCmd.ExecuteNonQuery();
+
+                    tran.Commit();
+
+                    if (rows > 0)
+                    {
+                        label47.Text = "تم الحذف بنجاح";
+                        label47.ForeColor = Color.Green;
+                    }
+                    else
+                    {
+                        label47.Text = "لم يتم العثور على المدرس";
+                        label47.ForeColor = Color.Red;
+                    }
+                }
+                catch (Exception ex1)
+                {
+                    tran.Rollback();
+                    label47.Text = "خطأ أثناء الحذف: " + ex1.Message;
+                    label47.ForeColor = Color.Red;
+                }
+            }
+            catch (Exception ex2)
+            {
+                MessageBox.Show("خطأ: " + ex2.Message);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+            // إعادة تحميل المدرسين بعد الحذف
+            ShowAllInstructors();
+        }
+    }
 }
+
+
