@@ -65,6 +65,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label47 = new System.Windows.Forms.Label();
             this.button8 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.label16 = new System.Windows.Forms.Label();
@@ -72,6 +73,7 @@
             this.dataGridViewInstructors = new System.Windows.Forms.DataGridView();
             this.button10 = new System.Windows.Forms.Button();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.label38 = new System.Windows.Forms.Label();
             this.comboBoxDegree = new System.Windows.Forms.ComboBox();
             this.dateTimePickerBirth = new System.Windows.Forms.DateTimePicker();
             this.label24 = new System.Windows.Forms.Label();
@@ -154,8 +156,10 @@
             this.txtCourseCode = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
-            this.label38 = new System.Windows.Forms.Label();
-            this.label47 = new System.Windows.Forms.Label();
+            this.button24 = new System.Windows.Forms.Button();
+            this.label48 = new System.Windows.Forms.Label();
+            this.label49 = new System.Windows.Forms.Label();
+            this.button25 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -704,6 +708,15 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "عرض/ تعديل/ حذف دكتور";
             // 
+            // label47
+            // 
+            this.label47.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(91, 160);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(0, 19);
+            this.label47.TabIndex = 44;
+            // 
             // button8
             // 
             this.button8.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -769,6 +782,7 @@
             this.dataGridViewInstructors.RowTemplate.Height = 24;
             this.dataGridViewInstructors.Size = new System.Drawing.Size(586, 59);
             this.dataGridViewInstructors.TabIndex = 26;
+            this.dataGridViewInstructors.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewInstructors_CellClick);
             // 
             // button10
             // 
@@ -789,6 +803,7 @@
             // 
             this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox6.Controls.Add(this.button24);
             this.groupBox6.Controls.Add(this.label38);
             this.groupBox6.Controls.Add(this.comboBoxDegree);
             this.groupBox6.Controls.Add(this.dateTimePickerBirth);
@@ -810,6 +825,14 @@
             this.groupBox6.TabIndex = 48;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "إضافة دكتور";
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(34, 129);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(0, 19);
+            this.label38.TabIndex = 43;
             // 
             // comboBoxDegree
             // 
@@ -1542,6 +1565,7 @@
             this.groupBox11.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox11.Controls.Add(this.label49);
             this.groupBox11.Controls.Add(this.button20);
             this.groupBox11.Controls.Add(this.button21);
             this.groupBox11.Controls.Add(this.label37);
@@ -1618,6 +1642,7 @@
             this.dataGridView7.Location = new System.Drawing.Point(16, 78);
             this.dataGridView7.Margin = new System.Windows.Forms.Padding(2);
             this.dataGridView7.Name = "dataGridView7";
+            this.dataGridView7.ReadOnly = true;
             this.dataGridView7.RowHeadersWidth = 51;
             this.dataGridView7.RowTemplate.Height = 24;
             this.dataGridView7.Size = new System.Drawing.Size(586, 45);
@@ -1643,6 +1668,8 @@
             // 
             this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox12.Controls.Add(this.button25);
+            this.groupBox12.Controls.Add(this.label48);
             this.groupBox12.Controls.Add(this.label46);
             this.groupBox12.Controls.Add(this.comboBoxType);
             this.groupBox12.Controls.Add(this.comboBoxYear);
@@ -1850,22 +1877,52 @@
             this.label42.Size = new System.Drawing.Size(0, 26);
             this.label42.TabIndex = 46;
             // 
-            // label38
+            // button24
             // 
-            this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(34, 129);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(0, 19);
-            this.label38.TabIndex = 43;
+            this.button24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button24.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.button24.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button24.ForeColor = System.Drawing.Color.White;
+            this.button24.Location = new System.Drawing.Point(143, 110);
+            this.button24.Margin = new System.Windows.Forms.Padding(2);
+            this.button24.Name = "button24";
+            this.button24.Size = new System.Drawing.Size(104, 29);
+            this.button24.TabIndex = 44;
+            this.button24.Text = "جديد";
+            this.button24.UseVisualStyleBackColor = false;
+            this.button24.Click += new System.EventHandler(this.button24_Click);
             // 
-            // label47
+            // label48
             // 
-            this.label47.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(91, 160);
-            this.label47.Name = "label47";
-            this.label47.Size = new System.Drawing.Size(0, 19);
-            this.label47.TabIndex = 44;
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(66, 138);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(0, 19);
+            this.label48.TabIndex = 44;
+            // 
+            // label49
+            // 
+            this.label49.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(66, 150);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(0, 19);
+            this.label49.TabIndex = 38;
+            // 
+            // button25
+            // 
+            this.button25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button25.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.button25.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button25.ForeColor = System.Drawing.Color.White;
+            this.button25.Location = new System.Drawing.Point(141, 123);
+            this.button25.Margin = new System.Windows.Forms.Padding(2);
+            this.button25.Name = "button25";
+            this.button25.Size = new System.Drawing.Size(104, 29);
+            this.button25.TabIndex = 45;
+            this.button25.Text = "جديد";
+            this.button25.UseVisualStyleBackColor = false;
+            this.button25.Click += new System.EventHandler(this.button25_Click);
             // 
             // departments_management
             // 
@@ -2056,5 +2113,9 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label47;
         private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.Button button24;
+        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.Button button25;
     }
 }

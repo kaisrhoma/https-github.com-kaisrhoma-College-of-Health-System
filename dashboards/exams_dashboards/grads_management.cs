@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
-//using ClosedXML.Excel;
+
 
 
 namespace college_of_health_sciences.dashboards.exams_dashboards
@@ -1222,8 +1222,11 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
             }
         }
 
+
         private void button8_Click(object sender, EventArgs e)
         {
+
+
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "Excel Files|*.xlsx;*.xls";
 
@@ -1237,7 +1240,7 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                 using (var workbook = new XLWorkbook(filePath))
                 {
                     var worksheet = workbook.Worksheet(1);
-                    var rows = worksheet.RangeUsed().RowsUsed().Skip(1); // تخطي العنوان
+                    var rows = worksheet.RangeUsed().RowsUsed().Skip(1); // تخطي الصف الأول (العناوين)
 
                     using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                     {
@@ -1246,13 +1249,13 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                         int insertedCount = 0;
                         int updatedCount = 0;
                         int skippedCount = 0;
-                        int courseId = Convert.ToInt32(comboCourse.SelectedValue);
                         string selectedRound = comboExamRound.SelectedItem?.ToString();
 
                         foreach (var row in rows)
                         {
                             string universityNumber = row.Cell(1).GetString().Trim();
                             string studentName = row.Cell(2).GetString().Trim();
+                            string courseCode = row.Cell(3).GetString().Trim(); // الكورس كود
                             var workCell = row.Cell(4);
                             var finalCell = row.Cell(5);
 
@@ -1291,7 +1294,7 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
 
                             int totalGrade = workGrade + finalGrade;
 
-                            // جلب student_id
+                            // الحصول على student_id
                             string studentIdQuery = "SELECT student_id FROM Students WHERE university_number = @uniNumber";
                             int studentId = -1;
                             using (SqlCommand cmdStudentId = new SqlCommand(studentIdQuery, conn))
@@ -1308,10 +1311,29 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                                 }
                             }
 
-                            // تحقق من وجود سجل الدرجات
+
+                            // الحصول على course_id من course_code
+                            string courseIdQuery = "SELECT course_id FROM Courses WHERE course_code = @code";
+                            int courseId = -1;
+                            using (SqlCommand cmdCourseId = new SqlCommand(courseIdQuery, conn))
+                            {
+                                cmdCourseId.Parameters.AddWithValue("@code", courseCode);
+                                var res = cmdCourseId.ExecuteScalar();
+                                if (res != null)
+                                    courseId = Convert.ToInt32(res);
+                                else
+                                {
+                                    MessageBox.Show($"لم يتم العثور على المادة بالرمز: {courseCode} في الصف {row.RowNumber()}");
+                                    skippedCount++;
+                                    continue;
+                                }
+                            }
+
+
+                            // التحقق من وجود سجل الدرجات
                             string checkGradesQuery = @"
-                    SELECT work_grade, final_grade FROM Grades 
-                    WHERE student_id = @studentId AND course_id = @courseId";
+        SELECT work_grade, final_grade FROM Grades 
+        WHERE student_id = @studentId AND course_id = @courseId";
                             using (SqlCommand checkGradesCmd = new SqlCommand(checkGradesQuery, conn))
                             {
                                 checkGradesCmd.Parameters.AddWithValue("@studentId", studentId);
@@ -1330,12 +1352,12 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                                         {
                                             reader.Close();
                                             string updateQuery = @"
-                                    UPDATE Grades 
-                                    SET work_grade = @workGrade,
-                                        final_grade = @finalGrade,
-                                        total_grade = @totalGrade,
-                                        success_status = CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'رسوب' END
-                                    WHERE student_id = @studentId AND course_id = @courseId";
+                        UPDATE Grades 
+                        SET work_grade = @workGrade,
+                            final_grade = @finalGrade,
+                            total_grade = @totalGrade,
+                            success_status = CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'رسوب' END
+                        WHERE student_id = @studentId AND course_id = @courseId";
 
                                             using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
                                             {
@@ -1348,8 +1370,8 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                                             }
 
                                             using (SqlCommand auditCmd = new SqlCommand(@"
-                                    INSERT INTO Audit_Log (user_id, action, table_name, record_id)
-                                    VALUES (@userId, 'UPDATE', 'Grades', @recordId)", conn))
+                        INSERT INTO Audit_Log (user_id, action, table_name, record_id)
+                        VALUES (@userId, 'UPDATE', 'Grades', @recordId)", conn))
                                             {
                                                 auditCmd.Parameters.AddWithValue("@userId", Session.userID);
                                                 auditCmd.Parameters.AddWithValue("@recordId", studentId);
@@ -1368,9 +1390,9 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                                     {
                                         reader.Close();
                                         string insertQuery = @"
-                                INSERT INTO Grades (student_id, course_id, work_grade, final_grade, total_grade, success_status)
-                                VALUES (@studentId, @courseId, @workGrade, @finalGrade, @totalGrade,
-                                        CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'رسوب' END)";
+                    INSERT INTO Grades (student_id, course_id, work_grade, final_grade, total_grade, success_status)
+                    VALUES (@studentId, @courseId, @workGrade, @finalGrade, @totalGrade,
+                            CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'رسوب' END)";
                                         using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
                                         {
                                             insertCmd.Parameters.AddWithValue("@studentId", studentId);
@@ -1382,8 +1404,8 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                                         }
 
                                         using (SqlCommand auditCmd = new SqlCommand(@"
-                                INSERT INTO Audit_Log (user_id, action, table_name, record_id)
-                                VALUES (@userId, 'INSERT', 'Grades', @recordId)", conn))
+                    INSERT INTO Audit_Log (user_id, action, table_name, record_id)
+                    VALUES (@userId, 'INSERT', 'Grades', @recordId)", conn))
                                         {
                                             auditCmd.Parameters.AddWithValue("@userId", Session.userID);
                                             auditCmd.Parameters.AddWithValue("@recordId", studentId);
@@ -1392,25 +1414,25 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
 
                                         insertedCount++;
                                     }
+
                                 }
 
                             }
 
-
-
-
                         }
+
                         MessageBox.Show($"✅ تم الاستيراد من ملف Excel:\n📥 تم الإدخال: {insertedCount}\n✏️ تم التحديث: {updatedCount}\n⏭ تم التخطي: {skippedCount}");
 
-                        // بعد الاستيراد، إعادة تحميل الطلاب
-                        LoadStudents(courseId, selectedRound);
+
                     }
                 }
             }
+
             catch (Exception ex)
             {
                 MessageBox.Show("❌ خطأ أثناء استيراد البيانات:\n" + ex.Message);
             }
+
 
 
         }

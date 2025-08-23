@@ -145,10 +145,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             int fixedColCount = 4; // رقم، اسم الطالب، الرقم الجامعي، النتيجة
             int[] colWidths = new int[dt.Columns.Count];
 
-            colWidths[0] = 40;   // رقم
-            colWidths[1] = 180;  // اسم الطالب
-            colWidths[2] = 120;  // الرقم الجامعي
-            colWidths[dt.Columns.Count - 1] = 100; // النتيجة
+            colWidths[0] = 30;   // رقم
+            colWidths[1] = 150;  // اسم الطالب
+            colWidths[2] = 100;  // الرقم الجامعي
+            colWidths[dt.Columns.Count - 1] = 70; // النتيجة
 
             int availableWidth = e.MarginBounds.Width - (colWidths[0] + colWidths[1] + colWidths[2] + colWidths[dt.Columns.Count - 1]);
             int subjectsCount = dt.Columns.Count - fixedColCount;

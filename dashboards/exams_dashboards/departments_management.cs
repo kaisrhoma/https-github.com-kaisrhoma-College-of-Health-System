@@ -326,6 +326,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         }
         //المواد
         // دالة لملء ComboBox السنة
+        private int selectedCourseId = 0;
         private void LoadYearComboBox()
         {
             comboBoxYear.Items.Clear();
@@ -353,9 +354,11 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             int practicalHours = (int)numericUpDownPractical.Value;
             int units = (int)numericUpDownUnits.Value;
 
+            // التحقق من المدخلات
             if (string.IsNullOrEmpty(courseName) || string.IsNullOrEmpty(courseCode))
             {
-                MessageBox.Show("الرجاء إدخال اسم المادة ورمزها");
+                label48.Text = "⚠️ الرجاء إدخال اسم المادة ورمزها";
+                label48.ForeColor = Color.Red;
                 return;
             }
 
@@ -363,32 +366,36 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 con.Open();
 
-                // التحقق من وجود المادة مسبقاً
+                // التحقق من وجود المادة مسبقًا
                 SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Courses WHERE course_code = @code", con);
                 checkCmd.Parameters.AddWithValue("@code", courseCode);
                 int count = (int)checkCmd.ExecuteScalar();
                 if (count > 0)
                 {
-                    MessageBox.Show("رمز المادة موجود مسبقًا، لا يمكن إضافته مرة أخرى", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    label48.Text = "⚠️ رمز المادة موجود مسبقًا، لا يمكن إضافته مرة أخرى";
+                    label48.ForeColor = Color.Red;
                     return;
                 }
 
                 // إدخال المادة
-                SqlCommand cmd = new SqlCommand(@"INSERT INTO Courses
-            (course_name, course_code, theory_hours, practical_hours, credit_hrs, year_number, type, units)
-            VALUES (@name, @code, @theory, @practical, @credit, @year, @type, @units)", con);
+                SqlCommand cmd = new SqlCommand(@"
+        INSERT INTO Courses
+        (course_name, course_code, theory_hours, practical_hours, credit_hrs, year_number, type, units)
+        VALUES (@name, @code, @theory, @practical, @credit, @year, @type, @units)", con);
 
                 cmd.Parameters.AddWithValue("@name", courseName);
                 cmd.Parameters.AddWithValue("@code", courseCode);
                 cmd.Parameters.AddWithValue("@theory", theoryHours);
                 cmd.Parameters.AddWithValue("@practical", practicalHours);
-                cmd.Parameters.AddWithValue("@credit", theoryHours + practicalHours); // يمكن تعديل طريقة الحساب
+                cmd.Parameters.AddWithValue("@credit", theoryHours + practicalHours);
                 cmd.Parameters.AddWithValue("@year", yearNumber);
                 cmd.Parameters.AddWithValue("@type", type);
                 cmd.Parameters.AddWithValue("@units", units);
 
                 cmd.ExecuteNonQuery();
-                MessageBox.Show("تم إضافة المادة بنجاح");
+
+                label48.Text = "✅ تم إضافة المادة بنجاح";
+                label48.ForeColor = Color.Green;
 
                 // إعادة تعيين القيم بعد الإضافة
                 txtCourseName.Clear();
@@ -398,6 +405,9 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 numericUpDownTheory.Value = 0;
                 numericUpDownPractical.Value = 0;
                 numericUpDownUnits.Value = 0;
+
+            
+            
             }
             catch (Exception ex)
             {
@@ -407,6 +417,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 con.Close();
             }
+            // تحميل المواد لتحديث الجدول
+            LoadCourses();
 
 
         }
@@ -475,129 +487,135 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void dataGridView7_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
-            {
-                isSelecting = true;
-                selectedCourse = ((DataRowView)dataGridView7.Rows[e.RowIndex].DataBoundItem).Row;
-                textBox6.Text = selectedCourse["course_name"].ToString();
-                isSelecting = false;
-            }
+            if (e.RowIndex < 0 || e.RowIndex >= dataGridView7.Rows.Count)
+                return;
+
+            DataGridViewRow row = dataGridView7.Rows[e.RowIndex];
+
+            // تعبئة الأدوات مع التحقق من DBNull
+            txtCourseName.Text = row.Cells["course_name"].Value?.ToString() ?? "";
+            txtCourseCode.Text = row.Cells["course_code"].Value?.ToString() ?? "";
+
+            // السنة الدراسية
+            if (row.Cells["year_number"].Value != DBNull.Value)
+                comboBoxYear.SelectedItem = row.Cells["year_number"].Value.ToString();
+            else
+                comboBoxYear.SelectedIndex = 0;
+
+            // النوع
+            if (row.Cells["type"].Value != DBNull.Value)
+                comboBoxType.SelectedItem = row.Cells["type"].Value.ToString();
+            else
+                comboBoxType.SelectedIndex = 0;
+
+            // الساعات النظرية والعملية والوحدات
+            numericUpDownTheory.Value = Convert.ToDecimal(row.Cells["credit_hrs"].Value ?? 0);
+            numericUpDownPractical.Value = Convert.ToDecimal(row.Cells["practical_hours"].Value ?? 0);
+            numericUpDownUnits.Value = Convert.ToDecimal(row.Cells["units"].Value ?? 0);
+
+            // تخزين ID داخلي لتحديثه لاحقاً
+            selectedCourseId = Convert.ToInt32(row.Cells["course_id"].Value);
 
 
         }
 
         private void button21_Click(object sender, EventArgs e)
         {
-            if (dataGridView7.CurrentRow != null && dataGridView7.CurrentRow.Index >= 0)
+            // مثل زر التحديث: لازم يكون فيه عنصر مختار (selectedCourseId تم ضبطه من CellClick)
+            if (selectedCourseId == 0)
             {
-                try
+                MessageBox.Show("الرجاء اختيار مادة من الجدول أولاً.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد الحذف",
+                                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
+
+            try
+            {
+                con.Open();
+                using (SqlTransaction tran = con.BeginTransaction())
                 {
-                    if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد",
-             MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    using (SqlCommand cmd = new SqlCommand(@"
+                DELETE FROM Course_Classroom  WHERE course_id = @id;
+                DELETE FROM Course_Department WHERE course_id = @id;
+                DELETE FROM Course_Instructor WHERE course_id = @id;
+                DELETE FROM Courses           WHERE course_id = @id;", con, tran))
                     {
-                        int courseId = Convert.ToInt32(dataGridView7.CurrentRow.Cells["course_id"].Value);
-
-                        con.Open();
-
-                        // حذف من Course_Classroom
-                        SqlCommand cmdClassroom = new SqlCommand(
-                            "DELETE FROM Course_Classroom WHERE course_id=@id", con);
-                        cmdClassroom.Parameters.AddWithValue("@id", courseId);
-                        cmdClassroom.ExecuteNonQuery();
-
-                        // حذف من Course_Department
-                        SqlCommand cmdDepartment = new SqlCommand(
-                            "DELETE FROM Course_Department WHERE course_id=@id", con);
-                        cmdDepartment.Parameters.AddWithValue("@id", courseId);
-                        cmdDepartment.ExecuteNonQuery();
-
-                        // حذف من Course_Instructor
-                        SqlCommand cmdInstructor = new SqlCommand(
-                            "DELETE FROM Course_Instructor WHERE course_id=@id", con);
-                        cmdInstructor.Parameters.AddWithValue("@id", courseId);
-                        cmdInstructor.ExecuteNonQuery();
-
-                        // حذف المادة نفسها من Courses
-                        SqlCommand cmdMain = new SqlCommand(
-                            "DELETE FROM Courses WHERE course_id=@id", con);
-                        cmdMain.Parameters.AddWithValue("@id", courseId);
-                        cmdMain.ExecuteNonQuery();
-
-                        con.Close();
-
-                        // حذف الصف من DataGridView
-                        dtCourses.Rows[dataGridView7.CurrentRow.Index].Delete();
-
-                        MessageBox.Show("تم حذف المادة وجميع البيانات المرتبطة بها بنجاح!");
-                        
+                        cmd.Parameters.AddWithValue("@id", selectedCourseId);
+                        cmd.ExecuteNonQuery();
                     }
+
+                    tran.Commit();
                 }
 
-                catch (Exception ex)
-                {
-                    MessageBox.Show("خطأ أثناء الحذف: " + ex.Message);
-             
-                }
-                finally
-                {
-                    con.Close();
-                }
-                LoadCourses();
+              
+                label49.Text = "تم حذف المادة وجميع العلاقات المرتبطة بها بنجاح.";
+                label49.ForeColor = Color.Red;
+                // نفس سلوك زر التحديث بعد الإتمام
+                selectedCourseId = 0;
+              
+                dataGridView7.ClearSelection();
+               
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("الرجاء تحديد مادة أولاً للحذف.");
+                MessageBox.Show("خطأ أثناء الحذف: " + ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
+            finally
+            {
+                if (con.State == ConnectionState.Open) con.Close();
+            }
+            LoadCourses();
 
 
         }
 
         private void button20_Click(object sender, EventArgs e)
         {
+            if (selectedCourseId == 0)
+            {
+                MessageBox.Show("الرجاء اختيار مادة لتعديلها.");
+                return;
+            }
+
             try
             {
                 con.Open();
 
-                foreach (DataGridViewRow row in dataGridView7.Rows)
-                {
-                    if (row.IsNewRow) continue; // تجاهل الصف الفارغ
-
-                    int id = Convert.ToInt32(row.Cells["course_id"].Value);
-                    string name = row.Cells["course_name"].Value?.ToString() ?? "";
-                    int credit = Convert.ToInt32(row.Cells["credit_hrs"].Value ?? 0);
-                    int year = Convert.ToInt32(row.Cells["year_number"].Value ?? 1);
-                    string type = row.Cells["type"].Value?.ToString() ?? "";
-                    int units = Convert.ToInt32(row.Cells["units"].Value ?? 0);
-                    string code = row.Cells["course_code"].Value?.ToString() ?? "";
-
-                    SqlCommand cmd = new SqlCommand(@"
+                SqlCommand cmd = new SqlCommand(@"
             UPDATE Courses 
             SET course_name=@name, 
-                credit_hrs=@credit, 
+                course_code=@code,
+                theory_hours=@theory,
+                practical_hours=@practical,
+                credit_hrs=@credit,
                 year_number=@year, 
                 type=@type, 
-                units=@units, 
-                course_code=@code 
+                units=@units 
             WHERE course_id=@id", con);
 
-                    cmd.Parameters.AddWithValue("@name", name);
-                    cmd.Parameters.AddWithValue("@credit", credit);
-                    cmd.Parameters.AddWithValue("@year", year);
-                    cmd.Parameters.AddWithValue("@type", type);
-                    cmd.Parameters.AddWithValue("@units", units);
-                    cmd.Parameters.AddWithValue("@code", code);
-                    cmd.Parameters.AddWithValue("@id", id);
+                cmd.Parameters.AddWithValue("@name", txtCourseName.Text.Trim());
+                cmd.Parameters.AddWithValue("@code", txtCourseCode.Text.Trim());
+                cmd.Parameters.AddWithValue("@theory", (int)numericUpDownTheory.Value);
+                cmd.Parameters.AddWithValue("@practical", (int)numericUpDownPractical.Value);
+                cmd.Parameters.AddWithValue("@credit", (int)(numericUpDownTheory.Value + numericUpDownPractical.Value));
+                cmd.Parameters.AddWithValue("@year", Convert.ToInt32(comboBoxYear.SelectedItem));
+                cmd.Parameters.AddWithValue("@type", comboBoxType.SelectedItem?.ToString());
+                cmd.Parameters.AddWithValue("@units", (int)numericUpDownUnits.Value);
+                cmd.Parameters.AddWithValue("@id", selectedCourseId);
 
-                    cmd.ExecuteNonQuery();
-                }
+                cmd.ExecuteNonQuery();
+             
+                label49.Text = "تم تعديل المادة بنجاح.";
+                label49.ForeColor = Color.Green;
 
-                MessageBox.Show("تم تحديث جميع البيانات بنجاح!");
-              
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ أثناء التحديث: " + ex.Message);
+                MessageBox.Show("خطأ أثناء التعديل: " + ex.Message);
             }
             finally
             {
@@ -606,6 +624,18 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             }
             LoadCourses();
 
+
+        }
+        private void button25_Click(object sender, EventArgs e)
+        {
+            txtCourseName.Clear();
+            txtCourseCode.Clear();
+            comboBoxYear.SelectedIndex = 0;
+            comboBoxType.SelectedIndex = 0;
+            numericUpDownTheory.Value = 0;
+            numericUpDownPractical.Value = 0;
+            numericUpDownUnits.Value = 0;
+            txtCourseCode.Focus();
         }
         //4 اداره القاعات
         private void button15_Click(object sender, EventArgs e)
@@ -855,6 +885,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             showClassrooms();
         }
         //ادارخ الدكاتره
+        private int hiddenInstructorId = 0;
         private void InitializeControls()
         {
             // تعبئة كومبو بوكس الدرجة العلمية
@@ -867,7 +898,18 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             // الراديو بوتون للنوع
             radioButtonMale.Checked = true; // افتراضي ذكر
             radioButtonFemale.Checked = false; // افتراضي أنثى غير محدد
+                                               // تهيئة DataGridView
+            InitializeDataGridView();
         }
+        private void InitializeDataGridView()
+        {
+            dataGridViewInstructors.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewInstructors.MultiSelect = false;
+            dataGridViewInstructors.ReadOnly = true;
+            dataGridViewInstructors.ClearSelection();
+            dataGridViewInstructors.CellClick += dataGridViewInstructors_CellClick;
+        }
+
         private void button11_Click(object sender, EventArgs e)
         {
             string name = textBoxName.Text.Trim();
@@ -1003,7 +1045,6 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 dtInstructors = new DataTable();
                 da.Fill(dtInstructors);
 
-                // إعادة نفس الترقيم والهيدرز
                 DataTable dtWithIndex = new DataTable();
                 dtWithIndex.Columns.Add("الرقم", typeof(int));
                 dtWithIndex.Columns.Add("الاسم", typeof(string));
@@ -1011,7 +1052,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 dtWithIndex.Columns.Add("الجنس", typeof(string));
                 dtWithIndex.Columns.Add("تاريخ الميلاد", typeof(DateTime));
                 dtWithIndex.Columns.Add("الدرجة العلمية", typeof(string));
-                dtWithIndex.Columns.Add("instructor_id", typeof(int)); // مخفي
+                dtWithIndex.Columns.Add("instructor_id", typeof(int));
 
                 int index = 1;
                 foreach (DataRow row in dtInstructors.Rows)
@@ -1022,6 +1063,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                 dataGridViewInstructors.DataSource = dtWithIndex;
                 dataGridViewInstructors.Columns["instructor_id"].Visible = false;
+                dataGridViewInstructors.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                hiddenInstructorId = 0;
             }
             catch (Exception ex)
             {
@@ -1036,40 +1079,44 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button8_Click(object sender, EventArgs e)
         {
-            if (dataGridViewInstructors.Rows.Count == 0)
+            if (hiddenInstructorId == 0)
             {
-                label47.Text = "لا توجد بيانات للتحديث";
+                label47.Text = "يرجى اختيار مدرس من القائمة أولاً";
                 label47.ForeColor = Color.Red;
                 return;
             }
 
+            string name = textBoxName.Text.Trim();
+            string specialization = textBoxSpecialization.Text.Trim();
+            string degree = comboBoxDegree.SelectedItem?.ToString();
+            bool gender = radioButtonMale.Checked;
+            DateTime birthDate = dateTimePickerBirth.Value;
+
             try
             {
                 con.Open();
-                foreach (DataGridViewRow row in dataGridViewInstructors.Rows)
+                SqlCommand cmd = new SqlCommand(
+                    "UPDATE Instructors SET full_name=@name, specialization=@spec, gender=@gender, birth_date=@birth, academic_degree=@degree WHERE instructor_id=@id", con);
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@spec", specialization);
+                cmd.Parameters.AddWithValue("@gender", gender);
+                cmd.Parameters.AddWithValue("@birth", birthDate);
+                cmd.Parameters.AddWithValue("@degree", degree);
+                cmd.Parameters.AddWithValue("@id", hiddenInstructorId);
+
+                int rows = cmd.ExecuteNonQuery();
+
+                if (rows > 0)
                 {
-                    if (row.IsNewRow) continue;
-
-                    int id = Convert.ToInt32(row.Cells["instructor_id"].Value);
-                    string fullName = row.Cells["الاسم"].Value?.ToString() ?? "";
-                    string specialization = row.Cells["التخصص"].Value?.ToString() ?? "";
-                    string degree = row.Cells["الدرجة العلمية"].Value?.ToString() ?? "";
-                    bool gender = row.Cells["الجنس"].Value?.ToString() == "ذكر";
-                    DateTime birth = Convert.ToDateTime(row.Cells["تاريخ الميلاد"].Value);
-
-                    SqlCommand cmd = new SqlCommand(
-                        "UPDATE Instructors SET full_name=@name, specialization=@spec, gender=@gender, birth_date=@birth, academic_degree=@degree WHERE instructor_id=@id", con);
-                    cmd.Parameters.AddWithValue("@name", fullName);
-                    cmd.Parameters.AddWithValue("@spec", specialization);
-                    cmd.Parameters.AddWithValue("@gender", gender);
-                    cmd.Parameters.AddWithValue("@birth", birth);
-                    cmd.Parameters.AddWithValue("@degree", degree);
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.ExecuteNonQuery();
+                    label47.Text = "تم تحديث المدرس بنجاح";
+                    label47.ForeColor = Color.Green;
+                  
                 }
-
-                label47.Text = "تم تحديث بيانات المدرسين بنجاح";
-                label47.ForeColor = Color.Green;
+                else
+                {
+                    label47.Text = "لم يتم التحديث";
+                    label47.ForeColor = Color.Red;
+                }
             }
             catch (Exception ex)
             {
@@ -1086,25 +1133,12 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button9_Click(object sender, EventArgs e)
         {
-       
-    if (dataGridViewInstructors.SelectedCells.Count == 0)
+            if (hiddenInstructorId == 0)
             {
-                label47.Text = "يرجى تحديد صف للحذف";
+                label47.Text = "يرجى اختيار مدرس من القائمة أولاً";
                 label47.ForeColor = Color.Red;
                 return;
             }
-
-            int rowIndex = dataGridViewInstructors.SelectedCells[0].RowIndex;
-
-            // تحقق من أن الصف ليس NewRow
-            if (dataGridViewInstructors.Rows[rowIndex].IsNewRow)
-            {
-                label47.Text = "لا يمكن الحذف من الصف الفارغ";
-                label47.ForeColor = Color.Red;
-                return;
-            }
-
-            int instructorId = Convert.ToInt32(dataGridViewInstructors.Rows[rowIndex].Cells["instructor_id"].Value);
 
             try
             {
@@ -1113,22 +1147,22 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                 try
                 {
-                    // إزالة instructor_id من Course_Instructor للمواد التي يدرسها فقط
+                    // إزالة instructor_id من Course_Instructor
                     SqlCommand updateCourses = new SqlCommand(
                         "UPDATE Course_Instructor SET instructor_id=NULL WHERE instructor_id=@id", con, tran);
-                    updateCourses.Parameters.AddWithValue("@id", instructorId);
+                    updateCourses.Parameters.AddWithValue("@id", hiddenInstructorId);
                     updateCourses.ExecuteNonQuery();
 
                     // تحديث Departments إذا كان رئيس قسم
                     SqlCommand updateDepartments = new SqlCommand(
                         "UPDATE Departments SET head_id=NULL WHERE head_id=@id", con, tran);
-                    updateDepartments.Parameters.AddWithValue("@id", instructorId);
+                    updateDepartments.Parameters.AddWithValue("@id", hiddenInstructorId);
                     updateDepartments.ExecuteNonQuery();
 
                     // حذف المدرس
                     SqlCommand delCmd = new SqlCommand(
                         "DELETE FROM Instructors WHERE instructor_id=@id", con, tran);
-                    delCmd.Parameters.AddWithValue("@id", instructorId);
+                    delCmd.Parameters.AddWithValue("@id", hiddenInstructorId);
                     int rows = delCmd.ExecuteNonQuery();
 
                     tran.Commit();
@@ -1143,6 +1177,9 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                         label47.Text = "لم يتم العثور على المدرس";
                         label47.ForeColor = Color.Red;
                     }
+
+                    hiddenInstructorId = 0;
+             
                 }
                 catch (Exception ex1)
                 {
@@ -1160,10 +1197,81 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 if (con.State == ConnectionState.Open)
                     con.Close();
             }
-
             // إعادة تحميل المدرسين بعد الحذف
             ShowAllInstructors();
         }
+
+        private void dataGridViewInstructors_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // تجاهل النقر على رؤوس الأعمدة أو الصف الجديد
+            if (e.RowIndex < 0 || e.RowIndex >= dataGridViewInstructors.Rows.Count)
+                return;
+
+            DataGridViewRow row = dataGridViewInstructors.Rows[e.RowIndex];
+
+            // تعبئة الأدوات مع التحقق من DBNull
+            textBoxName.Text = row.Cells["الاسم"].Value?.ToString() ?? "";
+            textBoxSpecialization.Text = row.Cells["التخصص"].Value?.ToString() ?? "";
+            comboBoxDegree.SelectedItem = row.Cells["الدرجة العلمية"].Value?.ToString() ?? comboBoxDegree.Items[0].ToString();
+
+            // التعامل مع الجنس
+            if (row.Cells["الجنس"].Value != DBNull.Value && !string.IsNullOrEmpty(row.Cells["الجنس"].Value.ToString()))
+            {
+                bool gender = row.Cells["الجنس"].Value.ToString() == "ذكر";
+                radioButtonMale.Checked = gender;
+                radioButtonFemale.Checked = !gender;
+            }
+            else
+            {
+                // قيمة افتراضية
+                radioButtonMale.Checked = true;
+                radioButtonFemale.Checked = false;
+            }
+
+            // التعامل مع تاريخ الميلاد
+            if (row.Cells["تاريخ الميلاد"].Value != DBNull.Value)
+            {
+                dateTimePickerBirth.Value = Convert.ToDateTime(row.Cells["تاريخ الميلاد"].Value);
+            }
+            else
+            {
+                dateTimePickerBirth.Value = DateTime.Today; // قيمة افتراضية
+            }
+
+            // التعامل مع ID
+            if (row.Cells["instructor_id"].Value != DBNull.Value)
+            {
+                hiddenInstructorId = Convert.ToInt32(row.Cells["instructor_id"].Value);
+            }
+            else
+            {
+                hiddenInstructorId = 0;
+            }
+
+        }
+
+        private void button24_Click(object sender, EventArgs e)
+        {
+            // إعادة تعيين TextBox و ComboBox و RadioButton
+            textBoxName.Clear();
+            textBoxSpecialization.Clear();
+            comboBoxDegree.SelectedIndex = 0; // الدرجة العلمية الافتراضية
+            radioButtonMale.Checked = true;   // الجنس الافتراضي ذكر
+            radioButtonFemale.Checked = false;
+
+            dateTimePickerBirth.Value = DateTime.Today; // تاريخ الميلاد الافتراضي
+
+            hiddenInstructorId = 0; // إعادة ضبط ID للصف الجديد
+
+            // مسح أي رسالة سابقة
+            label38.Text = "";
+            label47.Text = "";
+
+            // إزالة أي تحديد من DataGridView
+            dataGridViewInstructors.ClearSelection();
+        }
+
+     
     }
 }
 
