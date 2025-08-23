@@ -28,7 +28,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             LoadYearComboBox();
             LoadTypeComboBox();
             InitializeControls();
-
+            LoadDepartments1();
+            LoadYears();
+            dataGridViewDepartment.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewDepartment.MultiSelect = false;
         }
         private void LoadInstructors()
         {
@@ -136,7 +139,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         private int selectedDeptId = -1; // نخزن ID القسم
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-      
+
             if (e.RowIndex >= 0)
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
@@ -406,8 +409,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 numericUpDownPractical.Value = 0;
                 numericUpDownUnits.Value = 0;
 
-            
-            
+
+
             }
             catch (Exception ex)
             {
@@ -550,14 +553,14 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     tran.Commit();
                 }
 
-              
+
                 label49.Text = "تم حذف المادة وجميع العلاقات المرتبطة بها بنجاح.";
                 label49.ForeColor = Color.Red;
                 // نفس سلوك زر التحديث بعد الإتمام
                 selectedCourseId = 0;
-              
+
                 dataGridView7.ClearSelection();
-               
+
             }
             catch (Exception ex)
             {
@@ -607,7 +610,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 cmd.Parameters.AddWithValue("@id", selectedCourseId);
 
                 cmd.ExecuteNonQuery();
-             
+
                 label49.Text = "تم تعديل المادة بنجاح.";
                 label49.ForeColor = Color.Green;
 
@@ -1110,7 +1113,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 {
                     label47.Text = "تم تحديث المدرس بنجاح";
                     label47.ForeColor = Color.Green;
-                  
+
                 }
                 else
                 {
@@ -1179,7 +1182,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     }
 
                     hiddenInstructorId = 0;
-             
+
                 }
                 catch (Exception ex1)
                 {
@@ -1270,8 +1273,302 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             // إزالة أي تحديد من DataGridView
             dataGridViewInstructors.ClearSelection();
         }
+        //ربط المواد بي القسم
+        // تحميل السنوات في الكمبو الأول
 
-     
+
+        private void LoadYears()
+        {
+            comboBoxYear4.Items.Clear();
+            for (int i = 1; i <= 4; i++) // حسب عدد سنوات الكلية
+                comboBoxYear4.Items.Add(i);
+            if (comboBoxYear4.Items.Count > 0)
+                comboBoxYear4.SelectedIndex = 0; // السنة الأولى افتراضي
+        }
+        // تحميل الأقسام في الكمبو الثاني
+
+        private void LoadDepartments1()
+        {
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                SqlDataAdapter da = new SqlDataAdapter("SELECT department_id, dep_name FROM Departments", con);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                comboBoxDepartment.DataSource = dt;
+                comboBoxDepartment.DisplayMember = "dep_name";
+                comboBoxDepartment.ValueMember = "department_id";
+                // ComboBox لتحديد القسم الجديد للتحديث
+                comboBox1.DataSource = dt.Copy();
+                comboBox1.DisplayMember = "dep_name";
+                comboBox1.ValueMember = "department_id";
+
+
+
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+
+
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewAvailable.CurrentRow == null || comboBoxDepartment.SelectedValue == null)
+            {
+                MessageBox.Show("⚠️ الرجاء اختيار مادة وقسم أولاً");
+                return;
+            }
+
+            int courseId = Convert.ToInt32(dataGridViewAvailable.CurrentRow.Cells["course_id"].Value);
+            int deptId = Convert.ToInt32(comboBoxDepartment.SelectedValue);
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                SqlCommand cmd = new SqlCommand("INSERT INTO Course_Department(course_id, department_id) VALUES(@c, @d)", con);
+                cmd.Parameters.AddWithValue("@c", courseId);
+                cmd.Parameters.AddWithValue("@d", deptId);
+                cmd.ExecuteNonQuery();
+
+
+                label50.Text = "✅ تم ربط المادة بالقسم بنجاح.";
+                label50.ForeColor = Color.Green;
+
+
+            }
+            catch (SqlException)
+            {
+                MessageBox.Show("⚠️ المادة مرتبطة بالفعل بهذا القسم.");
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+            comboBoxYear4_SelectedIndexChanged(null, null);
+            LoadDepartmentCourses();
+        }
+
+        private void comboBoxYear4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxYear4.SelectedItem == null)
+                return;
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                SqlCommand cmd = new SqlCommand(@"
+            SELECT c.course_id, c.course_name AS [اسم المادة], c.course_code AS [رمز المادة]
+            FROM Courses c
+            WHERE c.year_number = @year
+            AND NOT EXISTS (
+                SELECT 1 FROM Course_Department cd WHERE cd.course_id = c.course_id
+            )", con);
+                cmd.Parameters.AddWithValue("@year", comboBoxYear4.SelectedItem);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                dataGridViewAvailable.DataSource = dt;
+
+                // إضافة عمود ترقيم
+                if (!dataGridViewAvailable.Columns.Contains("ترقيم"))
+                {
+                    DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn();
+                    col.Name = "ترقيم";
+                    col.HeaderText = "م";
+                    col.Width = 50;
+                    dataGridViewAvailable.Columns.Insert(0, col);
+                }
+                dataGridViewAvailable.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                // تعبئة العمود بالترقيم
+                for (int i = 0; i < dataGridViewAvailable.Rows.Count; i++)
+                    dataGridViewAvailable.Rows[i].Cells["ترقيم"].Value = i + 1;
+
+                // إخفاء العمود الأصلي
+                if (dataGridViewAvailable.Columns.Contains("course_id"))
+                    dataGridViewAvailable.Columns["course_id"].Visible = false;
+
+                //if (dt.Rows.Count == 0)
+                //    label50.Text = "⚠️ لا توجد مواد في هذه السنة.";
+                //label50.ForeColor = Color.Red;
+
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+        private void LoadDepartmentCourses()
+        {
+
+            if (comboBoxDepartment.SelectedValue == null || comboBoxDepartment.SelectedValue is DataRowView)
+                return;
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                int deptId = Convert.ToInt32(comboBoxDepartment.SelectedValue);
+
+                SqlCommand cmd = new SqlCommand(@"
+            SELECT c.course_id, c.course_name AS [اسم المادة], c.course_code AS [رمز المادة]
+            FROM Courses c
+            INNER JOIN Course_Department cd ON cd.course_id = c.course_id
+            WHERE cd.department_id = @deptId", con);
+                cmd.Parameters.AddWithValue("@deptId", deptId);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                dataGridViewDepartment.DataSource = dt;
+
+                // إضافة عمود ترقيم
+                if (!dataGridViewDepartment.Columns.Contains("ترقيم"))
+                {
+                    DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn();
+                    col.Name = "ترقيم";
+                    col.HeaderText = "م";
+                    col.Width = 50;
+                    dataGridViewDepartment.Columns.Insert(0, col);
+                }
+
+                // تعبئة العمود بالترقيم
+                for (int i = 0; i < dataGridViewDepartment.Rows.Count; i++)
+                    dataGridViewDepartment.Rows[i].Cells["ترقيم"].Value = i + 1;
+
+                // إخفاء العمود الأصلي
+                if (dataGridViewDepartment.Columns.Contains("course_id"))
+                    dataGridViewDepartment.Columns["course_id"].Visible = false;
+                dataGridViewDepartment.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+
+                if (dt.Rows.Count == 0)
+                    label50.Text = "⚠️ لا توجد مواد في هذا القسم.";
+                //  label50.ForeColor = Color.Red;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+
+        private void comboBoxDepartment_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadDepartmentCourses();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewDepartment.CurrentRow == null)
+            {
+                label50.Text = "⚠️ الرجاء اختيار مادة لتحديث القسم.";
+                label50.ForeColor = Color.Red;
+                return;
+            }
+
+            if (comboBox1.SelectedValue == null || comboBox1.SelectedValue is DataRowView)
+            {
+                label50.Text = "⚠️ الرجاء اختيار قسم جديد ";
+                label50.ForeColor = Color.Red;
+                return;
+            }
+
+            int courseId = Convert.ToInt32(dataGridViewDepartment.CurrentRow.Cells["course_id"].Value);
+            int newDeptId = Convert.ToInt32(comboBox1.SelectedValue);
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                SqlCommand cmd = new SqlCommand("UPDATE Course_Department SET department_id = @newDept WHERE course_id = @courseId", con);
+                cmd.Parameters.AddWithValue("@newDept", newDeptId);
+                cmd.Parameters.AddWithValue("@courseId", courseId);
+                cmd.ExecuteNonQuery();
+
+                label50.Text = "✅ تم تغيير القسم للمادة: " + dataGridViewDepartment.CurrentRow.Cells["اسم المادة"].Value.ToString();
+                label50.ForeColor = Color.Green;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+            LoadDepartmentCourses();        // تحديث قائمة القسم الحالي
+            comboBoxYear4_SelectedIndexChanged(null, null); // تحديث قائمة المواد غير المرتبطة
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {  // الحصول على الصف الفعلي الذي ضغط عليه المستخدم
+            if (dataGridViewDepartment.SelectedRows.Count == 0)
+            {
+                label50.Text = "⚠️ الرجاء اختيار مادة صحيحة للحذف.";
+                label50.ForeColor = Color.Red;
+                return;
+            }
+
+            DataGridViewRow row = dataGridViewDepartment.SelectedRows[0];
+
+            if (row.IsNewRow)
+            {
+                label50.Text = "⚠️ الرجاء اختيار مادة صحيحة للحذف.";
+                label50.ForeColor = Color.Red;
+                return;
+            }
+
+            int courseId = Convert.ToInt32(row.Cells["course_id"].Value);
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                SqlCommand cmd = new SqlCommand("DELETE FROM Course_Department WHERE course_id = @c", con);
+                cmd.Parameters.AddWithValue("@c", courseId);
+                cmd.ExecuteNonQuery();
+
+                label50.Text = "✅ تم حذف المادة من القسم بنجاح.";
+                label50.ForeColor = Color.Green;
+
+                LoadDepartmentCourses();
+                comboBoxYear4_SelectedIndexChanged(null, null);
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+        }
+
+        private void label50_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 

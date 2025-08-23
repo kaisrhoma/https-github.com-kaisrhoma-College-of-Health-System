@@ -49,18 +49,21 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label50 = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
+            this.label51 = new System.Windows.Forms.Label();
+            this.comboBoxDepartment = new System.Windows.Forms.ComboBox();
             this.button4 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.dataGridViewDepartment = new System.Windows.Forms.DataGridView();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.dataGridView3 = new System.Windows.Forms.DataGridView();
+            this.comboBoxYear4 = new System.Windows.Forms.ComboBox();
+            this.dataGridViewAvailable = new System.Windows.Forms.DataGridView();
             this.label18 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -73,6 +76,7 @@
             this.dataGridViewInstructors = new System.Windows.Forms.DataGridView();
             this.button10 = new System.Windows.Forms.Button();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.button24 = new System.Windows.Forms.Button();
             this.label38 = new System.Windows.Forms.Label();
             this.comboBoxDegree = new System.Windows.Forms.ComboBox();
             this.dateTimePickerBirth = new System.Windows.Forms.DateTimePicker();
@@ -132,6 +136,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.label49 = new System.Windows.Forms.Label();
             this.button20 = new System.Windows.Forms.Button();
             this.button21 = new System.Windows.Forms.Button();
             this.label37 = new System.Windows.Forms.Label();
@@ -139,6 +144,8 @@
             this.dataGridView7 = new System.Windows.Forms.DataGridView();
             this.button22 = new System.Windows.Forms.Button();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.button25 = new System.Windows.Forms.Button();
+            this.label48 = new System.Windows.Forms.Label();
             this.label46 = new System.Windows.Forms.Label();
             this.comboBoxType = new System.Windows.Forms.ComboBox();
             this.comboBoxYear = new System.Windows.Forms.ComboBox();
@@ -156,10 +163,6 @@
             this.txtCourseCode = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
-            this.button24 = new System.Windows.Forms.Button();
-            this.label48 = new System.Windows.Forms.Label();
-            this.label49 = new System.Windows.Forms.Label();
-            this.button25 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -167,9 +170,9 @@
             this.groupBox1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDepartment)).BeginInit();
             this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAvailable)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewInstructors)).BeginInit();
@@ -250,6 +253,7 @@
             this.groupBox2.TabIndex = 45;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "عرض/ تعديل/ حذف قسم";
+            this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
             // button2
             // 
@@ -470,6 +474,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.comboBox1);
+            this.tabPage2.Controls.Add(this.label50);
             this.tabPage2.Controls.Add(this.button7);
             this.tabPage2.Controls.Add(this.label14);
             this.tabPage2.Controls.Add(this.groupBox3);
@@ -485,6 +491,26 @@
             this.tabPage2.Text = "ربط المواد بالقسم";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(-134, 91);
+            this.comboBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(152, 27);
+            this.comboBox1.TabIndex = 38;
+            // 
+            // label50
+            // 
+            this.label50.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.label50.AutoSize = true;
+            this.label50.Location = new System.Drawing.Point(282, 401);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(0, 19);
+            this.label50.TabIndex = 52;
+            this.label50.Click += new System.EventHandler(this.label50_Click);
+            // 
             // button7
             // 
             this.button7.Anchor = System.Windows.Forms.AnchorStyles.Right;
@@ -498,6 +524,7 @@
             this.button7.TabIndex = 51;
             this.button7.Text = "إضافة";
             this.button7.UseVisualStyleBackColor = false;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // label14
             // 
@@ -515,11 +542,12 @@
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.comboBox4);
+            this.groupBox3.Controls.Add(this.label51);
+            this.groupBox3.Controls.Add(this.comboBoxDepartment);
             this.groupBox3.Controls.Add(this.button4);
             this.groupBox3.Controls.Add(this.button6);
             this.groupBox3.Controls.Add(this.label13);
-            this.groupBox3.Controls.Add(this.dataGridView2);
+            this.groupBox3.Controls.Add(this.dataGridViewDepartment);
             this.groupBox3.Location = new System.Drawing.Point(15, 58);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 24);
             this.groupBox3.Name = "groupBox3";
@@ -529,15 +557,28 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "عرض/ تعديل/ حذف/ إضافة مواد للقسم";
             // 
-            // comboBox4
+            // label51
             // 
-            this.comboBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Location = new System.Drawing.Point(48, 34);
-            this.comboBox4.Margin = new System.Windows.Forms.Padding(2);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(158, 27);
-            this.comboBox4.TabIndex = 34;
+            this.label51.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label51.AutoSize = true;
+            this.label51.ForeColor = System.Drawing.Color.Black;
+            this.label51.Location = new System.Drawing.Point(4, 37);
+            this.label51.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(46, 19);
+            this.label51.TabIndex = 38;
+            this.label51.Text = "نقل الى";
+            // 
+            // comboBoxDepartment
+            // 
+            this.comboBoxDepartment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxDepartment.FormattingEnabled = true;
+            this.comboBoxDepartment.Location = new System.Drawing.Point(54, 34);
+            this.comboBoxDepartment.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxDepartment.Name = "comboBoxDepartment";
+            this.comboBoxDepartment.Size = new System.Drawing.Size(152, 27);
+            this.comboBoxDepartment.TabIndex = 34;
+            this.comboBoxDepartment.SelectedIndexChanged += new System.EventHandler(this.comboBoxDepartment_SelectedIndexChanged);
             // 
             // button4
             // 
@@ -552,6 +593,7 @@
             this.button4.TabIndex = 37;
             this.button4.Text = "تحديث المادة";
             this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button6
             // 
@@ -566,6 +608,7 @@
             this.button6.TabIndex = 34;
             this.button6.Text = "حذف المادة";
             this.button6.UseVisualStyleBackColor = false;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // label13
             // 
@@ -579,28 +622,28 @@
             this.label13.TabIndex = 32;
             this.label13.Text = "القسم";
             // 
-            // dataGridView2
+            // dataGridViewDepartment
             // 
-            this.dataGridView2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dataGridViewDepartment.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(16, 78);
-            this.dataGridView2.Margin = new System.Windows.Forms.Padding(2);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.ReadOnly = true;
-            this.dataGridView2.RowHeadersWidth = 51;
-            this.dataGridView2.RowTemplate.Height = 24;
-            this.dataGridView2.Size = new System.Drawing.Size(227, 219);
-            this.dataGridView2.TabIndex = 26;
+            this.dataGridViewDepartment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewDepartment.Location = new System.Drawing.Point(16, 78);
+            this.dataGridViewDepartment.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridViewDepartment.Name = "dataGridViewDepartment";
+            this.dataGridViewDepartment.ReadOnly = true;
+            this.dataGridViewDepartment.RowHeadersWidth = 51;
+            this.dataGridViewDepartment.RowTemplate.Height = 24;
+            this.dataGridViewDepartment.Size = new System.Drawing.Size(227, 219);
+            this.dataGridViewDepartment.TabIndex = 26;
             // 
             // groupBox4
             // 
             this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.label12);
-            this.groupBox4.Controls.Add(this.comboBox3);
-            this.groupBox4.Controls.Add(this.dataGridView3);
+            this.groupBox4.Controls.Add(this.comboBoxYear4);
+            this.groupBox4.Controls.Add(this.dataGridViewAvailable);
             this.groupBox4.Location = new System.Drawing.Point(349, 58);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox4.Name = "groupBox4";
@@ -622,30 +665,31 @@
             this.label12.TabIndex = 33;
             this.label12.Text = "السنة";
             // 
-            // comboBox3
+            // comboBoxYear4
             // 
-            this.comboBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(138, 37);
-            this.comboBox3.Margin = new System.Windows.Forms.Padding(2);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(126, 27);
-            this.comboBox3.TabIndex = 28;
+            this.comboBoxYear4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxYear4.FormattingEnabled = true;
+            this.comboBoxYear4.Location = new System.Drawing.Point(138, 37);
+            this.comboBoxYear4.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxYear4.Name = "comboBoxYear4";
+            this.comboBoxYear4.Size = new System.Drawing.Size(126, 27);
+            this.comboBoxYear4.TabIndex = 28;
+            this.comboBoxYear4.SelectedIndexChanged += new System.EventHandler(this.comboBoxYear4_SelectedIndexChanged);
             // 
-            // dataGridView3
+            // dataGridViewAvailable
             // 
-            this.dataGridView3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.dataGridViewAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView3.Location = new System.Drawing.Point(14, 78);
-            this.dataGridView3.Margin = new System.Windows.Forms.Padding(2);
-            this.dataGridView3.Name = "dataGridView3";
-            this.dataGridView3.ReadOnly = true;
-            this.dataGridView3.RowHeadersWidth = 51;
-            this.dataGridView3.RowTemplate.Height = 24;
-            this.dataGridView3.Size = new System.Drawing.Size(283, 261);
-            this.dataGridView3.TabIndex = 27;
+            this.dataGridViewAvailable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewAvailable.Location = new System.Drawing.Point(14, 78);
+            this.dataGridViewAvailable.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridViewAvailable.Name = "dataGridViewAvailable";
+            this.dataGridViewAvailable.ReadOnly = true;
+            this.dataGridViewAvailable.RowHeadersWidth = 51;
+            this.dataGridViewAvailable.RowTemplate.Height = 24;
+            this.dataGridViewAvailable.Size = new System.Drawing.Size(283, 261);
+            this.dataGridViewAvailable.TabIndex = 27;
             // 
             // label18
             // 
@@ -825,6 +869,21 @@
             this.groupBox6.TabIndex = 48;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "إضافة دكتور";
+            // 
+            // button24
+            // 
+            this.button24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button24.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.button24.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button24.ForeColor = System.Drawing.Color.White;
+            this.button24.Location = new System.Drawing.Point(143, 110);
+            this.button24.Margin = new System.Windows.Forms.Padding(2);
+            this.button24.Name = "button24";
+            this.button24.Size = new System.Drawing.Size(104, 29);
+            this.button24.TabIndex = 44;
+            this.button24.Text = "جديد";
+            this.button24.UseVisualStyleBackColor = false;
+            this.button24.Click += new System.EventHandler(this.button24_Click);
             // 
             // label38
             // 
@@ -1581,6 +1640,15 @@
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "عرض/ تعديل/ حذف مادة من الكلية";
             // 
+            // label49
+            // 
+            this.label49.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(66, 150);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(0, 19);
+            this.label49.TabIndex = 38;
+            // 
             // button20
             // 
             this.button20.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -1693,6 +1761,29 @@
             this.groupBox12.TabIndex = 48;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "إضافة مادة للكلية";
+            // 
+            // button25
+            // 
+            this.button25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button25.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.button25.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button25.ForeColor = System.Drawing.Color.White;
+            this.button25.Location = new System.Drawing.Point(141, 123);
+            this.button25.Margin = new System.Windows.Forms.Padding(2);
+            this.button25.Name = "button25";
+            this.button25.Size = new System.Drawing.Size(104, 29);
+            this.button25.TabIndex = 45;
+            this.button25.Text = "جديد";
+            this.button25.UseVisualStyleBackColor = false;
+            this.button25.Click += new System.EventHandler(this.button25_Click);
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(66, 138);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(0, 19);
+            this.label48.TabIndex = 44;
             // 
             // label46
             // 
@@ -1877,53 +1968,6 @@
             this.label42.Size = new System.Drawing.Size(0, 26);
             this.label42.TabIndex = 46;
             // 
-            // button24
-            // 
-            this.button24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button24.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.button24.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button24.ForeColor = System.Drawing.Color.White;
-            this.button24.Location = new System.Drawing.Point(143, 110);
-            this.button24.Margin = new System.Windows.Forms.Padding(2);
-            this.button24.Name = "button24";
-            this.button24.Size = new System.Drawing.Size(104, 29);
-            this.button24.TabIndex = 44;
-            this.button24.Text = "جديد";
-            this.button24.UseVisualStyleBackColor = false;
-            this.button24.Click += new System.EventHandler(this.button24_Click);
-            // 
-            // label48
-            // 
-            this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(66, 138);
-            this.label48.Name = "label48";
-            this.label48.Size = new System.Drawing.Size(0, 19);
-            this.label48.TabIndex = 44;
-            // 
-            // label49
-            // 
-            this.label49.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label49.AutoSize = true;
-            this.label49.Location = new System.Drawing.Point(66, 150);
-            this.label49.Name = "label49";
-            this.label49.Size = new System.Drawing.Size(0, 19);
-            this.label49.TabIndex = 38;
-            // 
-            // button25
-            // 
-            this.button25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button25.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.button25.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button25.ForeColor = System.Drawing.Color.White;
-            this.button25.Location = new System.Drawing.Point(141, 123);
-            this.button25.Margin = new System.Windows.Forms.Padding(2);
-            this.button25.Name = "button25";
-            this.button25.Size = new System.Drawing.Size(104, 29);
-            this.button25.TabIndex = 45;
-            this.button25.Text = "جديد";
-            this.button25.UseVisualStyleBackColor = false;
-            this.button25.Click += new System.EventHandler(this.button25_Click);
-            // 
             // departments_management
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1944,10 +1988,10 @@
             this.tabPage2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDepartment)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAvailable)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.groupBox5.ResumeLayout(false);
@@ -2017,15 +2061,15 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.DataGridView dataGridViewDepartment;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.ComboBox comboBoxYear4;
+        private System.Windows.Forms.DataGridView dataGridViewAvailable;
         private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.ComboBox comboBox4;
+        private System.Windows.Forms.ComboBox comboBoxDepartment;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button9;
@@ -2117,5 +2161,8 @@
         private System.Windows.Forms.Label label49;
         private System.Windows.Forms.Label label48;
         private System.Windows.Forms.Button button25;
+        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label51;
     }
 }
