@@ -388,5 +388,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         {
 
         }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

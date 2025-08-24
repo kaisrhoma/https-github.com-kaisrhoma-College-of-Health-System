@@ -16,5 +16,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         {
             InitializeComponent();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

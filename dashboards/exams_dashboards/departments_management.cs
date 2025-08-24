@@ -1567,9 +1567,6 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void groupBox2_Enter(object sender, EventArgs e)
         {
-
         }
     }
 }
-
-

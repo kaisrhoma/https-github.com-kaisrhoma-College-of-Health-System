@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Office.Word;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -546,6 +547,32 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         private void button6_Click(object sender, EventArgs e)
         {
+            try
+            {
+                conn.DatabaseConnection db3 = new conn.DatabaseConnection();
+                using (SqlConnection con = db3.OpenConnection())
+                {
+                    int month2;
+                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1", con))
+                    {
+                        month2 = Convert.ToInt32(cmddate.ExecuteScalar());
+                    }
+                    if (DateTime.Now.Month < month2)
+                    {
+                        MessageBox.Show("لايمكن الترقية قبل بداية السنة الدراسية الجديدة");
+                        return;
+                    }
+                }
+            }
+            catch(SqlException ex)
+            {
+                MessageBox.Show("Error : " + ex.Message);
+            }
+
+            string value = Interaction.InputBox("تأكيد الترقية", "هل متأكد من الترقية ؟\nللتأكيد ادخل الرمز للتأكيد", "الرمز هنا");
+            if (value != "2025")
+                return;
+            else MessageBox.Show("رمز خاطئ يرجى إعادة المحاولة");
             label1.Visible = true;
             progressBar1.Visible = true;
             progressBar1.Style = ProgressBarStyle.Marquee;
@@ -659,10 +686,10 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                     // جلب الطلاب الذين تنطبق عليهم الشروط
                     SqlCommand cmd = new SqlCommand(@"
-            SELECT student_id, current_year, department_id
-            FROM Students
-            WHERE status_id = '1'
-              AND exam_round = N'مرحل'", con);
+                                                 SELECT student_id, current_year, department_id
+                                                 FROM Students
+                                                 WHERE status_id = '1'
+                                                 AND exam_round = N'مرحل'", con);
 
                     SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                     DataTable students = new DataTable();
@@ -792,7 +819,8 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                                                          FROM Registrations r
                                                          JOIN Grades g ON r.course_id = g.course_id AND r.student_id = g.student_id
                                                          WHERE r.student_id = @student_id
-                                                         AND r.academic_year_start = @academic_year_start", con);
+                                                         AND r.academic_year_start = @academic_year_start
+                                                         AND g.success_status = 'رسوب' ", con);
 
                         prevCourses.Parameters.AddWithValue("@student_id", studentId);
                         prevCourses.Parameters.AddWithValue("@academic_year_start", academicYearStart - 1);

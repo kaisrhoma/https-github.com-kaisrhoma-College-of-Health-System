@@ -1081,5 +1081,10 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 e.SuppressKeyPress = true;
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
