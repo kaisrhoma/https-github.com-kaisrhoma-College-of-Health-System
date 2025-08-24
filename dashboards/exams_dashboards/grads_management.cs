@@ -751,46 +751,46 @@ ORDER BY s.university_number, r.year_number, c.course_name;
                                     auditCmd.ExecuteNonQuery();
                                 }
 
-                                // جلب حالة الطالب و student_id
-                                string getExamRoundQuery = @"
-                        SELECT exam_round 
-                        FROM Students 
-                        WHERE student_id = @studentId";
+                        //        // جلب حالة الطالب و student_id
+                        //        string getExamRoundQuery = @"
+                        //SELECT exam_round 
+                        //FROM Students 
+                        //WHERE student_id = @studentId";
 
-                                string examRound = "";
-                                using (SqlCommand cmdExamRound = new SqlCommand(getExamRoundQuery, conn))
-                                {
-                                    cmdExamRound.Parameters.AddWithValue("@studentId", studentId);
-                                    examRound = cmdExamRound.ExecuteScalar()?.ToString() ?? "";
-                                }
+                        //        string examRound = "";
+                        //        using (SqlCommand cmdExamRound = new SqlCommand(getExamRoundQuery, conn))
+                        //        {
+                        //            cmdExamRound.Parameters.AddWithValue("@studentId", studentId);
+                        //            examRound = cmdExamRound.ExecuteScalar()?.ToString() ?? "";
+                        //        }
 
-                                if (examRound == "مرحل" && totalGrade >= 60 && studentId != -1)
-                                {
-                                    string updateExamRoundQuery = @"
-                            UPDATE Students
-                            SET exam_round = N'دور أول'
-                            WHERE student_id = @studentId";
+                        //        if (examRound == "مرحل" && totalGrade >= 60 && studentId != -1)
+                        //        {
+                        //            string updateExamRoundQuery = @"
+                        //    UPDATE Students
+                        //    SET exam_round = N'دور أول'
+                        //    WHERE student_id = @studentId";
 
-                                    using (SqlCommand cmdUpdateRound = new SqlCommand(updateExamRoundQuery, conn))
-                                    {
-                                        cmdUpdateRound.Parameters.AddWithValue("@studentId", studentId);
-                                        cmdUpdateRound.ExecuteNonQuery();
-                                    }
+                        //            using (SqlCommand cmdUpdateRound = new SqlCommand(updateExamRoundQuery, conn))
+                        //            {
+                        //                cmdUpdateRound.Parameters.AddWithValue("@studentId", studentId);
+                        //                cmdUpdateRound.ExecuteNonQuery();
+                        //            }
 
-                                }
-                                else if (examRound == "دور ثاني" && totalGrade >= 60 && studentId != -1)
-                                {
-                                    string updateExamRoundQuery = @"
-                            UPDATE Students
-                            SET exam_round = N'دور أول'
-                            WHERE student_id = @studentId";
+                        //        }
+                        //        else if (examRound == "دور ثاني" && totalGrade >= 60 && studentId != -1)
+                        //        {
+                        //            string updateExamRoundQuery = @"
+                        //    UPDATE Students
+                        //    SET exam_round = N'دور أول'
+                        //    WHERE student_id = @studentId";
 
-                                    using (SqlCommand cmdUpdateRound = new SqlCommand(updateExamRoundQuery, conn))
-                                    {
-                                        cmdUpdateRound.Parameters.AddWithValue("@studentId", studentId);
-                                        cmdUpdateRound.ExecuteNonQuery();
-                                    }
-                                }
+                        //            using (SqlCommand cmdUpdateRound = new SqlCommand(updateExamRoundQuery, conn))
+                        //            {
+                        //                cmdUpdateRound.Parameters.AddWithValue("@studentId", studentId);
+                        //                cmdUpdateRound.ExecuteNonQuery();
+                        //            }
+                        //        }
 
                                 updatedCount++;
                             }
@@ -1143,29 +1143,9 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
 
         private void button6_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
-            {
-                conn.Open();
-
-                foreach (DataGridViewRow row in dataGridView3.Rows)
-                {
-                    if (row.IsNewRow) continue;
-
-                    string univNo = row.Cells["university_number"].Value.ToString();
-
-                    SqlCommand cmd = new SqlCommand(@"
-                SELECT COUNT(*) FROM Grades g
-                JOIN Students s ON g.student_id = s.student_id
-                WHERE s.university_number = @univNo AND g.success_status = 'راسب'", conn);
-
-                    cmd.Parameters.AddWithValue("@univNo", univNo);
-
-                    int failCount = (int)cmd.ExecuteScalar();
-
-                    string result = failCount <= 2 ? $"مرحّل ({failCount} مواد)." : "يعيد السنة.";
-                    MessageBox.Show($"الطالب {univNo}: {result}");
-                }
-            }
+          
+                
+            
         }
 
         private void tabPage3_Click(object sender, EventArgs e)
