@@ -1,4 +1,5 @@
 ﻿using college_of_health_sciences.dashboards.exams_dashboards;
+using college_of_health_sciences.dashboards.registrar_dashboard;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,6 +74,14 @@ namespace college_of_health_sciences.system_forms
             departments_management depman = new departments_management();
             depman.Dock = DockStyle.Fill;
             panel4.Controls.Add(depman);
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            panel4.Controls.Clear();
+            transfer_deportation trdp = new transfer_deportation();
+            trdp.Dock = DockStyle.Fill;
+            panel4.Controls.Add(trdp);
         }
     }
 }

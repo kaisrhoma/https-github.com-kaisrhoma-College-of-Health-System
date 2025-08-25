@@ -687,11 +687,11 @@ ORDER BY s.university_number, r.year_number, c.course_name;
                             }
                         }
 
-                        if (!workGradeHasValue && !finalGradeHasValue)
-                        {
-                            skippedCount++;
-                            continue;
-                        }
+                        //if (!workGradeHasValue && !finalGradeHasValue)
+                        //{
+                        //    skippedCount++;
+                        //    continue;
+                        //}
 
                         string selectQuery = "SELECT work_grade, final_grade, student_id FROM Grades WHERE grade_id = @gradeId";
 
@@ -751,47 +751,6 @@ ORDER BY s.university_number, r.year_number, c.course_name;
                                     auditCmd.ExecuteNonQuery();
                                 }
 
-                        //        // جلب حالة الطالب و student_id
-                        //        string getExamRoundQuery = @"
-                        //SELECT exam_round 
-                        //FROM Students 
-                        //WHERE student_id = @studentId";
-
-                        //        string examRound = "";
-                        //        using (SqlCommand cmdExamRound = new SqlCommand(getExamRoundQuery, conn))
-                        //        {
-                        //            cmdExamRound.Parameters.AddWithValue("@studentId", studentId);
-                        //            examRound = cmdExamRound.ExecuteScalar()?.ToString() ?? "";
-                        //        }
-
-                        //        if (examRound == "مرحل" && totalGrade >= 60 && studentId != -1)
-                        //        {
-                        //            string updateExamRoundQuery = @"
-                        //    UPDATE Students
-                        //    SET exam_round = N'دور أول'
-                        //    WHERE student_id = @studentId";
-
-                        //            using (SqlCommand cmdUpdateRound = new SqlCommand(updateExamRoundQuery, conn))
-                        //            {
-                        //                cmdUpdateRound.Parameters.AddWithValue("@studentId", studentId);
-                        //                cmdUpdateRound.ExecuteNonQuery();
-                        //            }
-
-                        //        }
-                        //        else if (examRound == "دور ثاني" && totalGrade >= 60 && studentId != -1)
-                        //        {
-                        //            string updateExamRoundQuery = @"
-                        //    UPDATE Students
-                        //    SET exam_round = N'دور أول'
-                        //    WHERE student_id = @studentId";
-
-                        //            using (SqlCommand cmdUpdateRound = new SqlCommand(updateExamRoundQuery, conn))
-                        //            {
-                        //                cmdUpdateRound.Parameters.AddWithValue("@studentId", studentId);
-                        //                cmdUpdateRound.ExecuteNonQuery();
-                        //            }
-                        //        }
-
                                 updatedCount++;
                             }
                             else
@@ -808,8 +767,8 @@ ORDER BY s.university_number, r.year_number, c.course_name;
             {
                 MessageBox.Show("❌ خطأ أثناء حفظ التعديلات: " + ex.Message);
             }
-
-
+            if (txtUniversityNumber.Text == "") { button4_Click(null, null); }
+            if (txtUniversityNumber.Text != "") { button3_Click(null, null); }
 
         }
 
@@ -1143,9 +1102,9 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
 
         private void button6_Click(object sender, EventArgs e)
         {
-          
-                
-            
+
+
+
         }
 
         private void tabPage3_Click(object sender, EventArgs e)

@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,6 +17,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 {
     public partial class transfer_deportation : UserControl
     {
+        SqlConnection con = new SqlConnection(@"Data Source=.\SQLEXPRESS;Initial Catalog=Cohs_DB;Integrated Security=True");
         public transfer_deportation()
         {
             InitializeComponent();
@@ -864,6 +866,54 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             progressBar1.Visible = false;
             button6.Enabled = true;
             label1.Visible = false;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (SaveFileDialog sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = "Backup Files (*.bak)|*.bak";
+                    sfd.FileName = "Cohs_DB_Backup_" + DateTime.Now.ToString("yyyy-MM-dd") + ".bak";
+
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        string backupFile = sfd.FileName;
+
+                        string sqlBackup = $"BACKUP DATABASE Cohs_DB TO DISK = '{backupFile}' WITH INIT, NAME = 'Cohs_DB Backup'";
+
+                        using (SqlConnection con = new SqlConnection(@"Data Source=.\SQLEXPRESS;Initial Catalog=master;Integrated Security=True"))
+                        {
+                            con.Open();
+                            using (SqlCommand cmd = new SqlCommand(sqlBackup, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        label1.Text = "تم حفظ النسخة الاحتياطية بنجاح";
+                        label1.ForeColor = Color.Green;
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                label1.Text = "لا يمكن الكتابة في هذا المجلد، اختر مجلداً آخر";
+                label1.ForeColor = Color.Red;
+            }
+            catch (Exception )
+            {
+                label1.Text = "خطأ في النسخ الاحتياطي: ";
+                label1.ForeColor = Color.Red;
+            }
+            finally
+            {
+                label1.Visible = true;
+            }
+
+
+
         }
     }
 }

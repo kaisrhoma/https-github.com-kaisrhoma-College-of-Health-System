@@ -85,17 +85,6 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             currentPageIndex = 0;
             currentRowIndex = 0;
         }
-
-
-
-
-        private void printDocument3_BeginPrint(object sender, PrintEventArgs e)
-        {
-            currentPageIndex = 0;
-            currentRowIndex = 0;
-        }
-
-
         private void printDocument1_PrintPage(object sender, PrintPageEventArgs e)
         {
             if (currentPageIndex >= pages.Count)
@@ -209,6 +198,13 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                 if (y + rowHeight > e.MarginBounds.Bottom)
                 {
+                    // 🔹 رسم الترقيم قبل الانتقال للصفحة التالية
+                    string pageNumber = $"صفحة {currentPageIndex + 1} من {pages.Count}";
+                    Font footerFont = new Font("Arial", 10, FontStyle.Bold);
+                    SizeF footerSize = e.Graphics.MeasureString(pageNumber, footerFont);
+                    e.Graphics.DrawString(pageNumber, footerFont, Brushes.Black,
+                        e.PageBounds.Width / 2 - footerSize.Width / 2, e.MarginBounds.Bottom + 30);
+
                     e.HasMorePages = true;
                     return;
                 }
@@ -241,10 +237,18 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 currentRowIndex++;
             }
 
+            // 🔹 رسم الترقيم أسفل الصفحة في المنتصف
+            string finalPageNumber = $"صفحة {currentPageIndex + 1} من {pages.Count}";
+            Font finalFooterFont = new Font("Arial", 10, FontStyle.Bold);
+            SizeF finalFooterSize = e.Graphics.MeasureString(finalPageNumber, finalFooterFont);
+            e.Graphics.DrawString(finalPageNumber, finalFooterFont, Brushes.Black,
+                e.PageBounds.Width / 2 - finalFooterSize.Width / 2, e.MarginBounds.Bottom + 30);
+
             currentRowIndex = 0;
             currentPageIndex++;
             e.HasMorePages = currentPageIndex < pages.Count;
         }
+
         private void tabPage1_Click(object sender, EventArgs e)
         {
 
@@ -747,8 +751,6 @@ ORDER BY c.year_number, c.course_name;";
             e.HasMorePages = currentPageIndex < pages.Count;
         }
 
-
-
         //--------------------------------------------------------------------------------------3
         private void printDocument3_PrintPage(object sender, PrintPageEventArgs e)
         {
@@ -900,7 +902,6 @@ ORDER BY c.year_number, c.course_name;";
             }
 
             // **اجعل التوقيعات في أسفل الصفحة مهما كان المحتوى**
-
             int signHeight = 50;
             int signY = pageHeight - margin - signHeight; // مكان التوقيعات في أسفل الصفحة
 
@@ -923,9 +924,15 @@ ORDER BY c.year_number, c.course_name;";
                 e.Graphics.DrawLine(dottedPen, posX + 5, lineY, posX + signColWidth - 10, lineY);
             }
 
+            // ===== إضافة ترقيم الصفحة =====
+            string pageNumberText = $"صفحة {currentPageIndex + 1}";
+            Rectangle pageNumberRect = new Rectangle(x, pageHeight - margin / 2, pageWidth, 20);
+            e.Graphics.DrawString(pageNumberText, textFont, brush, pageNumberRect, centerFormat);
+
             currentPageIndex++;
             e.HasMorePages = currentPageIndex < pages.Count;
         }
+
         private void PrepareStudentReportPages1(DataTable dt)
         {
             pages.Clear();
@@ -1082,8 +1089,6 @@ ORDER BY c.year_number, c.course_name;";
         //طبته
         private void button6_Click(object sender, EventArgs e)
         {
-
-
             string selectedYear = comboBox_Year.SelectedItem?.ToString();
             if (!int.TryParse(selectedYear, out int yearNumber))
             {
@@ -1105,20 +1110,20 @@ ORDER BY c.year_number, c.course_name;";
 
             // قراءة كل البيانات من قاعدة البيانات
             string query = @"
-    SELECT 
-        s.full_name AS [اسم الطالب],
-        s.university_number AS [الرقم الجامعي],
-        c.course_name AS [المادة],
-        g.total_grade AS [الدرجة]
-    FROM Grades g
-    INNER JOIN Students s ON g.student_id = s.student_id
-    INNER JOIN Courses c ON g.course_id = c.course_id
-    INNER JOIN Course_Department cd ON cd.course_id = c.course_id
-    INNER JOIN Registrations r ON r.student_id = s.student_id AND r.course_id = g.course_id
-    WHERE c.year_number = @yearNumber
-      AND cd.department_id = @deptId
-      AND r.academic_year_start = @academicYear
-    ORDER BY s.full_name, c.course_name";
+ SELECT 
+     s.full_name AS [اسم الطالب],
+     s.university_number AS [الرقم الجامعي],
+     c.course_name AS [المادة],
+     g.total_grade AS [الدرجة]
+ FROM Grades g
+ INNER JOIN Students s ON g.student_id = s.student_id
+ INNER JOIN Courses c ON g.course_id = c.course_id
+ INNER JOIN Course_Department cd ON cd.course_id = c.course_id
+ INNER JOIN Registrations r ON r.student_id = s.student_id AND r.course_id = g.course_id
+ WHERE c.year_number = @yearNumber
+   AND cd.department_id = @deptId
+   AND r.academic_year_start = @academicYear
+ ORDER BY s.full_name, c.course_name";
 
             DataTable allData = new DataTable();
             using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
@@ -1166,19 +1171,28 @@ ORDER BY c.year_number, c.course_name;";
                 row["اسم الطالب"] = first["اسم الطالب"];
                 row["الرقم الجامعي"] = first["الرقم الجامعي"];
 
+                bool allPassed = true; // نفترض أنه ناجح
+
                 foreach (var s in subjects)
                 {
                     var gradeRow = studentGroup.FirstOrDefault(r => r.Field<string>("المادة") == s);
-                    row[s] = gradeRow != null ? gradeRow["الدرجة"] : "-";
+                    string gradeText = gradeRow != null ? gradeRow["الدرجة"].ToString() : string.Empty;
+
+                    // ضع الدرجة في الجدول
+                    row[s] = string.IsNullOrEmpty(gradeText) ? "-" : gradeText;
+
+                    // تحقق النجاح
+                    if (!int.TryParse(gradeText, out int grade) || grade < 60)
+                    {
+                        allPassed = false; // إذا في مادة أقل من 60 أو بدون درجة
+                    }
                 }
 
-                // حساب النتيجة
-                bool isFail = studentGroup.Any(r => int.TryParse(r["الدرجة"].ToString(), out int g) && g < 60);
-                row["النتيجة"] = isFail ? "راسب" : "ناجح";
+                // النتيجة النهائية
+                row["النتيجة"] = allPassed ? "ناجح" : "راسب";
 
                 tableForPrinting.Rows.Add(row);
             }
-
             // تحضير الطباعة
             subjectPages.Clear();
             subjectPages.Add(tableForPrinting);
@@ -1226,6 +1240,7 @@ ORDER BY c.year_number, c.course_name;";
         private string yearName;
 
         private int currentPageNumber = 1;   // رقم الصفحة العام
+
         private void printDocument12_PrintPage(object sender, PrintPageEventArgs e)
         {
             if (currentPrintIndex >= subjectPages.Count)
@@ -1320,6 +1335,14 @@ ORDER BY c.year_number, c.course_name;";
             {
                 if (y + rowHeight1 > e.MarginBounds.Bottom)
                 {
+                    // ====== ترقيم الصفحة أسفل الصفحة ======
+                    string pageNum = currentPageNumber.ToString();
+                    Font footerFont = new Font("Arial", 10, FontStyle.Bold);
+                    SizeF pageSize = e.Graphics.MeasureString(pageNum, footerFont);
+                    e.Graphics.DrawString(pageNum, footerFont, Brushes.Black,
+                        e.PageBounds.Width / 2 - pageSize.Width / 2, e.MarginBounds.Bottom + 30);
+
+                    currentPageNumber++;
                     e.HasMorePages = true;
                     return;
                 }
@@ -1344,10 +1367,19 @@ ORDER BY c.year_number, c.course_name;";
                 currentRowIndex++;
             }
 
+            // ====== ترقيم الصفحة أسفل الصفحة ======
+            string finalPageNum = currentPageNumber.ToString();
+            Font finalFooterFont = new Font("Arial", 10, FontStyle.Bold);
+            SizeF finalPageSize = e.Graphics.MeasureString(finalPageNum, finalFooterFont);
+            e.Graphics.DrawString(finalPageNum, finalFooterFont, Brushes.Black,
+                e.PageBounds.Width / 2 - finalPageSize.Width / 2, e.MarginBounds.Bottom + 30);
+
+            currentPageNumber++;
             currentRowIndex = 0;
             currentPrintIndex++;
             e.HasMorePages = currentPrintIndex < subjectPages.Count;
         }
+
 
 
 

@@ -293,6 +293,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button1_Click(object sender, EventArgs e)
         {
+     
             if (selectedDeptId == -1)
             {
                 MessageBox.Show("الرجاء اختيار قسم للحذف");
@@ -820,6 +821,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button13_Click(object sender, EventArgs e)
         {
+         
             if (dataGridView5.SelectedCells.Count == 0)
             {
                 label10.Text = "يرجى تحديد صف للحذف";
@@ -827,6 +829,9 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 return;
             }
 
+            if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد الحذف",
+                          MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
             int rowIndex = dataGridView5.SelectedCells[0].RowIndex;
 
             // تحقق من أن الصف ليس NewRow
@@ -1136,12 +1141,16 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button9_Click(object sender, EventArgs e)
         {
+        
             if (hiddenInstructorId == 0)
             {
                 label47.Text = "يرجى اختيار مدرس من القائمة أولاً";
                 label47.ForeColor = Color.Red;
                 return;
             }
+            if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد الحذف",
+                          MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
 
             try
             {
@@ -1525,7 +1534,9 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 label50.ForeColor = Color.Red;
                 return;
             }
-
+            if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد الحذف",
+                              MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
             DataGridViewRow row = dataGridViewDepartment.SelectedRows[0];
 
             if (row.IsNewRow)
