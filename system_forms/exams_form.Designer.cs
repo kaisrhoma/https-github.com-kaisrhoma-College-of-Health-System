@@ -68,10 +68,10 @@
             this.panel2.Controls.Add(this.button2);
             this.panel2.Controls.Add(this.button1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(682, 0);
-            this.panel2.Margin = new System.Windows.Forms.Padding(2);
+            this.panel2.Location = new System.Drawing.Point(909, 0);
+            this.panel2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(206, 537);
+            this.panel2.Size = new System.Drawing.Size(275, 661);
             this.panel2.TabIndex = 1;
             // 
             // button8
@@ -85,11 +85,11 @@
             this.button8.ForeColor = System.Drawing.Color.White;
             this.button8.Image = ((System.Drawing.Image)(resources.GetObject("button8.Image")));
             this.button8.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button8.Location = new System.Drawing.Point(0, 357);
+            this.button8.Location = new System.Drawing.Point(0, 435);
             this.button8.Margin = new System.Windows.Forms.Padding(0);
             this.button8.Name = "button8";
-            this.button8.Padding = new System.Windows.Forms.Padding(0, 0, 19, 0);
-            this.button8.Size = new System.Drawing.Size(206, 35);
+            this.button8.Padding = new System.Windows.Forms.Padding(0, 0, 25, 0);
+            this.button8.Size = new System.Drawing.Size(275, 43);
             this.button8.TabIndex = 5;
             this.button8.Text = "التحويل و الترحيل";
             this.button8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -108,11 +108,11 @@
             this.button6.ForeColor = System.Drawing.Color.White;
             this.button6.Image = ((System.Drawing.Image)(resources.GetObject("button6.Image")));
             this.button6.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button6.Location = new System.Drawing.Point(0, 318);
+            this.button6.Location = new System.Drawing.Point(0, 391);
             this.button6.Margin = new System.Windows.Forms.Padding(0);
             this.button6.Name = "button6";
-            this.button6.Padding = new System.Windows.Forms.Padding(0, 0, 19, 0);
-            this.button6.Size = new System.Drawing.Size(206, 35);
+            this.button6.Padding = new System.Windows.Forms.Padding(0, 0, 25, 0);
+            this.button6.Size = new System.Drawing.Size(275, 43);
             this.button6.TabIndex = 9;
             this.button6.Text = "إدارة الاقسام";
             this.button6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -124,10 +124,10 @@
             // 
             this.panel11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panel11.BackColor = System.Drawing.Color.Gainsboro;
-            this.panel11.Location = new System.Drawing.Point(16, 150);
-            this.panel11.Margin = new System.Windows.Forms.Padding(2);
+            this.panel11.Location = new System.Drawing.Point(21, 185);
+            this.panel11.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(172, 3);
+            this.panel11.Size = new System.Drawing.Size(229, 4);
             this.panel11.TabIndex = 8;
             // 
             // button7
@@ -141,11 +141,11 @@
             this.button7.ForeColor = System.Drawing.Color.White;
             this.button7.Image = global::college_of_health_sciences.Properties.Resources.cancel_24;
             this.button7.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button7.Location = new System.Drawing.Point(0, 425);
+            this.button7.Location = new System.Drawing.Point(0, 570);
             this.button7.Margin = new System.Windows.Forms.Padding(0);
             this.button7.Name = "button7";
-            this.button7.Padding = new System.Windows.Forms.Padding(0, 0, 19, 0);
-            this.button7.Size = new System.Drawing.Size(206, 35);
+            this.button7.Padding = new System.Windows.Forms.Padding(0, 0, 25, 0);
+            this.button7.Size = new System.Drawing.Size(275, 43);
             this.button7.TabIndex = 7;
             this.button7.Text = "تسجيل الخروج";
             this.button7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -158,10 +158,9 @@
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label13.Font = new System.Drawing.Font("Times New Roman", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label13.ForeColor = System.Drawing.Color.White;
-            this.label13.Location = new System.Drawing.Point(2, 112);
-            this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label13.Location = new System.Drawing.Point(3, 138);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(202, 26);
+            this.label13.Size = new System.Drawing.Size(269, 32);
             this.label13.TabIndex = 1;
             this.label13.Text = "قسم الدراسة والامتحانات";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -171,10 +170,10 @@
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::college_of_health_sciences.Properties.Resources.adminlogin;
-            this.pictureBox1.Location = new System.Drawing.Point(66, 24);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBox1.Location = new System.Drawing.Point(88, 30);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(71, 77);
+            this.pictureBox1.Size = new System.Drawing.Size(95, 95);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -190,11 +189,11 @@
             this.button5.ForeColor = System.Drawing.Color.White;
             this.button5.Image = ((System.Drawing.Image)(resources.GetObject("button5.Image")));
             this.button5.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button5.Location = new System.Drawing.Point(2, 391);
+            this.button5.Location = new System.Drawing.Point(3, 479);
             this.button5.Margin = new System.Windows.Forms.Padding(0);
             this.button5.Name = "button5";
-            this.button5.Padding = new System.Windows.Forms.Padding(0, 0, 19, 0);
-            this.button5.Size = new System.Drawing.Size(206, 35);
+            this.button5.Padding = new System.Windows.Forms.Padding(0, 0, 25, 0);
+            this.button5.Size = new System.Drawing.Size(275, 43);
             this.button5.TabIndex = 5;
             this.button5.Text = "تعديل الملف الشخصي";
             this.button5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -213,11 +212,11 @@
             this.button4.ForeColor = System.Drawing.Color.White;
             this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
             this.button4.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button4.Location = new System.Drawing.Point(0, 282);
+            this.button4.Location = new System.Drawing.Point(0, 347);
             this.button4.Margin = new System.Windows.Forms.Padding(0);
             this.button4.Name = "button4";
-            this.button4.Padding = new System.Windows.Forms.Padding(0, 0, 19, 0);
-            this.button4.Size = new System.Drawing.Size(206, 35);
+            this.button4.Padding = new System.Windows.Forms.Padding(0, 0, 25, 0);
+            this.button4.Size = new System.Drawing.Size(275, 43);
             this.button4.TabIndex = 4;
             this.button4.Text = "العمليات الإدارية";
             this.button4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -236,11 +235,11 @@
             this.button3.ForeColor = System.Drawing.Color.White;
             this.button3.Image = ((System.Drawing.Image)(resources.GetObject("button3.Image")));
             this.button3.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button3.Location = new System.Drawing.Point(0, 247);
+            this.button3.Location = new System.Drawing.Point(0, 304);
             this.button3.Margin = new System.Windows.Forms.Padding(0);
             this.button3.Name = "button3";
-            this.button3.Padding = new System.Windows.Forms.Padding(0, 0, 19, 0);
-            this.button3.Size = new System.Drawing.Size(206, 35);
+            this.button3.Padding = new System.Windows.Forms.Padding(0, 0, 25, 0);
+            this.button3.Size = new System.Drawing.Size(275, 43);
             this.button3.TabIndex = 3;
             this.button3.Text = "الكشوف و التقارير";
             this.button3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -259,11 +258,11 @@
             this.button2.ForeColor = System.Drawing.Color.White;
             this.button2.Image = ((System.Drawing.Image)(resources.GetObject("button2.Image")));
             this.button2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button2.Location = new System.Drawing.Point(0, 212);
+            this.button2.Location = new System.Drawing.Point(0, 261);
             this.button2.Margin = new System.Windows.Forms.Padding(0);
             this.button2.Name = "button2";
-            this.button2.Padding = new System.Windows.Forms.Padding(0, 0, 19, 0);
-            this.button2.Size = new System.Drawing.Size(206, 35);
+            this.button2.Padding = new System.Windows.Forms.Padding(0, 0, 25, 0);
+            this.button2.Size = new System.Drawing.Size(275, 43);
             this.button2.TabIndex = 2;
             this.button2.Text = "إدارة الدرجات";
             this.button2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -282,11 +281,11 @@
             this.button1.ForeColor = System.Drawing.Color.White;
             this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
             this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.button1.Location = new System.Drawing.Point(0, 177);
+            this.button1.Location = new System.Drawing.Point(0, 218);
             this.button1.Margin = new System.Windows.Forms.Padding(0);
             this.button1.Name = "button1";
-            this.button1.Padding = new System.Windows.Forms.Padding(0, 0, 19, 0);
-            this.button1.Size = new System.Drawing.Size(206, 35);
+            this.button1.Padding = new System.Windows.Forms.Padding(0, 0, 25, 0);
+            this.button1.Size = new System.Drawing.Size(275, 43);
             this.button1.TabIndex = 1;
             this.button1.Text = "الرئيسية";
             this.button1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -303,9 +302,9 @@
             this.panel3.Controls.Add(this.pictureBox2);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(0, 0);
-            this.panel3.Margin = new System.Windows.Forms.Padding(2);
+            this.panel3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(682, 71);
+            this.panel3.Size = new System.Drawing.Size(909, 87);
             this.panel3.TabIndex = 2;
             // 
             // label3
@@ -313,10 +312,9 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Times New Roman", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(423, 24);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Location = new System.Drawing.Point(564, 30);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(187, 23);
+            this.label3.Size = new System.Drawing.Size(237, 29);
             this.label3.TabIndex = 4;
             this.label3.Text = "كلية العلوم الصحية - غريان";
             // 
@@ -326,10 +324,9 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Times New Roman", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label2.Location = new System.Drawing.Point(316, 14);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(421, 17);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(0, 25);
+            this.label2.Size = new System.Drawing.Size(0, 32);
             this.label2.TabIndex = 3;
             // 
             // label1
@@ -337,10 +334,9 @@
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Times New Roman", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(292, 14);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(389, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 25);
+            this.label1.Size = new System.Drawing.Size(0, 32);
             this.label1.TabIndex = 2;
             // 
             // pictureBox2
@@ -348,10 +344,10 @@
             this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = global::college_of_health_sciences.Properties.Resources.cohs_logo;
-            this.pictureBox2.Location = new System.Drawing.Point(609, 6);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBox2.Location = new System.Drawing.Point(812, 7);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(59, 58);
+            this.pictureBox2.Size = new System.Drawing.Size(79, 71);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 0;
             this.pictureBox2.TabStop = false;
@@ -360,22 +356,22 @@
             // 
             this.panel4.AutoScroll = true;
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel4.Location = new System.Drawing.Point(0, 71);
-            this.panel4.Margin = new System.Windows.Forms.Padding(2);
+            this.panel4.Location = new System.Drawing.Point(0, 87);
+            this.panel4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(682, 466);
+            this.panel4.Size = new System.Drawing.Size(909, 574);
             this.panel4.TabIndex = 3;
             // 
             // exams_form
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(888, 537);
+            this.ClientSize = new System.Drawing.Size(1184, 661);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(903, 574);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MinimumSize = new System.Drawing.Size(1198, 696);
             this.Name = "exams_form";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "exams_form";

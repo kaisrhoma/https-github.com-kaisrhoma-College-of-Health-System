@@ -32,14 +32,12 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.button4 = new System.Windows.Forms.Button();
-            this.txtSearch = new System.Windows.Forms.TextBox();
+            this.txtUniversityNumber3 = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -73,6 +71,8 @@
             this.button7 = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
+            this.printDocument2 = new System.Drawing.Printing.PrintDocument();
+            this.printDocument3 = new System.Drawing.Printing.PrintDocument();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -115,8 +115,6 @@
             this.tabPage1.BackColor = System.Drawing.Color.White;
             this.tabPage1.Controls.Add(this.button1);
             this.tabPage1.Controls.Add(this.dataGridView3);
-            this.tabPage1.Controls.Add(this.textBox2);
-            this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Controls.Add(this.button5);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -130,7 +128,7 @@
             // 
             // button1
             // 
-            this.button1.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button1.BackColor = System.Drawing.Color.LimeGreen;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.Color.White;
@@ -145,7 +143,8 @@
             // 
             // dataGridView3
             // 
-            this.dataGridView3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.dataGridView3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView3.Location = new System.Drawing.Point(59, 175);
@@ -156,39 +155,20 @@
             this.dataGridView3.Size = new System.Drawing.Size(780, 244);
             this.dataGridView3.TabIndex = 41;
             // 
-            // textBox2
-            // 
-            this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(531, 122);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(201, 30);
-            this.textBox2.TabIndex = 39;
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.Black;
-            this.label1.Location = new System.Drawing.Point(739, 122);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 23);
-            this.label1.TabIndex = 37;
-            this.label1.Text = "الرقم الجامعي";
-            // 
             // button5
             // 
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button5.ForeColor = System.Drawing.Color.White;
-            this.button5.Location = new System.Drawing.Point(353, 116);
+            this.button5.Location = new System.Drawing.Point(531, 115);
             this.button5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(165, 36);
+            this.button5.Size = new System.Drawing.Size(308, 36);
             this.button5.TabIndex = 38;
-            this.button5.Text = "اصدار شهادة القيد";
+            this.button5.Text = "عرض كل الطلبة اللذين قاموا بإقاف القيد";
             this.button5.UseVisualStyleBackColor = false;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // label3
             // 
@@ -207,7 +187,7 @@
             this.tabPage2.BackColor = System.Drawing.Color.White;
             this.tabPage2.Controls.Add(this.dataGridView2);
             this.tabPage2.Controls.Add(this.button4);
-            this.tabPage2.Controls.Add(this.txtSearch);
+            this.tabPage2.Controls.Add(this.txtUniversityNumber3);
             this.tabPage2.Controls.Add(this.label6);
             this.tabPage2.Controls.Add(this.button2);
             this.tabPage2.Controls.Add(this.label4);
@@ -249,15 +229,15 @@
             this.button4.UseVisualStyleBackColor = false;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // txtSearch
+            // txtUniversityNumber3
             // 
-            this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSearch.Location = new System.Drawing.Point(533, 103);
-            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(201, 30);
-            this.txtSearch.TabIndex = 39;
-            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
+            this.txtUniversityNumber3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtUniversityNumber3.Location = new System.Drawing.Point(533, 103);
+            this.txtUniversityNumber3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtUniversityNumber3.Name = "txtUniversityNumber3";
+            this.txtUniversityNumber3.Size = new System.Drawing.Size(201, 30);
+            this.txtUniversityNumber3.TabIndex = 39;
+            this.txtUniversityNumber3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
             // 
             // label6
             // 
@@ -666,6 +646,14 @@
             // 
             this.printDocument1.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument1_PrintPage);
             // 
+            // printDocument2
+            // 
+            this.printDocument2.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument2_PrintPage_1);
+            // 
+            // printDocument3
+            // 
+            this.printDocument3.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument3_PrintPage);
+            // 
             // certificates_reports
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -711,12 +699,10 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.DataGridView dataGridView3;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.DataGridView dataGridView2;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.TextBox txtSearch;
+        private System.Windows.Forms.TextBox txtUniversityNumber3;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
@@ -748,5 +734,7 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Drawing.Printing.PrintDocument printDocument2;
+        private System.Drawing.Printing.PrintDocument printDocument3;
     }
 }
