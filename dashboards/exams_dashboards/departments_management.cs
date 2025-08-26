@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -191,7 +192,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
             }
         }
-        private void LoadDepartments()
+        private void    LoadDepartments()
         {
             try
             {
@@ -1578,6 +1579,222 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void groupBox2_Enter(object sender, EventArgs e)
         {
+        }
+
+        private void comboBox8_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox8.SelectedValue == null || comboBox8.SelectedValue == DBNull.Value)
+                return;
+            // تأكد أن القيمة هي من النوع الصحيح‍
+            if (!(comboBox8.SelectedValue is int))
+            {
+                try
+                {
+                    // حاول تحويلها إذا كانت من نوع مختلف‍
+                    int convertedValue = Convert.ToInt32(comboBox8.SelectedValue);
+                    // استمر في المعالجة...‍
+                }
+                catch
+                {
+                    MessageBox.Show("قيمة الدورة التدريبية غير صالحة");
+                    return;
+                }
+            }
+            try
+            {
+                conn.DatabaseConnection dbstudent = new conn.DatabaseConnection();
+                using (SqlConnection con = dbstudent.OpenConnection())
+                {
+                    int month2;
+
+                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1", con))
+                    {
+                        month2 = Convert.ToInt32(cmddate.ExecuteScalar());
+                    }
+
+                    string q = @"SELECT COUNT(*) 
+                         FROM Registrations r 
+                         WHERE r.course_id = @course_id 
+                           AND r.academic_year_start = @academic_year_start";
+
+                    int academicYearStart = DateTime.Now.Month >= month2 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+
+                    using (SqlCommand cmddate2 = new SqlCommand(q, con))
+                    {
+                        cmddate2.Parameters.AddWithValue("@course_id", (int)comboBox8.SelectedValue);
+                        cmddate2.Parameters.AddWithValue("@academic_year_start", academicYearStart);
+
+                        // هنا لازم تستخدم ExecuteScalar مش ExecuteNonQuery عشان تسترجع العدد
+                        int count = Convert.ToInt32(cmddate2.ExecuteScalar());
+                        label53.Text = count.ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error : " + ex.Message);
+            }
+        }
+
+
+        private void departments_management_Load(object sender, EventArgs e)
+        {
+            
+            try
+            {
+                conn.DatabaseConnection db2 = new conn.DatabaseConnection();
+                using (SqlConnection con2 = db2.OpenConnection())
+                {
+                    string q2 = "select * from Departments";
+                    SqlDataAdapter da2 = new SqlDataAdapter(q2, con2);
+                    DataTable dt2 = new DataTable();
+                    da2.Fill(dt2);
+
+                    comboBox6.DataSource = dt2;
+                    comboBox6.DisplayMember = "dep_name";
+                    comboBox6.ValueMember = "department_id";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an Error : " + ex.Message);
+            }
+
+            try
+            {
+                conn.DatabaseConnection db1 = new conn.DatabaseConnection();
+                using (SqlConnection con1 = db1.OpenConnection())
+                {
+                    string q1 = "select full_name,instructor_id from Instructors";
+                    SqlDataAdapter da1 = new SqlDataAdapter(q1, con1);
+                    DataTable dt1 = new DataTable();
+                    da1.Fill(dt1);
+
+                    comboBox9.DataSource = dt1;
+                    comboBox9.DisplayMember = "full_name";
+                    comboBox9.ValueMember = "instructor_id";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an Error : " + ex.Message);
+            }
+
+            var y_num = new Dictionary<int, string>()
+            {
+                {1, "1"},
+                {2, "2"},
+                {3, "3"},
+                {4, "4"}
+            };
+
+            comboBox7.DataSource = new BindingSource(y_num, null);
+            comboBox7.DisplayMember = "Value";
+            comboBox7.ValueMember = "Key";
+
+
+
+            var group_num = new Dictionary<int, string>()
+            {
+                {1, "1"},
+                {2, "2"},
+                {3, "3"},
+                {4, "4"},
+                {5, "5"},
+                {6, "6"},
+                {7, "7"},
+                {8, "8"},
+                {9, "9"},
+                {10, "10"},
+                {11, "11"},
+                {12, "12"},
+                {13, "13"},
+                {14, "14"},
+                {15, "15"},
+                {16, "16"},
+                {17, "17"},
+                {18, "18"}
+            };
+
+            comboBox10.DataSource = new BindingSource(group_num, null);
+            comboBox10.DisplayMember = "Value";
+            comboBox10.ValueMember = "Key";
+
+            var day = new Dictionary<int, string>()
+            {
+                {1, "الأحد"},
+                {2, "الأثنين"},
+                {3, "الثلاثاء"},
+                {4, "الإربعاء"},
+                {5, "الخميس"},
+                {6, "الجمعة"},
+                {7, "السبت"}
+            };
+
+            comboBox11.DataSource = new BindingSource(day, null);
+            comboBox11.DisplayMember = "Value";
+            comboBox11.ValueMember = "Key";
+
+            var times = new Dictionary<int, string>();
+            int id = 1;
+
+            for (int hour = 7; hour <= 20; hour++) // من 7 صباحا حتى 8 مساءً
+            {
+                DateTime time = new DateTime(1, 1, 1, hour, 0, 0);
+                string displayTime = time.ToString("hh:mm tt", new System.Globalization.CultureInfo("ar-SA"));
+                string sqlFormat = time.ToString("HH:mm"); // مناسب للتخزين في SQL Server
+
+                times.Add(id, displayTime);
+                id++;
+            }
+
+            comboBox12.DataSource = new BindingSource(times, null);
+            comboBox12.DisplayMember = "Value"; // يعرض التوقيت بالعربي
+            comboBox12.ValueMember = "Key";      // أو ممكن تخليه sqlFormat لو تريد
+
+        }
+
+        private void comboBox7_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox6.SelectedValue == null || comboBox7.SelectedValue == null)
+                return;
+            try
+            {
+                int selectedYear = (int)comboBox7.SelectedValue;
+                int selecteddep = (int)comboBox6.SelectedValue;
+                conn.DatabaseConnection dbconnect = new conn.DatabaseConnection();
+                using (SqlConnection con4 = dbconnect.OpenConnection())
+                {
+                    string q4 = @"
+            SELECT c.course_name, c.course_id
+            FROM Courses c
+            JOIN Course_Department cd ON c.course_id = cd.course_id
+            WHERE cd.department_id = @department_id 
+              AND c.year_number = @year_number ";
+                    using (SqlCommand cmdconnect = new SqlCommand(q4, con4))
+                    {
+                        cmdconnect.Parameters.AddWithValue("@department_id", selecteddep);
+                        cmdconnect.Parameters.AddWithValue("@year_number", selectedYear);
+
+                        SqlDataAdapter daconn = new SqlDataAdapter(cmdconnect);
+                        DataTable dtcon = new DataTable();
+                        daconn.Fill(dtcon);
+
+                        comboBox8.DataSource = new BindingSource(dtcon, null);
+                        comboBox8.DisplayMember = "course_name";
+                        comboBox8.ValueMember = "course_id";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an Error : " + ex.Message);
+            }
+        }
+
+        private void comboBox6_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox7_SelectedIndexChanged(null,null);
         }
     }
 }

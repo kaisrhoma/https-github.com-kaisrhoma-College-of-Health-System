@@ -163,6 +163,8 @@
             this.txtCourseCode = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
+            this.label52 = new System.Windows.Forms.Label();
+            this.label53 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -213,7 +215,7 @@
             this.tabControl1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tabControl1.RightToLeftLayout = true;
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(680, 460);
+            this.tabControl1.Size = new System.Drawing.Size(907, 566);
             this.tabControl1.TabIndex = 5;
             // 
             // tabPage1
@@ -224,11 +226,11 @@
             this.tabPage1.Controls.Add(this.label5);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage1.Location = new System.Drawing.Point(4, 36);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 40);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(672, 420);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.tabPage1.Size = new System.Drawing.Size(899, 522);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "ادارة الاقسام";
             // 
@@ -245,11 +247,11 @@
             this.groupBox2.Controls.Add(this.txtDeptName2);
             this.groupBox2.Controls.Add(this.dataGridView1);
             this.groupBox2.Controls.Add(this.button5);
-            this.groupBox2.Location = new System.Drawing.Point(29, 193);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 24);
+            this.groupBox2.Location = new System.Drawing.Point(39, 238);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox2.Size = new System.Drawing.Size(616, 213);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox2.Size = new System.Drawing.Size(821, 262);
             this.groupBox2.TabIndex = 45;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "عرض/ تعديل/ حذف قسم";
@@ -261,10 +263,10 @@
             this.button2.BackColor = System.Drawing.Color.LimeGreen;
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.ForeColor = System.Drawing.Color.White;
-            this.button2.Location = new System.Drawing.Point(210, 172);
-            this.button2.Margin = new System.Windows.Forms.Padding(2);
+            this.button2.Location = new System.Drawing.Point(280, 212);
+            this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(104, 29);
+            this.button2.Size = new System.Drawing.Size(139, 36);
             this.button2.TabIndex = 37;
             this.button2.Text = "تحديث القسم";
             this.button2.UseVisualStyleBackColor = false;
@@ -274,10 +276,9 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(326, 37);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(435, 46);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(71, 19);
+            this.label1.Size = new System.Drawing.Size(86, 23);
             this.label1.TabIndex = 36;
             this.label1.Text = "رئيس القسم";
             // 
@@ -285,10 +286,10 @@
             // 
             this.comboBoxHead2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxHead2.FormattingEnabled = true;
-            this.comboBoxHead2.Location = new System.Drawing.Point(155, 34);
-            this.comboBoxHead2.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxHead2.Location = new System.Drawing.Point(207, 42);
+            this.comboBoxHead2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxHead2.Name = "comboBoxHead2";
-            this.comboBoxHead2.Size = new System.Drawing.Size(167, 27);
+            this.comboBoxHead2.Size = new System.Drawing.Size(221, 31);
             this.comboBoxHead2.TabIndex = 35;
             // 
             // button1
@@ -297,10 +298,10 @@
             this.button1.BackColor = System.Drawing.Color.Red;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(318, 172);
-            this.button1.Margin = new System.Windows.Forms.Padding(2);
+            this.button1.Location = new System.Drawing.Point(424, 212);
+            this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(104, 29);
+            this.button1.Size = new System.Drawing.Size(139, 36);
             this.button1.TabIndex = 34;
             this.button1.Text = "حذف القسم";
             this.button1.UseVisualStyleBackColor = false;
@@ -311,20 +312,19 @@
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label11.AutoSize = true;
             this.label11.ForeColor = System.Drawing.Color.Black;
-            this.label11.Location = new System.Drawing.Point(545, 37);
-            this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label11.Location = new System.Drawing.Point(727, 46);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(62, 19);
+            this.label11.Size = new System.Drawing.Size(72, 23);
             this.label11.TabIndex = 32;
             this.label11.Text = "إسم القسم";
             // 
             // txtDeptName2
             // 
             this.txtDeptName2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDeptName2.Location = new System.Drawing.Point(402, 34);
-            this.txtDeptName2.Margin = new System.Windows.Forms.Padding(2);
+            this.txtDeptName2.Location = new System.Drawing.Point(536, 42);
+            this.txtDeptName2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtDeptName2.Name = "txtDeptName2";
-            this.txtDeptName2.Size = new System.Drawing.Size(138, 26);
+            this.txtDeptName2.Size = new System.Drawing.Size(183, 30);
             this.txtDeptName2.TabIndex = 33;
             // 
             // dataGridView1
@@ -333,13 +333,13 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(16, 78);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridView1.Location = new System.Drawing.Point(21, 96);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(586, 82);
+            this.dataGridView1.Size = new System.Drawing.Size(781, 101);
             this.dataGridView1.TabIndex = 26;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             // 
@@ -349,10 +349,10 @@
             this.button5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button5.ForeColor = System.Drawing.Color.White;
-            this.button5.Location = new System.Drawing.Point(17, 31);
-            this.button5.Margin = new System.Windows.Forms.Padding(2);
+            this.button5.Location = new System.Drawing.Point(23, 38);
+            this.button5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(134, 29);
+            this.button5.Size = new System.Drawing.Size(179, 36);
             this.button5.TabIndex = 27;
             this.button5.Text = "عرض جميع الاقسام";
             this.button5.UseVisualStyleBackColor = false;
@@ -368,11 +368,11 @@
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtDeptName);
-            this.groupBox1.Location = new System.Drawing.Point(29, 61);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox1.Location = new System.Drawing.Point(39, 75);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox1.Size = new System.Drawing.Size(616, 117);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox1.Size = new System.Drawing.Size(821, 144);
             this.groupBox1.TabIndex = 44;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "إضافة قسم";
@@ -383,10 +383,9 @@
             this.lblMessage.AutoSize = true;
             this.lblMessage.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessage.ForeColor = System.Drawing.Color.Red;
-            this.lblMessage.Location = new System.Drawing.Point(311, 86);
-            this.lblMessage.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblMessage.Location = new System.Drawing.Point(415, 106);
             this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(0, 19);
+            this.lblMessage.Size = new System.Drawing.Size(0, 22);
             this.lblMessage.TabIndex = 32;
             this.lblMessage.Click += new System.EventHandler(this.label10_Click);
             // 
@@ -394,10 +393,9 @@
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(315, 41);
-            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label8.Location = new System.Drawing.Point(420, 50);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(71, 19);
+            this.label8.Size = new System.Drawing.Size(86, 23);
             this.label8.TabIndex = 31;
             this.label8.Text = "رئيس القسم";
             // 
@@ -405,10 +403,10 @@
             // 
             this.comboBoxHead.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxHead.FormattingEnabled = true;
-            this.comboBoxHead.Location = new System.Drawing.Point(134, 38);
-            this.comboBoxHead.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxHead.Location = new System.Drawing.Point(179, 47);
+            this.comboBoxHead.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxHead.Name = "comboBoxHead";
-            this.comboBoxHead.Size = new System.Drawing.Size(178, 27);
+            this.comboBoxHead.Size = new System.Drawing.Size(236, 31);
             this.comboBoxHead.TabIndex = 30;
             // 
             // button3
@@ -417,10 +415,10 @@
             this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.ForeColor = System.Drawing.Color.White;
-            this.button3.Location = new System.Drawing.Point(16, 35);
-            this.button3.Margin = new System.Windows.Forms.Padding(2);
+            this.button3.Location = new System.Drawing.Point(21, 43);
+            this.button3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(104, 29);
+            this.button3.Size = new System.Drawing.Size(139, 36);
             this.button3.TabIndex = 29;
             this.button3.Text = "اضافة";
             this.button3.UseVisualStyleBackColor = false;
@@ -431,20 +429,19 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(550, 41);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(733, 50);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(62, 19);
+            this.label2.Size = new System.Drawing.Size(72, 23);
             this.label2.TabIndex = 25;
             this.label2.Text = "إسم القسم";
             // 
             // txtDeptName
             // 
             this.txtDeptName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDeptName.Location = new System.Drawing.Point(410, 38);
-            this.txtDeptName.Margin = new System.Windows.Forms.Padding(2);
+            this.txtDeptName.Location = new System.Drawing.Point(547, 47);
+            this.txtDeptName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtDeptName.Name = "txtDeptName";
-            this.txtDeptName.Size = new System.Drawing.Size(138, 26);
+            this.txtDeptName.Size = new System.Drawing.Size(183, 30);
             this.txtDeptName.TabIndex = 28;
             // 
             // label5
@@ -453,10 +450,9 @@
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label5.Location = new System.Drawing.Point(292, 24);
-            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label5.Location = new System.Drawing.Point(389, 30);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(108, 26);
+            this.label5.Size = new System.Drawing.Size(137, 35);
             this.label5.TabIndex = 43;
             this.label5.Text = "ادارة الاقسام";
             // 
@@ -466,10 +462,9 @@
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label3.Location = new System.Drawing.Point(291, 24);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Location = new System.Drawing.Point(388, 30);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(0, 26);
+            this.label3.Size = new System.Drawing.Size(0, 35);
             this.label3.TabIndex = 6;
             // 
             // tabPage2
@@ -482,11 +477,11 @@
             this.tabPage2.Controls.Add(this.groupBox4);
             this.tabPage2.Controls.Add(this.label18);
             this.tabPage2.Controls.Add(this.label4);
-            this.tabPage2.Location = new System.Drawing.Point(4, 36);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage2.Location = new System.Drawing.Point(4, 40);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage2.Size = new System.Drawing.Size(672, 420);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage2.Size = new System.Drawing.Size(899, 522);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "ربط المواد بالقسم";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -495,19 +490,20 @@
             // 
             this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(-134, 91);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox1.Location = new System.Drawing.Point(-179, 112);
+            this.comboBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(152, 27);
+            this.comboBox1.Size = new System.Drawing.Size(201, 31);
             this.comboBox1.TabIndex = 38;
             // 
             // label50
             // 
             this.label50.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label50.AutoSize = true;
-            this.label50.Location = new System.Drawing.Point(282, 401);
+            this.label50.Location = new System.Drawing.Point(376, 494);
+            this.label50.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label50.Name = "label50";
-            this.label50.Size = new System.Drawing.Size(0, 19);
+            this.label50.Size = new System.Drawing.Size(0, 23);
             this.label50.TabIndex = 52;
             this.label50.Click += new System.EventHandler(this.label50_Click);
             // 
@@ -517,10 +513,10 @@
             this.button7.BackColor = System.Drawing.Color.LimeGreen;
             this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button7.ForeColor = System.Drawing.Color.White;
-            this.button7.Location = new System.Drawing.Point(282, 248);
-            this.button7.Margin = new System.Windows.Forms.Padding(2);
+            this.button7.Location = new System.Drawing.Point(376, 305);
+            this.button7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(58, 36);
+            this.button7.Size = new System.Drawing.Size(77, 44);
             this.button7.TabIndex = 51;
             this.button7.Text = "إضافة";
             this.button7.UseVisualStyleBackColor = false;
@@ -530,10 +526,9 @@
             // 
             this.label14.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(298, 220);
-            this.label14.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label14.Location = new System.Drawing.Point(397, 271);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(27, 19);
+            this.label14.Size = new System.Drawing.Size(32, 23);
             this.label14.TabIndex = 50;
             this.label14.Text = ">>";
             // 
@@ -548,11 +543,11 @@
             this.groupBox3.Controls.Add(this.button6);
             this.groupBox3.Controls.Add(this.label13);
             this.groupBox3.Controls.Add(this.dataGridViewDepartment);
-            this.groupBox3.Location = new System.Drawing.Point(15, 58);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 24);
+            this.groupBox3.Location = new System.Drawing.Point(20, 71);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox3.Size = new System.Drawing.Size(257, 350);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox3.Size = new System.Drawing.Size(343, 431);
             this.groupBox3.TabIndex = 49;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "عرض/ تعديل/ حذف/ إضافة مواد للقسم";
@@ -562,10 +557,9 @@
             this.label51.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label51.AutoSize = true;
             this.label51.ForeColor = System.Drawing.Color.Black;
-            this.label51.Location = new System.Drawing.Point(4, 37);
-            this.label51.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label51.Location = new System.Drawing.Point(5, 46);
             this.label51.Name = "label51";
-            this.label51.Size = new System.Drawing.Size(46, 19);
+            this.label51.Size = new System.Drawing.Size(55, 23);
             this.label51.TabIndex = 38;
             this.label51.Text = "نقل الى";
             // 
@@ -573,10 +567,10 @@
             // 
             this.comboBoxDepartment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDepartment.FormattingEnabled = true;
-            this.comboBoxDepartment.Location = new System.Drawing.Point(54, 34);
-            this.comboBoxDepartment.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxDepartment.Location = new System.Drawing.Point(72, 42);
+            this.comboBoxDepartment.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxDepartment.Name = "comboBoxDepartment";
-            this.comboBoxDepartment.Size = new System.Drawing.Size(152, 27);
+            this.comboBoxDepartment.Size = new System.Drawing.Size(201, 31);
             this.comboBoxDepartment.TabIndex = 34;
             this.comboBoxDepartment.SelectedIndexChanged += new System.EventHandler(this.comboBoxDepartment_SelectedIndexChanged);
             // 
@@ -586,10 +580,10 @@
             this.button4.BackColor = System.Drawing.Color.LimeGreen;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.ForeColor = System.Drawing.Color.White;
-            this.button4.Location = new System.Drawing.Point(16, 310);
-            this.button4.Margin = new System.Windows.Forms.Padding(2);
+            this.button4.Location = new System.Drawing.Point(21, 382);
+            this.button4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(104, 29);
+            this.button4.Size = new System.Drawing.Size(139, 36);
             this.button4.TabIndex = 37;
             this.button4.Text = "تحديث المادة";
             this.button4.UseVisualStyleBackColor = false;
@@ -601,10 +595,10 @@
             this.button6.BackColor = System.Drawing.Color.Red;
             this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button6.ForeColor = System.Drawing.Color.White;
-            this.button6.Location = new System.Drawing.Point(139, 310);
-            this.button6.Margin = new System.Windows.Forms.Padding(2);
+            this.button6.Location = new System.Drawing.Point(185, 382);
+            this.button6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(104, 29);
+            this.button6.Size = new System.Drawing.Size(139, 36);
             this.button6.TabIndex = 34;
             this.button6.Text = "حذف المادة";
             this.button6.UseVisualStyleBackColor = false;
@@ -615,10 +609,9 @@
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label13.AutoSize = true;
             this.label13.ForeColor = System.Drawing.Color.Black;
-            this.label13.Location = new System.Drawing.Point(213, 37);
-            this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label13.Location = new System.Drawing.Point(284, 46);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(38, 19);
+            this.label13.Size = new System.Drawing.Size(44, 23);
             this.label13.TabIndex = 32;
             this.label13.Text = "القسم";
             // 
@@ -628,13 +621,13 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewDepartment.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewDepartment.Location = new System.Drawing.Point(16, 78);
-            this.dataGridViewDepartment.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridViewDepartment.Location = new System.Drawing.Point(21, 96);
+            this.dataGridViewDepartment.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridViewDepartment.Name = "dataGridViewDepartment";
             this.dataGridViewDepartment.ReadOnly = true;
             this.dataGridViewDepartment.RowHeadersWidth = 51;
             this.dataGridViewDepartment.RowTemplate.Height = 24;
-            this.dataGridViewDepartment.Size = new System.Drawing.Size(227, 219);
+            this.dataGridViewDepartment.Size = new System.Drawing.Size(303, 270);
             this.dataGridViewDepartment.TabIndex = 26;
             // 
             // groupBox4
@@ -644,11 +637,11 @@
             this.groupBox4.Controls.Add(this.label12);
             this.groupBox4.Controls.Add(this.comboBoxYear4);
             this.groupBox4.Controls.Add(this.dataGridViewAvailable);
-            this.groupBox4.Location = new System.Drawing.Point(349, 58);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox4.Location = new System.Drawing.Point(465, 71);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox4.Size = new System.Drawing.Size(309, 350);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox4.Size = new System.Drawing.Size(412, 431);
             this.groupBox4.TabIndex = 48;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "مواد الكلية";
@@ -658,10 +651,9 @@
             this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label12.AutoSize = true;
             this.label12.ForeColor = System.Drawing.Color.Black;
-            this.label12.Location = new System.Drawing.Point(267, 40);
-            this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label12.Location = new System.Drawing.Point(356, 49);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(38, 19);
+            this.label12.Size = new System.Drawing.Size(44, 23);
             this.label12.TabIndex = 33;
             this.label12.Text = "السنة";
             // 
@@ -669,10 +661,10 @@
             // 
             this.comboBoxYear4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxYear4.FormattingEnabled = true;
-            this.comboBoxYear4.Location = new System.Drawing.Point(138, 37);
-            this.comboBoxYear4.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxYear4.Location = new System.Drawing.Point(184, 46);
+            this.comboBoxYear4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxYear4.Name = "comboBoxYear4";
-            this.comboBoxYear4.Size = new System.Drawing.Size(126, 27);
+            this.comboBoxYear4.Size = new System.Drawing.Size(167, 31);
             this.comboBoxYear4.TabIndex = 28;
             this.comboBoxYear4.SelectedIndexChanged += new System.EventHandler(this.comboBoxYear4_SelectedIndexChanged);
             // 
@@ -682,13 +674,13 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewAvailable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewAvailable.Location = new System.Drawing.Point(14, 78);
-            this.dataGridViewAvailable.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridViewAvailable.Location = new System.Drawing.Point(19, 96);
+            this.dataGridViewAvailable.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridViewAvailable.Name = "dataGridViewAvailable";
             this.dataGridViewAvailable.ReadOnly = true;
             this.dataGridViewAvailable.RowHeadersWidth = 51;
             this.dataGridViewAvailable.RowTemplate.Height = 24;
-            this.dataGridViewAvailable.Size = new System.Drawing.Size(283, 261);
+            this.dataGridViewAvailable.Size = new System.Drawing.Size(377, 321);
             this.dataGridViewAvailable.TabIndex = 27;
             // 
             // label18
@@ -697,10 +689,9 @@
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label18.Location = new System.Drawing.Point(291, 21);
-            this.label18.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label18.Location = new System.Drawing.Point(388, 26);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(0, 26);
+            this.label18.Size = new System.Drawing.Size(0, 35);
             this.label18.TabIndex = 46;
             // 
             // label4
@@ -709,10 +700,9 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label4.Location = new System.Drawing.Point(284, 21);
-            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label4.Location = new System.Drawing.Point(379, 26);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(150, 26);
+            this.label4.Size = new System.Drawing.Size(186, 35);
             this.label4.TabIndex = 44;
             this.label4.Text = "ربط المواد بالقسم";
             // 
@@ -722,11 +712,11 @@
             this.tabPage3.Controls.Add(this.groupBox6);
             this.tabPage3.Controls.Add(this.label22);
             this.tabPage3.Controls.Add(this.label6);
-            this.tabPage3.Location = new System.Drawing.Point(4, 36);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage3.Location = new System.Drawing.Point(4, 40);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage3.Size = new System.Drawing.Size(672, 420);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage3.Size = new System.Drawing.Size(899, 522);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "ادارة الدكاترة";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -743,11 +733,11 @@
             this.groupBox5.Controls.Add(this.textBoxSearchName);
             this.groupBox5.Controls.Add(this.dataGridViewInstructors);
             this.groupBox5.Controls.Add(this.button10);
-            this.groupBox5.Location = new System.Drawing.Point(29, 213);
-            this.groupBox5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 24);
+            this.groupBox5.Location = new System.Drawing.Point(39, 262);
+            this.groupBox5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox5.Size = new System.Drawing.Size(616, 190);
+            this.groupBox5.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox5.Size = new System.Drawing.Size(821, 234);
             this.groupBox5.TabIndex = 49;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "عرض/ تعديل/ حذف دكتور";
@@ -756,9 +746,10 @@
             // 
             this.label47.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(91, 160);
+            this.label47.Location = new System.Drawing.Point(121, 197);
+            this.label47.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label47.Name = "label47";
-            this.label47.Size = new System.Drawing.Size(0, 19);
+            this.label47.Size = new System.Drawing.Size(0, 23);
             this.label47.TabIndex = 44;
             // 
             // button8
@@ -767,10 +758,10 @@
             this.button8.BackColor = System.Drawing.Color.LimeGreen;
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button8.ForeColor = System.Drawing.Color.White;
-            this.button8.Location = new System.Drawing.Point(210, 150);
-            this.button8.Margin = new System.Windows.Forms.Padding(2);
+            this.button8.Location = new System.Drawing.Point(280, 185);
+            this.button8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(104, 29);
+            this.button8.Size = new System.Drawing.Size(139, 36);
             this.button8.TabIndex = 37;
             this.button8.Text = "تحديث البيانات";
             this.button8.UseVisualStyleBackColor = false;
@@ -782,10 +773,10 @@
             this.button9.BackColor = System.Drawing.Color.Red;
             this.button9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button9.ForeColor = System.Drawing.Color.White;
-            this.button9.Location = new System.Drawing.Point(318, 150);
-            this.button9.Margin = new System.Windows.Forms.Padding(2);
+            this.button9.Location = new System.Drawing.Point(424, 185);
+            this.button9.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(104, 29);
+            this.button9.Size = new System.Drawing.Size(139, 36);
             this.button9.TabIndex = 34;
             this.button9.Text = "حذف المحاضر";
             this.button9.UseVisualStyleBackColor = false;
@@ -796,20 +787,19 @@
             this.label16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label16.AutoSize = true;
             this.label16.ForeColor = System.Drawing.Color.Black;
-            this.label16.Location = new System.Drawing.Point(572, 40);
-            this.label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label16.Location = new System.Drawing.Point(763, 49);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(37, 19);
+            this.label16.Size = new System.Drawing.Size(43, 23);
             this.label16.TabIndex = 32;
             this.label16.Text = "الاسم";
             // 
             // textBoxSearchName
             // 
             this.textBoxSearchName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxSearchName.Location = new System.Drawing.Point(431, 37);
-            this.textBoxSearchName.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxSearchName.Location = new System.Drawing.Point(575, 46);
+            this.textBoxSearchName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBoxSearchName.Name = "textBoxSearchName";
-            this.textBoxSearchName.Size = new System.Drawing.Size(138, 26);
+            this.textBoxSearchName.Size = new System.Drawing.Size(183, 30);
             this.textBoxSearchName.TabIndex = 33;
             this.textBoxSearchName.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             // 
@@ -819,12 +809,12 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewInstructors.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewInstructors.Location = new System.Drawing.Point(16, 78);
-            this.dataGridViewInstructors.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridViewInstructors.Location = new System.Drawing.Point(21, 96);
+            this.dataGridViewInstructors.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridViewInstructors.Name = "dataGridViewInstructors";
             this.dataGridViewInstructors.RowHeadersWidth = 51;
             this.dataGridViewInstructors.RowTemplate.Height = 24;
-            this.dataGridViewInstructors.Size = new System.Drawing.Size(586, 59);
+            this.dataGridViewInstructors.Size = new System.Drawing.Size(781, 73);
             this.dataGridViewInstructors.TabIndex = 26;
             this.dataGridViewInstructors.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewInstructors_CellClick);
             // 
@@ -834,10 +824,10 @@
             this.button10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button10.ForeColor = System.Drawing.Color.White;
-            this.button10.Location = new System.Drawing.Point(288, 34);
-            this.button10.Margin = new System.Windows.Forms.Padding(2);
+            this.button10.Location = new System.Drawing.Point(384, 42);
+            this.button10.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(134, 29);
+            this.button10.Size = new System.Drawing.Size(179, 36);
             this.button10.TabIndex = 27;
             this.button10.Text = "عرض كل الدكاترة";
             this.button10.UseVisualStyleBackColor = false;
@@ -861,11 +851,11 @@
             this.groupBox6.Controls.Add(this.label21);
             this.groupBox6.Controls.Add(this.label20);
             this.groupBox6.Controls.Add(this.textBoxName);
-            this.groupBox6.Location = new System.Drawing.Point(29, 58);
-            this.groupBox6.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox6.Location = new System.Drawing.Point(39, 71);
+            this.groupBox6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox6.Size = new System.Drawing.Size(616, 150);
+            this.groupBox6.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox6.Size = new System.Drawing.Size(821, 185);
             this.groupBox6.TabIndex = 48;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "إضافة دكتور";
@@ -876,10 +866,10 @@
             this.button24.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button24.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button24.ForeColor = System.Drawing.Color.White;
-            this.button24.Location = new System.Drawing.Point(143, 110);
-            this.button24.Margin = new System.Windows.Forms.Padding(2);
+            this.button24.Location = new System.Drawing.Point(191, 135);
+            this.button24.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button24.Name = "button24";
-            this.button24.Size = new System.Drawing.Size(104, 29);
+            this.button24.Size = new System.Drawing.Size(139, 36);
             this.button24.TabIndex = 44;
             this.button24.Text = "جديد";
             this.button24.UseVisualStyleBackColor = false;
@@ -888,28 +878,29 @@
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(34, 129);
+            this.label38.Location = new System.Drawing.Point(45, 159);
+            this.label38.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(0, 19);
+            this.label38.Size = new System.Drawing.Size(0, 23);
             this.label38.TabIndex = 43;
             // 
             // comboBoxDegree
             // 
             this.comboBoxDegree.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDegree.FormattingEnabled = true;
-            this.comboBoxDegree.Location = new System.Drawing.Point(198, 73);
-            this.comboBoxDegree.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxDegree.Location = new System.Drawing.Point(264, 90);
+            this.comboBoxDegree.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxDegree.Name = "comboBoxDegree";
-            this.comboBoxDegree.Size = new System.Drawing.Size(116, 27);
+            this.comboBoxDegree.Size = new System.Drawing.Size(153, 31);
             this.comboBoxDegree.TabIndex = 42;
             // 
             // dateTimePickerBirth
             // 
             this.dateTimePickerBirth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.dateTimePickerBirth.Location = new System.Drawing.Point(7, 36);
-            this.dateTimePickerBirth.Margin = new System.Windows.Forms.Padding(2);
+            this.dateTimePickerBirth.Location = new System.Drawing.Point(9, 44);
+            this.dateTimePickerBirth.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dateTimePickerBirth.Name = "dateTimePickerBirth";
-            this.dateTimePickerBirth.Size = new System.Drawing.Size(308, 26);
+            this.dateTimePickerBirth.Size = new System.Drawing.Size(409, 30);
             this.dateTimePickerBirth.TabIndex = 41;
             // 
             // label24
@@ -917,10 +908,9 @@
             this.label24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label24.AutoSize = true;
             this.label24.ForeColor = System.Drawing.Color.Black;
-            this.label24.Location = new System.Drawing.Point(320, 38);
-            this.label24.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label24.Location = new System.Drawing.Point(427, 47);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(74, 19);
+            this.label24.Size = new System.Drawing.Size(90, 23);
             this.label24.TabIndex = 40;
             this.label24.Text = "تاريخ الميلاد";
             // 
@@ -928,10 +918,10 @@
             // 
             this.radioButtonFemale.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioButtonFemale.AutoSize = true;
-            this.radioButtonFemale.Location = new System.Drawing.Point(446, 110);
-            this.radioButtonFemale.Margin = new System.Windows.Forms.Padding(2);
+            this.radioButtonFemale.Location = new System.Drawing.Point(603, 135);
+            this.radioButtonFemale.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radioButtonFemale.Name = "radioButtonFemale";
-            this.radioButtonFemale.Size = new System.Drawing.Size(48, 23);
+            this.radioButtonFemale.Size = new System.Drawing.Size(56, 27);
             this.radioButtonFemale.TabIndex = 39;
             this.radioButtonFemale.TabStop = true;
             this.radioButtonFemale.Text = "انثى";
@@ -941,10 +931,10 @@
             // 
             this.radioButtonMale.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioButtonMale.AutoSize = true;
-            this.radioButtonMale.Location = new System.Drawing.Point(494, 110);
-            this.radioButtonMale.Margin = new System.Windows.Forms.Padding(2);
+            this.radioButtonMale.Location = new System.Drawing.Point(665, 135);
+            this.radioButtonMale.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.radioButtonMale.Name = "radioButtonMale";
-            this.radioButtonMale.Size = new System.Drawing.Size(45, 23);
+            this.radioButtonMale.Size = new System.Drawing.Size(54, 27);
             this.radioButtonMale.TabIndex = 38;
             this.radioButtonMale.TabStop = true;
             this.radioButtonMale.Text = "ذكر";
@@ -956,10 +946,10 @@
             this.button11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button11.ForeColor = System.Drawing.Color.White;
-            this.button11.Location = new System.Drawing.Point(262, 110);
-            this.button11.Margin = new System.Windows.Forms.Padding(2);
+            this.button11.Location = new System.Drawing.Point(349, 135);
+            this.button11.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(104, 29);
+            this.button11.Size = new System.Drawing.Size(139, 36);
             this.button11.TabIndex = 29;
             this.button11.Text = "اضافة";
             this.button11.UseVisualStyleBackColor = false;
@@ -970,10 +960,9 @@
             this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label23.AutoSize = true;
             this.label23.ForeColor = System.Drawing.Color.Black;
-            this.label23.Location = new System.Drawing.Point(560, 114);
-            this.label23.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label23.Location = new System.Drawing.Point(747, 140);
             this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(43, 19);
+            this.label23.Size = new System.Drawing.Size(52, 23);
             this.label23.TabIndex = 37;
             this.label23.Text = "الجنس";
             // 
@@ -982,20 +971,19 @@
             this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label17.AutoSize = true;
             this.label17.ForeColor = System.Drawing.Color.Black;
-            this.label17.Location = new System.Drawing.Point(316, 76);
-            this.label17.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label17.Location = new System.Drawing.Point(421, 94);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(84, 19);
+            this.label17.Size = new System.Drawing.Size(100, 23);
             this.label17.TabIndex = 35;
             this.label17.Text = "الدرجة العلمية";
             // 
             // textBoxSpecialization
             // 
             this.textBoxSpecialization.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxSpecialization.Location = new System.Drawing.Point(402, 73);
-            this.textBoxSpecialization.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxSpecialization.Location = new System.Drawing.Point(536, 90);
+            this.textBoxSpecialization.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBoxSpecialization.Name = "textBoxSpecialization";
-            this.textBoxSpecialization.Size = new System.Drawing.Size(138, 26);
+            this.textBoxSpecialization.Size = new System.Drawing.Size(183, 30);
             this.textBoxSpecialization.TabIndex = 34;
             // 
             // label21
@@ -1003,10 +991,9 @@
             this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label21.AutoSize = true;
             this.label21.ForeColor = System.Drawing.Color.Black;
-            this.label21.Location = new System.Drawing.Point(547, 76);
-            this.label21.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label21.Location = new System.Drawing.Point(729, 94);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(58, 19);
+            this.label21.Size = new System.Drawing.Size(70, 23);
             this.label21.TabIndex = 33;
             this.label21.Text = "التخصص";
             // 
@@ -1015,20 +1002,19 @@
             this.label20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label20.AutoSize = true;
             this.label20.ForeColor = System.Drawing.Color.Black;
-            this.label20.Location = new System.Drawing.Point(567, 38);
-            this.label20.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label20.Location = new System.Drawing.Point(756, 47);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(37, 19);
+            this.label20.Size = new System.Drawing.Size(43, 23);
             this.label20.TabIndex = 25;
             this.label20.Text = "الإسم";
             // 
             // textBoxName
             // 
             this.textBoxName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxName.Location = new System.Drawing.Point(402, 36);
-            this.textBoxName.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxName.Location = new System.Drawing.Point(536, 44);
+            this.textBoxName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBoxName.Name = "textBoxName";
-            this.textBoxName.Size = new System.Drawing.Size(138, 26);
+            this.textBoxName.Size = new System.Drawing.Size(183, 30);
             this.textBoxName.TabIndex = 28;
             // 
             // label22
@@ -1037,10 +1023,9 @@
             this.label22.AutoSize = true;
             this.label22.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label22.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label22.Location = new System.Drawing.Point(291, 21);
-            this.label22.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label22.Location = new System.Drawing.Point(388, 26);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(0, 26);
+            this.label22.Size = new System.Drawing.Size(0, 35);
             this.label22.TabIndex = 46;
             // 
             // label6
@@ -1049,10 +1034,9 @@
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label6.Location = new System.Drawing.Point(292, 24);
-            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label6.Location = new System.Drawing.Point(389, 30);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(113, 26);
+            this.label6.Size = new System.Drawing.Size(143, 35);
             this.label6.TabIndex = 44;
             this.label6.Text = "إدارة الدكاترة";
             // 
@@ -1062,11 +1046,11 @@
             this.tabPage4.Controls.Add(this.groupBox8);
             this.tabPage4.Controls.Add(this.label30);
             this.tabPage4.Controls.Add(this.label7);
-            this.tabPage4.Location = new System.Drawing.Point(4, 36);
-            this.tabPage4.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage4.Location = new System.Drawing.Point(4, 40);
+            this.tabPage4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage4.Size = new System.Drawing.Size(672, 420);
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage4.Size = new System.Drawing.Size(899, 522);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "ادارة القاعات";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -1081,11 +1065,11 @@
             this.groupBox7.Controls.Add(this.button13);
             this.groupBox7.Controls.Add(this.dataGridView5);
             this.groupBox7.Controls.Add(this.button14);
-            this.groupBox7.Location = new System.Drawing.Point(29, 190);
-            this.groupBox7.Margin = new System.Windows.Forms.Padding(2, 2, 2, 24);
+            this.groupBox7.Location = new System.Drawing.Point(39, 234);
+            this.groupBox7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox7.Size = new System.Drawing.Size(616, 213);
+            this.groupBox7.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox7.Size = new System.Drawing.Size(821, 262);
             this.groupBox7.TabIndex = 49;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "عرض/ تعديل/ حذف قاعة";
@@ -1094,9 +1078,10 @@
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(48, 182);
+            this.label10.Location = new System.Drawing.Point(64, 224);
+            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(0, 19);
+            this.label10.Size = new System.Drawing.Size(0, 23);
             this.label10.TabIndex = 38;
             // 
             // button12
@@ -1105,10 +1090,10 @@
             this.button12.BackColor = System.Drawing.Color.LimeGreen;
             this.button12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button12.ForeColor = System.Drawing.Color.White;
-            this.button12.Location = new System.Drawing.Point(210, 172);
-            this.button12.Margin = new System.Windows.Forms.Padding(2);
+            this.button12.Location = new System.Drawing.Point(280, 212);
+            this.button12.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(104, 29);
+            this.button12.Size = new System.Drawing.Size(139, 36);
             this.button12.TabIndex = 37;
             this.button12.Text = "تحديث قاعة";
             this.button12.UseVisualStyleBackColor = false;
@@ -1120,10 +1105,10 @@
             this.button13.BackColor = System.Drawing.Color.Red;
             this.button13.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button13.ForeColor = System.Drawing.Color.White;
-            this.button13.Location = new System.Drawing.Point(318, 172);
-            this.button13.Margin = new System.Windows.Forms.Padding(2);
+            this.button13.Location = new System.Drawing.Point(424, 212);
+            this.button13.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(104, 29);
+            this.button13.Size = new System.Drawing.Size(139, 36);
             this.button13.TabIndex = 34;
             this.button13.Text = "حذف قاعة";
             this.button13.UseVisualStyleBackColor = false;
@@ -1135,12 +1120,12 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView5.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView5.Location = new System.Drawing.Point(16, 78);
-            this.dataGridView5.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridView5.Location = new System.Drawing.Point(21, 96);
+            this.dataGridView5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridView5.Name = "dataGridView5";
             this.dataGridView5.RowHeadersWidth = 51;
             this.dataGridView5.RowTemplate.Height = 24;
-            this.dataGridView5.Size = new System.Drawing.Size(586, 82);
+            this.dataGridView5.Size = new System.Drawing.Size(781, 101);
             this.dataGridView5.TabIndex = 26;
             // 
             // button14
@@ -1149,10 +1134,10 @@
             this.button14.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button14.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button14.ForeColor = System.Drawing.Color.White;
-            this.button14.Location = new System.Drawing.Point(468, 38);
-            this.button14.Margin = new System.Windows.Forms.Padding(2);
+            this.button14.Location = new System.Drawing.Point(624, 47);
+            this.button14.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(134, 29);
+            this.button14.Size = new System.Drawing.Size(179, 36);
             this.button14.TabIndex = 27;
             this.button14.Text = "عرض كل القاعات";
             this.button14.UseVisualStyleBackColor = false;
@@ -1168,11 +1153,11 @@
             this.groupBox8.Controls.Add(this.button15);
             this.groupBox8.Controls.Add(this.label28);
             this.groupBox8.Controls.Add(this.textBox7);
-            this.groupBox8.Location = new System.Drawing.Point(29, 58);
-            this.groupBox8.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox8.Location = new System.Drawing.Point(39, 71);
+            this.groupBox8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox8.Size = new System.Drawing.Size(616, 117);
+            this.groupBox8.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox8.Size = new System.Drawing.Size(821, 144);
             this.groupBox8.TabIndex = 48;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "إضافة قاعة";
@@ -1180,10 +1165,10 @@
             // textBox8
             // 
             this.textBox8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox8.Location = new System.Drawing.Point(226, 38);
-            this.textBox8.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox8.Location = new System.Drawing.Point(301, 47);
+            this.textBox8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(138, 26);
+            this.textBox8.Size = new System.Drawing.Size(183, 30);
             this.textBox8.TabIndex = 33;
             // 
             // label26
@@ -1192,20 +1177,18 @@
             this.label26.AutoSize = true;
             this.label26.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label26.ForeColor = System.Drawing.Color.Red;
-            this.label26.Location = new System.Drawing.Point(308, 86);
-            this.label26.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label26.Location = new System.Drawing.Point(411, 106);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(0, 19);
+            this.label26.Size = new System.Drawing.Size(0, 22);
             this.label26.TabIndex = 32;
             // 
             // label27
             // 
             this.label27.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(368, 41);
-            this.label27.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label27.Location = new System.Drawing.Point(491, 50);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(44, 19);
+            this.label27.Size = new System.Drawing.Size(51, 23);
             this.label27.TabIndex = 31;
             this.label27.Text = "الموقع";
             // 
@@ -1215,10 +1198,10 @@
             this.button15.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button15.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button15.ForeColor = System.Drawing.Color.White;
-            this.button15.Location = new System.Drawing.Point(103, 35);
-            this.button15.Margin = new System.Windows.Forms.Padding(2);
+            this.button15.Location = new System.Drawing.Point(137, 43);
+            this.button15.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(104, 29);
+            this.button15.Size = new System.Drawing.Size(139, 36);
             this.button15.TabIndex = 29;
             this.button15.Text = "اضافة";
             this.button15.UseVisualStyleBackColor = false;
@@ -1229,20 +1212,19 @@
             this.label28.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label28.AutoSize = true;
             this.label28.ForeColor = System.Drawing.Color.Black;
-            this.label28.Location = new System.Drawing.Point(572, 41);
-            this.label28.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label28.Location = new System.Drawing.Point(763, 50);
             this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(37, 19);
+            this.label28.Size = new System.Drawing.Size(43, 23);
             this.label28.TabIndex = 25;
             this.label28.Text = "الاسم";
             // 
             // textBox7
             // 
             this.textBox7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox7.Location = new System.Drawing.Point(431, 38);
-            this.textBox7.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox7.Location = new System.Drawing.Point(575, 47);
+            this.textBox7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(138, 26);
+            this.textBox7.Size = new System.Drawing.Size(183, 30);
             this.textBox7.TabIndex = 28;
             // 
             // label30
@@ -1251,10 +1233,9 @@
             this.label30.AutoSize = true;
             this.label30.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label30.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label30.Location = new System.Drawing.Point(291, 21);
-            this.label30.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label30.Location = new System.Drawing.Point(388, 26);
             this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(0, 26);
+            this.label30.Size = new System.Drawing.Size(0, 35);
             this.label30.TabIndex = 46;
             // 
             // label7
@@ -1263,10 +1244,9 @@
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label7.Location = new System.Drawing.Point(292, 24);
-            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label7.Location = new System.Drawing.Point(389, 30);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(114, 26);
+            this.label7.Size = new System.Drawing.Size(143, 35);
             this.label7.TabIndex = 44;
             this.label7.Text = "إدارة القاعات";
             // 
@@ -1276,11 +1256,11 @@
             this.tabPage5.Controls.Add(this.groupBox10);
             this.tabPage5.Controls.Add(this.label33);
             this.tabPage5.Controls.Add(this.label9);
-            this.tabPage5.Location = new System.Drawing.Point(4, 36);
-            this.tabPage5.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage5.Location = new System.Drawing.Point(4, 40);
+            this.tabPage5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage5.Size = new System.Drawing.Size(672, 420);
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage5.Size = new System.Drawing.Size(899, 522);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "ادارة المحاضرات";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -1294,11 +1274,11 @@
             this.groupBox9.Controls.Add(this.button17);
             this.groupBox9.Controls.Add(this.dataGridView6);
             this.groupBox9.Controls.Add(this.button18);
-            this.groupBox9.Location = new System.Drawing.Point(29, 247);
-            this.groupBox9.Margin = new System.Windows.Forms.Padding(2, 2, 2, 24);
+            this.groupBox9.Location = new System.Drawing.Point(39, 304);
+            this.groupBox9.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox9.Size = new System.Drawing.Size(616, 156);
+            this.groupBox9.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox9.Size = new System.Drawing.Size(821, 192);
             this.groupBox9.TabIndex = 53;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "عرض/ تعديل/ حذف محاضرة";
@@ -1309,10 +1289,10 @@
             this.button16.BackColor = System.Drawing.Color.LimeGreen;
             this.button16.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button16.ForeColor = System.Drawing.Color.White;
-            this.button16.Location = new System.Drawing.Point(140, 115);
-            this.button16.Margin = new System.Windows.Forms.Padding(2);
+            this.button16.Location = new System.Drawing.Point(187, 142);
+            this.button16.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(104, 29);
+            this.button16.Size = new System.Drawing.Size(139, 36);
             this.button16.TabIndex = 37;
             this.button16.Text = "تحديث البيانات";
             this.button16.UseVisualStyleBackColor = false;
@@ -1323,10 +1303,10 @@
             this.button17.BackColor = System.Drawing.Color.Red;
             this.button17.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button17.ForeColor = System.Drawing.Color.White;
-            this.button17.Location = new System.Drawing.Point(248, 115);
-            this.button17.Margin = new System.Windows.Forms.Padding(2);
+            this.button17.Location = new System.Drawing.Point(331, 142);
+            this.button17.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button17.Name = "button17";
-            this.button17.Size = new System.Drawing.Size(104, 29);
+            this.button17.Size = new System.Drawing.Size(139, 36);
             this.button17.TabIndex = 34;
             this.button17.Text = "حذف المحاضر";
             this.button17.UseVisualStyleBackColor = false;
@@ -1337,13 +1317,13 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView6.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView6.Location = new System.Drawing.Point(14, 23);
-            this.dataGridView6.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridView6.Location = new System.Drawing.Point(19, 28);
+            this.dataGridView6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridView6.Name = "dataGridView6";
             this.dataGridView6.ReadOnly = true;
             this.dataGridView6.RowHeadersWidth = 51;
             this.dataGridView6.RowTemplate.Height = 24;
-            this.dataGridView6.Size = new System.Drawing.Size(586, 79);
+            this.dataGridView6.Size = new System.Drawing.Size(781, 97);
             this.dataGridView6.TabIndex = 26;
             // 
             // button18
@@ -1352,10 +1332,10 @@
             this.button18.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button18.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button18.ForeColor = System.Drawing.Color.White;
-            this.button18.Location = new System.Drawing.Point(356, 115);
-            this.button18.Margin = new System.Windows.Forms.Padding(2);
+            this.button18.Location = new System.Drawing.Point(475, 142);
+            this.button18.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button18.Name = "button18";
-            this.button18.Size = new System.Drawing.Size(134, 29);
+            this.button18.Size = new System.Drawing.Size(179, 36);
             this.button18.TabIndex = 27;
             this.button18.Text = "عرض كل المحاضرات";
             this.button18.UseVisualStyleBackColor = false;
@@ -1364,6 +1344,7 @@
             // 
             this.groupBox10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox10.Controls.Add(this.label52);
             this.groupBox10.Controls.Add(this.numericUpDown1);
             this.groupBox10.Controls.Add(this.label25);
             this.groupBox10.Controls.Add(this.comboBox12);
@@ -1381,11 +1362,12 @@
             this.groupBox10.Controls.Add(this.label29);
             this.groupBox10.Controls.Add(this.label31);
             this.groupBox10.Controls.Add(this.label32);
-            this.groupBox10.Location = new System.Drawing.Point(29, 58);
-            this.groupBox10.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox10.Controls.Add(this.label53);
+            this.groupBox10.Location = new System.Drawing.Point(39, 71);
+            this.groupBox10.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox10.Size = new System.Drawing.Size(616, 184);
+            this.groupBox10.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox10.Size = new System.Drawing.Size(821, 226);
             this.groupBox10.TabIndex = 52;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "ربط الدكتور بالمادة";
@@ -1393,10 +1375,10 @@
             // numericUpDown1
             // 
             this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDown1.Location = new System.Drawing.Point(231, 104);
-            this.numericUpDown1.Margin = new System.Windows.Forms.Padding(2);
+            this.numericUpDown1.Location = new System.Drawing.Point(308, 128);
+            this.numericUpDown1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(119, 26);
+            this.numericUpDown1.Size = new System.Drawing.Size(159, 30);
             this.numericUpDown1.TabIndex = 58;
             // 
             // label25
@@ -1404,10 +1386,9 @@
             this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label25.AutoSize = true;
             this.label25.ForeColor = System.Drawing.Color.Black;
-            this.label25.Location = new System.Drawing.Point(356, 106);
-            this.label25.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label25.Location = new System.Drawing.Point(475, 130);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(40, 19);
+            this.label25.Size = new System.Drawing.Size(46, 23);
             this.label25.TabIndex = 57;
             this.label25.Text = "السعة";
             // 
@@ -1415,10 +1396,10 @@
             // 
             this.comboBox12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox12.FormattingEnabled = true;
-            this.comboBox12.Location = new System.Drawing.Point(14, 66);
-            this.comboBox12.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox12.Location = new System.Drawing.Point(19, 81);
+            this.comboBox12.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox12.Name = "comboBox12";
-            this.comboBox12.Size = new System.Drawing.Size(136, 27);
+            this.comboBox12.Size = new System.Drawing.Size(180, 31);
             this.comboBox12.TabIndex = 56;
             // 
             // label36
@@ -1426,10 +1407,9 @@
             this.label36.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label36.AutoSize = true;
             this.label36.ForeColor = System.Drawing.Color.Black;
-            this.label36.Location = new System.Drawing.Point(356, 42);
-            this.label36.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label36.Location = new System.Drawing.Point(475, 52);
             this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(38, 19);
+            this.label36.Size = new System.Drawing.Size(46, 23);
             this.label36.TabIndex = 55;
             this.label36.Text = "المادة";
             // 
@@ -1437,10 +1417,10 @@
             // 
             this.comboBox11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox11.FormattingEnabled = true;
-            this.comboBox11.Location = new System.Drawing.Point(14, 32);
-            this.comboBox11.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox11.Location = new System.Drawing.Point(19, 39);
+            this.comboBox11.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox11.Name = "comboBox11";
-            this.comboBox11.Size = new System.Drawing.Size(136, 27);
+            this.comboBox11.Size = new System.Drawing.Size(180, 31);
             this.comboBox11.TabIndex = 49;
             // 
             // label35
@@ -1448,10 +1428,9 @@
             this.label35.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label35.AutoSize = true;
             this.label35.ForeColor = System.Drawing.Color.Black;
-            this.label35.Location = new System.Drawing.Point(356, 76);
-            this.label35.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label35.Location = new System.Drawing.Point(475, 94);
             this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(54, 19);
+            this.label35.Size = new System.Drawing.Size(64, 23);
             this.label35.TabIndex = 48;
             this.label35.Text = "مجموعة";
             // 
@@ -1459,10 +1438,10 @@
             // 
             this.comboBox10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox10.FormattingEnabled = true;
-            this.comboBox10.Location = new System.Drawing.Point(231, 69);
-            this.comboBox10.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox10.Location = new System.Drawing.Point(308, 85);
+            this.comboBox10.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox10.Name = "comboBox10";
-            this.comboBox10.Size = new System.Drawing.Size(119, 27);
+            this.comboBox10.Size = new System.Drawing.Size(157, 31);
             this.comboBox10.TabIndex = 47;
             // 
             // label34
@@ -1470,10 +1449,9 @@
             this.label34.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label34.AutoSize = true;
             this.label34.ForeColor = System.Drawing.Color.Black;
-            this.label34.Location = new System.Drawing.Point(153, 69);
-            this.label34.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label34.Location = new System.Drawing.Point(204, 85);
             this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(60, 19);
+            this.label34.Size = new System.Drawing.Size(73, 23);
             this.label34.TabIndex = 46;
             this.label34.Text = "وقت البدء";
             // 
@@ -1481,51 +1459,53 @@
             // 
             this.comboBox9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox9.FormattingEnabled = true;
-            this.comboBox9.Location = new System.Drawing.Point(418, 103);
-            this.comboBox9.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox9.Location = new System.Drawing.Point(557, 127);
+            this.comboBox9.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox9.Name = "comboBox9";
-            this.comboBox9.Size = new System.Drawing.Size(136, 27);
+            this.comboBox9.Size = new System.Drawing.Size(180, 31);
             this.comboBox9.TabIndex = 45;
             // 
             // comboBox8
             // 
             this.comboBox8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox8.FormattingEnabled = true;
-            this.comboBox8.Location = new System.Drawing.Point(231, 36);
-            this.comboBox8.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox8.Location = new System.Drawing.Point(308, 44);
+            this.comboBox8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox8.Name = "comboBox8";
-            this.comboBox8.Size = new System.Drawing.Size(119, 27);
+            this.comboBox8.Size = new System.Drawing.Size(157, 31);
             this.comboBox8.TabIndex = 44;
+            this.comboBox8.SelectedIndexChanged += new System.EventHandler(this.comboBox8_SelectedIndexChanged);
             // 
             // comboBox7
             // 
             this.comboBox7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox7.FormattingEnabled = true;
-            this.comboBox7.Location = new System.Drawing.Point(418, 70);
-            this.comboBox7.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox7.Location = new System.Drawing.Point(557, 86);
+            this.comboBox7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox7.Name = "comboBox7";
-            this.comboBox7.Size = new System.Drawing.Size(136, 27);
+            this.comboBox7.Size = new System.Drawing.Size(180, 31);
             this.comboBox7.TabIndex = 43;
+            this.comboBox7.SelectedIndexChanged += new System.EventHandler(this.comboBox7_SelectedIndexChanged);
             // 
             // comboBox6
             // 
             this.comboBox6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox6.FormattingEnabled = true;
-            this.comboBox6.Location = new System.Drawing.Point(418, 36);
-            this.comboBox6.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox6.Location = new System.Drawing.Point(557, 44);
+            this.comboBox6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox6.Name = "comboBox6";
-            this.comboBox6.Size = new System.Drawing.Size(136, 27);
+            this.comboBox6.Size = new System.Drawing.Size(180, 31);
             this.comboBox6.TabIndex = 42;
+            this.comboBox6.SelectedIndexChanged += new System.EventHandler(this.comboBox6_SelectedIndexChanged);
             // 
             // label19
             // 
             this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label19.AutoSize = true;
             this.label19.ForeColor = System.Drawing.Color.Black;
-            this.label19.Location = new System.Drawing.Point(158, 38);
-            this.label19.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label19.Location = new System.Drawing.Point(211, 47);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(34, 19);
+            this.label19.Size = new System.Drawing.Size(40, 23);
             this.label19.TabIndex = 40;
             this.label19.Text = "اليوم";
             // 
@@ -1535,10 +1515,10 @@
             this.button19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button19.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button19.ForeColor = System.Drawing.Color.White;
-            this.button19.Location = new System.Drawing.Point(261, 142);
-            this.button19.Margin = new System.Windows.Forms.Padding(2);
+            this.button19.Location = new System.Drawing.Point(348, 175);
+            this.button19.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button19.Name = "button19";
-            this.button19.Size = new System.Drawing.Size(126, 29);
+            this.button19.Size = new System.Drawing.Size(168, 36);
             this.button19.TabIndex = 29;
             this.button19.Text = "إضافة المحاضرة";
             this.button19.UseVisualStyleBackColor = false;
@@ -1548,10 +1528,9 @@
             this.label29.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label29.AutoSize = true;
             this.label29.ForeColor = System.Drawing.Color.Black;
-            this.label29.Location = new System.Drawing.Point(558, 102);
-            this.label29.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label29.Location = new System.Drawing.Point(744, 126);
             this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(46, 19);
+            this.label29.Size = new System.Drawing.Size(56, 23);
             this.label29.TabIndex = 35;
             this.label29.Text = "الدكتور";
             // 
@@ -1560,10 +1539,9 @@
             this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label31.AutoSize = true;
             this.label31.ForeColor = System.Drawing.Color.Black;
-            this.label31.Location = new System.Drawing.Point(567, 72);
-            this.label31.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label31.Location = new System.Drawing.Point(756, 89);
             this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(38, 19);
+            this.label31.Size = new System.Drawing.Size(44, 23);
             this.label31.TabIndex = 33;
             this.label31.Text = "السنة";
             // 
@@ -1572,10 +1550,9 @@
             this.label32.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label32.AutoSize = true;
             this.label32.ForeColor = System.Drawing.Color.Black;
-            this.label32.Location = new System.Drawing.Point(567, 38);
-            this.label32.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label32.Location = new System.Drawing.Point(756, 47);
             this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(38, 19);
+            this.label32.Size = new System.Drawing.Size(44, 23);
             this.label32.TabIndex = 25;
             this.label32.Text = "القسم";
             // 
@@ -1585,10 +1562,9 @@
             this.label33.AutoSize = true;
             this.label33.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label33.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label33.Location = new System.Drawing.Point(291, 21);
-            this.label33.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label33.Location = new System.Drawing.Point(388, 26);
             this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(0, 26);
+            this.label33.Size = new System.Drawing.Size(0, 35);
             this.label33.TabIndex = 51;
             // 
             // label9
@@ -1597,10 +1573,9 @@
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label9.Location = new System.Drawing.Point(292, 24);
-            this.label9.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label9.Location = new System.Drawing.Point(389, 30);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(144, 26);
+            this.label9.Size = new System.Drawing.Size(181, 35);
             this.label9.TabIndex = 44;
             this.label9.Text = "إدارة المحاضرات";
             // 
@@ -1610,11 +1585,11 @@
             this.tabPage6.Controls.Add(this.groupBox12);
             this.tabPage6.Controls.Add(this.label41);
             this.tabPage6.Controls.Add(this.label42);
-            this.tabPage6.Location = new System.Drawing.Point(4, 36);
-            this.tabPage6.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPage6.Location = new System.Drawing.Point(4, 40);
+            this.tabPage6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage6.Size = new System.Drawing.Size(672, 420);
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.tabPage6.Size = new System.Drawing.Size(899, 522);
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "إدارة المواد";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -1631,11 +1606,11 @@
             this.groupBox11.Controls.Add(this.textBox6);
             this.groupBox11.Controls.Add(this.dataGridView7);
             this.groupBox11.Controls.Add(this.button22);
-            this.groupBox11.Location = new System.Drawing.Point(29, 228);
-            this.groupBox11.Margin = new System.Windows.Forms.Padding(2, 2, 2, 24);
+            this.groupBox11.Location = new System.Drawing.Point(39, 281);
+            this.groupBox11.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox11.Size = new System.Drawing.Size(616, 176);
+            this.groupBox11.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox11.Size = new System.Drawing.Size(821, 217);
             this.groupBox11.TabIndex = 49;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "عرض/ تعديل/ حذف مادة من الكلية";
@@ -1644,9 +1619,10 @@
             // 
             this.label49.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label49.AutoSize = true;
-            this.label49.Location = new System.Drawing.Point(66, 150);
+            this.label49.Location = new System.Drawing.Point(88, 185);
+            this.label49.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label49.Name = "label49";
-            this.label49.Size = new System.Drawing.Size(0, 19);
+            this.label49.Size = new System.Drawing.Size(0, 23);
             this.label49.TabIndex = 38;
             // 
             // button20
@@ -1655,10 +1631,10 @@
             this.button20.BackColor = System.Drawing.Color.LimeGreen;
             this.button20.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button20.ForeColor = System.Drawing.Color.White;
-            this.button20.Location = new System.Drawing.Point(210, 135);
-            this.button20.Margin = new System.Windows.Forms.Padding(2);
+            this.button20.Location = new System.Drawing.Point(280, 166);
+            this.button20.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button20.Name = "button20";
-            this.button20.Size = new System.Drawing.Size(104, 29);
+            this.button20.Size = new System.Drawing.Size(139, 36);
             this.button20.TabIndex = 37;
             this.button20.Text = "تحديث مادة";
             this.button20.UseVisualStyleBackColor = false;
@@ -1670,10 +1646,10 @@
             this.button21.BackColor = System.Drawing.Color.Red;
             this.button21.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button21.ForeColor = System.Drawing.Color.White;
-            this.button21.Location = new System.Drawing.Point(318, 135);
-            this.button21.Margin = new System.Windows.Forms.Padding(2);
+            this.button21.Location = new System.Drawing.Point(424, 166);
+            this.button21.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button21.Name = "button21";
-            this.button21.Size = new System.Drawing.Size(104, 29);
+            this.button21.Size = new System.Drawing.Size(139, 36);
             this.button21.TabIndex = 34;
             this.button21.Text = "حذف مادة";
             this.button21.UseVisualStyleBackColor = false;
@@ -1684,20 +1660,19 @@
             this.label37.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label37.AutoSize = true;
             this.label37.ForeColor = System.Drawing.Color.Black;
-            this.label37.Location = new System.Drawing.Point(545, 37);
-            this.label37.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label37.Location = new System.Drawing.Point(727, 46);
             this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(62, 19);
+            this.label37.Size = new System.Drawing.Size(74, 23);
             this.label37.TabIndex = 32;
             this.label37.Text = "إسم المادة";
             // 
             // textBox6
             // 
             this.textBox6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox6.Location = new System.Drawing.Point(402, 34);
-            this.textBox6.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox6.Location = new System.Drawing.Point(536, 42);
+            this.textBox6.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(138, 26);
+            this.textBox6.Size = new System.Drawing.Size(183, 30);
             this.textBox6.TabIndex = 33;
             this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
@@ -1707,13 +1682,13 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView7.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView7.Location = new System.Drawing.Point(16, 78);
-            this.dataGridView7.Margin = new System.Windows.Forms.Padding(2);
+            this.dataGridView7.Location = new System.Drawing.Point(21, 96);
+            this.dataGridView7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dataGridView7.Name = "dataGridView7";
             this.dataGridView7.ReadOnly = true;
             this.dataGridView7.RowHeadersWidth = 51;
             this.dataGridView7.RowTemplate.Height = 24;
-            this.dataGridView7.Size = new System.Drawing.Size(586, 45);
+            this.dataGridView7.Size = new System.Drawing.Size(781, 55);
             this.dataGridView7.TabIndex = 26;
             this.dataGridView7.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView7_CellClick);
             // 
@@ -1723,10 +1698,10 @@
             this.button22.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button22.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button22.ForeColor = System.Drawing.Color.White;
-            this.button22.Location = new System.Drawing.Point(262, 33);
-            this.button22.Margin = new System.Windows.Forms.Padding(2);
+            this.button22.Location = new System.Drawing.Point(349, 41);
+            this.button22.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button22.Name = "button22";
-            this.button22.Size = new System.Drawing.Size(134, 29);
+            this.button22.Size = new System.Drawing.Size(179, 36);
             this.button22.TabIndex = 27;
             this.button22.Text = "عرض جميع المواد";
             this.button22.UseVisualStyleBackColor = false;
@@ -1753,11 +1728,11 @@
             this.groupBox12.Controls.Add(this.button23);
             this.groupBox12.Controls.Add(this.label40);
             this.groupBox12.Controls.Add(this.txtCourseCode);
-            this.groupBox12.Location = new System.Drawing.Point(29, 58);
-            this.groupBox12.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox12.Location = new System.Drawing.Point(39, 71);
+            this.groupBox12.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox12.Size = new System.Drawing.Size(616, 164);
+            this.groupBox12.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.groupBox12.Size = new System.Drawing.Size(821, 202);
             this.groupBox12.TabIndex = 48;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "إضافة مادة للكلية";
@@ -1768,10 +1743,10 @@
             this.button25.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button25.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button25.ForeColor = System.Drawing.Color.White;
-            this.button25.Location = new System.Drawing.Point(141, 123);
-            this.button25.Margin = new System.Windows.Forms.Padding(2);
+            this.button25.Location = new System.Drawing.Point(188, 151);
+            this.button25.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button25.Name = "button25";
-            this.button25.Size = new System.Drawing.Size(104, 29);
+            this.button25.Size = new System.Drawing.Size(139, 36);
             this.button25.TabIndex = 45;
             this.button25.Text = "جديد";
             this.button25.UseVisualStyleBackColor = false;
@@ -1780,19 +1755,19 @@
             // label48
             // 
             this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(66, 138);
+            this.label48.Location = new System.Drawing.Point(88, 170);
+            this.label48.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label48.Name = "label48";
-            this.label48.Size = new System.Drawing.Size(0, 19);
+            this.label48.Size = new System.Drawing.Size(0, 23);
             this.label48.TabIndex = 44;
             // 
             // label46
             // 
             this.label46.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(187, 78);
-            this.label46.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label46.Location = new System.Drawing.Point(249, 96);
             this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(37, 19);
+            this.label46.Size = new System.Drawing.Size(44, 23);
             this.label46.TabIndex = 43;
             this.label46.Text = "النوع";
             // 
@@ -1800,30 +1775,29 @@
             // 
             this.comboBoxType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxType.FormattingEnabled = true;
-            this.comboBoxType.Location = new System.Drawing.Point(16, 76);
-            this.comboBoxType.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxType.Location = new System.Drawing.Point(21, 94);
+            this.comboBoxType.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxType.Name = "comboBoxType";
-            this.comboBoxType.Size = new System.Drawing.Size(168, 27);
+            this.comboBoxType.Size = new System.Drawing.Size(223, 31);
             this.comboBoxType.TabIndex = 42;
             // 
             // comboBoxYear
             // 
             this.comboBoxYear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxYear.FormattingEnabled = true;
-            this.comboBoxYear.Location = new System.Drawing.Point(16, 38);
-            this.comboBoxYear.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxYear.Location = new System.Drawing.Point(21, 47);
+            this.comboBoxYear.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxYear.Name = "comboBoxYear";
-            this.comboBoxYear.Size = new System.Drawing.Size(168, 27);
+            this.comboBoxYear.Size = new System.Drawing.Size(223, 31);
             this.comboBoxYear.TabIndex = 41;
             // 
             // label45
             // 
             this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(549, 105);
-            this.label45.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label45.Location = new System.Drawing.Point(732, 129);
             this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(51, 19);
+            this.label45.Size = new System.Drawing.Size(62, 23);
             this.label45.TabIndex = 40;
             this.label45.Text = "الوحدات";
             // 
@@ -1831,30 +1805,28 @@
             // 
             this.label44.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(187, 44);
-            this.label44.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label44.Location = new System.Drawing.Point(249, 54);
             this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(38, 19);
+            this.label44.Size = new System.Drawing.Size(44, 23);
             this.label44.TabIndex = 39;
             this.label44.Text = "السنة";
             // 
             // numericUpDownPractical
             // 
             this.numericUpDownPractical.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownPractical.Location = new System.Drawing.Point(247, 71);
-            this.numericUpDownPractical.Margin = new System.Windows.Forms.Padding(2);
+            this.numericUpDownPractical.Location = new System.Drawing.Point(329, 87);
+            this.numericUpDownPractical.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.numericUpDownPractical.Name = "numericUpDownPractical";
-            this.numericUpDownPractical.Size = new System.Drawing.Size(58, 26);
+            this.numericUpDownPractical.Size = new System.Drawing.Size(77, 30);
             this.numericUpDownPractical.TabIndex = 38;
             // 
             // label43
             // 
             this.label43.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(313, 72);
-            this.label43.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label43.Location = new System.Drawing.Point(417, 89);
             this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(94, 19);
+            this.label43.Size = new System.Drawing.Size(112, 23);
             this.label43.TabIndex = 37;
             this.label43.Text = "الساعات العملية";
             // 
@@ -1862,48 +1834,46 @@
             // 
             this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(310, 41);
-            this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label15.Location = new System.Drawing.Point(413, 50);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(96, 19);
+            this.label15.Size = new System.Drawing.Size(116, 23);
             this.label15.TabIndex = 36;
             this.label15.Text = "الساعات النظرية";
             // 
             // numericUpDownUnits
             // 
             this.numericUpDownUnits.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownUnits.Location = new System.Drawing.Point(486, 103);
-            this.numericUpDownUnits.Margin = new System.Windows.Forms.Padding(2);
+            this.numericUpDownUnits.Location = new System.Drawing.Point(648, 127);
+            this.numericUpDownUnits.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.numericUpDownUnits.Name = "numericUpDownUnits";
-            this.numericUpDownUnits.Size = new System.Drawing.Size(58, 26);
+            this.numericUpDownUnits.Size = new System.Drawing.Size(77, 30);
             this.numericUpDownUnits.TabIndex = 35;
             // 
             // numericUpDownTheory
             // 
             this.numericUpDownTheory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownTheory.Location = new System.Drawing.Point(247, 40);
-            this.numericUpDownTheory.Margin = new System.Windows.Forms.Padding(2);
+            this.numericUpDownTheory.Location = new System.Drawing.Point(329, 49);
+            this.numericUpDownTheory.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.numericUpDownTheory.Name = "numericUpDownTheory";
-            this.numericUpDownTheory.Size = new System.Drawing.Size(58, 26);
+            this.numericUpDownTheory.Size = new System.Drawing.Size(77, 30);
             this.numericUpDownTheory.TabIndex = 34;
             // 
             // txtCourseName
             // 
             this.txtCourseName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCourseName.Location = new System.Drawing.Point(410, 70);
-            this.txtCourseName.Margin = new System.Windows.Forms.Padding(2);
+            this.txtCourseName.Location = new System.Drawing.Point(547, 86);
+            this.txtCourseName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtCourseName.Name = "txtCourseName";
-            this.txtCourseName.Size = new System.Drawing.Size(138, 26);
+            this.txtCourseName.Size = new System.Drawing.Size(183, 30);
             this.txtCourseName.TabIndex = 33;
             // 
             // label39
             // 
             this.label39.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(549, 41);
-            this.label39.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label39.Location = new System.Drawing.Point(732, 50);
             this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(63, 19);
+            this.label39.Size = new System.Drawing.Size(77, 23);
             this.label39.TabIndex = 31;
             this.label39.Text = "رمز المادة";
             // 
@@ -1913,10 +1883,10 @@
             this.button23.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button23.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button23.ForeColor = System.Drawing.Color.White;
-            this.button23.Location = new System.Drawing.Point(262, 123);
-            this.button23.Margin = new System.Windows.Forms.Padding(2);
+            this.button23.Location = new System.Drawing.Point(349, 151);
+            this.button23.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button23.Name = "button23";
-            this.button23.Size = new System.Drawing.Size(104, 29);
+            this.button23.Size = new System.Drawing.Size(139, 36);
             this.button23.TabIndex = 29;
             this.button23.Text = "اضافة";
             this.button23.UseVisualStyleBackColor = false;
@@ -1927,20 +1897,19 @@
             this.label40.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label40.AutoSize = true;
             this.label40.ForeColor = System.Drawing.Color.Black;
-            this.label40.Location = new System.Drawing.Point(549, 76);
-            this.label40.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label40.Location = new System.Drawing.Point(732, 94);
             this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(62, 19);
+            this.label40.Size = new System.Drawing.Size(74, 23);
             this.label40.TabIndex = 25;
             this.label40.Text = "إسم المادة";
             // 
             // txtCourseCode
             // 
             this.txtCourseCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCourseCode.Location = new System.Drawing.Point(410, 38);
-            this.txtCourseCode.Margin = new System.Windows.Forms.Padding(2);
+            this.txtCourseCode.Location = new System.Drawing.Point(547, 47);
+            this.txtCourseCode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtCourseCode.Name = "txtCourseCode";
-            this.txtCourseCode.Size = new System.Drawing.Size(138, 26);
+            this.txtCourseCode.Size = new System.Drawing.Size(183, 30);
             this.txtCourseCode.TabIndex = 28;
             // 
             // label41
@@ -1949,10 +1918,9 @@
             this.label41.AutoSize = true;
             this.label41.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label41.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label41.Location = new System.Drawing.Point(292, 21);
-            this.label41.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label41.Location = new System.Drawing.Point(389, 26);
             this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(99, 26);
+            this.label41.Size = new System.Drawing.Size(127, 35);
             this.label41.TabIndex = 47;
             this.label41.Text = "إدارة المواد";
             // 
@@ -1962,20 +1930,42 @@
             this.label42.AutoSize = true;
             this.label42.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label42.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label42.Location = new System.Drawing.Point(291, 21);
-            this.label42.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label42.Location = new System.Drawing.Point(388, 26);
             this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(0, 26);
+            this.label42.Size = new System.Drawing.Size(0, 35);
             this.label42.TabIndex = 46;
+            // 
+            // label52
+            // 
+            this.label52.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(158, 130);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(119, 23);
+            this.label52.TabIndex = 59;
+            this.label52.Text = "عدد الطلبة للمادة";
+            // 
+            // label53
+            // 
+            this.label53.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label53.Font = new System.Drawing.Font("Times New Roman", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label53.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.label53.Location = new System.Drawing.Point(51, 120);
+            this.label53.Name = "label53";
+            this.label53.Size = new System.Drawing.Size(101, 37);
+            this.label53.TabIndex = 60;
+            this.label53.Text = "120";
+            this.label53.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // departments_management
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tabControl1);
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "departments_management";
-            this.Size = new System.Drawing.Size(680, 460);
+            this.Size = new System.Drawing.Size(907, 566);
+            this.Load += new System.EventHandler(this.departments_management_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -2164,5 +2154,7 @@
         private System.Windows.Forms.Label label50;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label51;
+        private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.Label label53;
     }
 }
