@@ -1585,21 +1585,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         {
             if (comboBox8.SelectedValue == null || comboBox8.SelectedValue == DBNull.Value)
                 return;
-            // تأكد أن القيمة هي من النوع الصحيح‍
-            if (!(comboBox8.SelectedValue is int))
-            {
-                try
-                {
-                    // حاول تحويلها إذا كانت من نوع مختلف‍
-                    int convertedValue = Convert.ToInt32(comboBox8.SelectedValue);
-                    // استمر في المعالجة...‍
-                }
-                catch
-                {
-                    MessageBox.Show("قيمة الدورة التدريبية غير صالحة");
-                    return;
-                }
-            }
+  
             try
             {
                 conn.DatabaseConnection dbstudent = new conn.DatabaseConnection();
@@ -1612,18 +1598,22 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                         month2 = Convert.ToInt32(cmddate.ExecuteScalar());
                     }
 
-                    string q = @"SELECT COUNT(*) 
-                         FROM Registrations r 
-                         WHERE r.course_id = @course_id 
-                           AND r.academic_year_start = @academic_year_start";
+                    string q = @"
+                              SELECT COUNT(*) 
+                              FROM Students s
+                              WHERE s.status_id = 1
+                                AND s.department_id = @department_id
+                                AND s.current_year = @current_year - 1
+                          ";
+
 
                     int academicYearStart = DateTime.Now.Month >= month2 ? DateTime.Now.Year : DateTime.Now.Year - 1;
 
                     using (SqlCommand cmddate2 = new SqlCommand(q, con))
                     {
-                        int selectedCourse = Convert.ToInt32(comboBox8.SelectedValue);
-                        cmddate2.Parameters.AddWithValue("@course_id", selectedCourse);
-                        cmddate2.Parameters.AddWithValue("@academic_year_start", academicYearStart);
+                        int selectedCourse = Convert.ToInt32(comboBox6.SelectedValue);
+                        cmddate2.Parameters.AddWithValue("@department_id", selectedCourse);
+                        cmddate2.Parameters.AddWithValue("@current_year", Convert.ToInt32(comboBox7.SelectedValue));
 
                         // هنا لازم تستخدم ExecuteScalar مش ExecuteNonQuery عشان تسترجع العدد
                         int count = Convert.ToInt32(cmddate2.ExecuteScalar());
@@ -1637,10 +1627,21 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             }
         }
 
-
+        private bool isLoading = false;
         private void departments_management_Load(object sender, EventArgs e)
         {
-            
+            isLoading = true;
+            ddepartments();
+            dinstructors();
+            dyears();
+            dgroups();
+            ddays();
+            dtimes();
+            drooms();
+            isLoading = false;
+        } 
+        public void ddepartments()
+        {
             try
             {
                 conn.DatabaseConnection db2 = new conn.DatabaseConnection();
@@ -1654,19 +1655,24 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     comboBox6.DataSource = dt2;
                     comboBox6.DisplayMember = "dep_name";
                     comboBox6.ValueMember = "department_id";
+                    comboBox6.SelectedIndex = -1;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("There is an Error : " + ex.Message);
             }
+        }
 
+        public void dinstructors()
+        {
             try
             {
                 conn.DatabaseConnection db1 = new conn.DatabaseConnection();
                 using (SqlConnection con1 = db1.OpenConnection())
                 {
-                    string q1 = "select full_name,instructor_id from Instructors";
+                    string q1 = "SELECT full_name, instructor_id FROM Instructors";
+
                     SqlDataAdapter da1 = new SqlDataAdapter(q1, con1);
                     DataTable dt1 = new DataTable();
                     da1.Fill(dt1);
@@ -1674,27 +1680,36 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     comboBox9.DataSource = dt1;
                     comboBox9.DisplayMember = "full_name";
                     comboBox9.ValueMember = "instructor_id";
+                    comboBox9.SelectedIndex = -1; // لتكون فارغة افتراضيًا
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("There is an Error : " + ex.Message);
             }
+        }
 
-            var y_num = new Dictionary<int, string>()
+
+
+        public void dyears()
+        {
+            var years = new Dictionary<int, string>()
             {
-                {1, "1"},
-                {2, "2"},
-                {3, "3"},
-                {4, "4"}
+                {1, "السنة 1"},
+                {2, "السنة 2"},
+                {3, "السنة 3"},
+                {4, "السنة 4"}
             };
 
-            comboBox7.DataSource = new BindingSource(y_num, null);
-            comboBox7.DisplayMember = "Value";
-            comboBox7.ValueMember = "Key";
+            comboBox7.DataSource = new BindingSource(years, null);
+            comboBox7.DisplayMember = "Value";  // يعرض النص
+            comboBox7.ValueMember = "Key";      // الرقم الفعلي للاستخدام في الاستعلام
+            comboBox7.SelectedIndex = 0;
+        }
 
 
-
+        public void dgroups()
+        {
             var group_num = new Dictionary<int, string>()
             {
                 {1, "1"},
@@ -1716,82 +1731,117 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 {17, "17"},
                 {18, "18"}
             };
-
             comboBox10.DataSource = new BindingSource(group_num, null);
             comboBox10.DisplayMember = "Value";
             comboBox10.ValueMember = "Key";
+        }
 
-            var day = new Dictionary<int, string>()
-            {
-                {1, "الأحد"},
-                {2, "الأثنين"},
-                {3, "الثلاثاء"},
-                {4, "الإربعاء"},
-                {5, "الخميس"},
-                {6, "الجمعة"},
-                {7, "السبت"}
-            };
-
-            comboBox11.DataSource = new BindingSource(day, null);
-            comboBox11.DisplayMember = "Value";
-            comboBox11.ValueMember = "Key";
-
+        public void dtimes()
+        {
             var times = new Dictionary<int, string>();
             int id = 1;
 
-            for (int hour = 7; hour <= 20; hour++) // من 7 صباحا حتى 8 مساءً
+            for (int hour = 7; hour <= 20; hour++) // من 7 صباحًا حتى 8 مساءً
             {
                 DateTime time = new DateTime(1, 1, 1, hour, 0, 0);
-                string displayTime = time.ToString("hh:mm tt", new System.Globalization.CultureInfo("ar-SA"));
-                string sqlFormat = time.ToString("HH:mm"); // مناسب للتخزين في SQL Server
+
+                // عرض الوقت بصيغة 24 ساعة HH:mm:ss
+                string displayTime = time.ToString("HH:mm:ss");
+
+                // تنسيق مناسب للتخزين في SQL Server
+                string sqlFormat = time.ToString("HH:mm");
 
                 times.Add(id, displayTime);
                 id++;
             }
 
             comboBox12.DataSource = new BindingSource(times, null);
-            comboBox12.DisplayMember = "Value"; // يعرض التوقيت بالعربي
-            comboBox12.ValueMember = "Key";      // أو ممكن تخليه sqlFormat لو تريد
-
-        } 
-        public void ddepartments()
-        {
-
-        }
-        public void dyears()
-        {
-
+            comboBox12.DisplayMember = "Value"; // يعرض التوقيت بصيغة 24 ساعة
+            comboBox12.ValueMember = "Key";      // أو يمكنك تغييرها لـ sqlFormat إذا تريد
         }
 
-        private void comboBox7_SelectedIndexChanged(object sender, EventArgs e)
+
+        public void ddays()
+        {
+            var day = new Dictionary<int, string>()
+            {
+                {1, "الأحد"},
+                {2, "الأثنين"},
+                {3, "الثلاثاء"},
+                {4, "الأربعاء"},
+                {5, "الخميس"},
+                {6, "الجمعة"},
+                {7, "السبت"}
+            };
+            comboBox11.DataSource = new BindingSource(day, null);
+            comboBox11.DisplayMember = "Value";
+            comboBox11.ValueMember = "Key";
+        }
+        
+        public void drooms()
+        {
+            try
+            {
+                conn.DatabaseConnection dbrooms1 = new conn.DatabaseConnection();
+                using (SqlConnection conrooms1 = dbrooms1.OpenConnection())
+                {
+                    string qroom = "SELECT classroom_id, room_name FROM Classrooms";
+                    SqlDataAdapter darooms = new SqlDataAdapter(qroom, conrooms1);
+                    DataTable dtrooms = new DataTable();
+                    darooms.Fill(dtrooms);
+
+                    comboBox2.DataSource = dtrooms;
+                    comboBox2.DisplayMember = "room_name";
+                    comboBox2.ValueMember = "classroom_id";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ: " + ex.Message);
+            }
+        }
+        private void LoadCoursesInstractors()
         {
             if (comboBox6.SelectedValue == null || comboBox7.SelectedValue == null)
                 return;
+
+            int selectedDep;
+            if (comboBox6.SelectedValue is DataRowView drvDep)
+                selectedDep = Convert.ToInt32(drvDep["department_id"]);
+            else
+                selectedDep = Convert.ToInt32(comboBox6.SelectedValue);
+
+            int selectedYear;
+            if (comboBox7.SelectedValue is DataRowView drvYear)
+                selectedYear = Convert.ToInt32(drvYear["Key"]); // بالكود الحالي، القيمة الصحيحة من Key
+            else
+                selectedYear = Convert.ToInt32(comboBox7.SelectedValue);
+
             try
             {
-                int selectedYear = (int)comboBox7.SelectedValue;
-                int selecteddep = (int)comboBox6.SelectedValue;
                 conn.DatabaseConnection dbconnect = new conn.DatabaseConnection();
                 using (SqlConnection con4 = dbconnect.OpenConnection())
                 {
                     string q4 = @"
-            SELECT c.course_name, c.course_id
-            FROM Courses c
-            JOIN Course_Department cd ON c.course_id = cd.course_id
-            WHERE cd.department_id = @department_id 
-              AND c.year_number = @year_number ";
+                SELECT c.course_name, c.course_id
+                FROM Courses c
+                JOIN Course_Department cd ON c.course_id = cd.course_id
+                WHERE cd.department_id = @department_id 
+                  AND c.year_number = @year_number
+            ";
                     using (SqlCommand cmdconnect = new SqlCommand(q4, con4))
                     {
-                        cmdconnect.Parameters.AddWithValue("@department_id", selecteddep);
+                        cmdconnect.Parameters.AddWithValue("@department_id", selectedDep);
                         cmdconnect.Parameters.AddWithValue("@year_number", selectedYear);
 
                         SqlDataAdapter daconn = new SqlDataAdapter(cmdconnect);
                         DataTable dtcon = new DataTable();
                         daconn.Fill(dtcon);
 
-                        comboBox8.DataSource = new BindingSource(dtcon, null);
+                        comboBox8.DataSource = dtcon;
                         comboBox8.DisplayMember = "course_name";
                         comboBox8.ValueMember = "course_id";
+                        comboBox8.SelectedIndex = -1;
                     }
                 }
             }
@@ -1801,9 +1851,205 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             }
         }
 
+
         private void comboBox6_SelectedIndexChanged(object sender, EventArgs e)
         {
-            comboBox7_SelectedIndexChanged(null,null);
+            if (isLoading) return;
+            LoadCoursesInstractors();
+        }
+
+        private void comboBox7_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (isLoading) return;
+            LoadCoursesInstractors();
+        }
+
+
+
+        public void datagridviewstyle(DataGridView datagrid)
+        {
+            datagrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            datagrid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            datagrid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        }
+        private void button18_Click(object sender, EventArgs e)
+        {
+            LoadCourseClassroom();
+        }
+
+        public void LoadCourseClassroom()
+        {
+            try
+            {
+                conn.DatabaseConnection dbshowcc = new conn.DatabaseConnection();
+
+                using (SqlConnection concc = dbshowcc.OpenConnection()) // فتح الاتصال
+                {
+                    string query = @"
+                                  SELECT 
+                                      cc.id,
+                                      c.year_number AS [السنة],
+                                      c.course_name AS [اسم المادة],
+                                      d.dep_name AS [القسم],
+                                      cl.room_name AS [اسم القاعة],
+                                      cc.group_number AS [المجموعة],
+                                      cc.capacity AS [العدد],
+                                      cc.start_time AS [وقت البداية],
+                                      cc.end_time AS [وقت النهاية],
+                                      CASE cc.lecture_day
+                                          WHEN 1 THEN N'الأحد'
+                                          WHEN 2 THEN N'الأثنين'
+                                          WHEN 3 THEN N'الثلاثاء'
+                                          WHEN 4 THEN N'الأربعاء'
+                                          WHEN 5 THEN N'الخميس'
+                                          WHEN 6 THEN N'الجمعة'
+                                          WHEN 7 THEN N'السبت'
+                                          ELSE N'غير محدد'
+                                      END AS [اليوم],
+                                      i.full_name AS [الدكتور]
+                                  FROM Course_Classroom cc
+                                  JOIN Courses c ON cc.course_id = c.course_id
+                                  JOIN Classrooms cl ON cc.classroom_id = cl.classroom_id
+                                  LEFT JOIN Course_Instructor ci ON ci.course_id = cc.course_id
+                                  LEFT JOIN Instructors i ON i.instructor_id = ci.instructor_id
+                                  LEFT JOIN Course_Department cd ON cd.course_id = c.course_id
+                                  LEFT JOIN Departments d ON d.department_id = cd.department_id
+                                  ";
+
+
+
+
+                    using (SqlCommand cmdcc = new SqlCommand(query, concc))
+                    {
+                        SqlDataAdapter dacc = new SqlDataAdapter(cmdcc);
+                        DataTable dtcc = new DataTable();
+
+                        dacc.Fill(dtcc); // تعبئة البيانات من الاستعلام
+
+                        // إضافة عمود الترقيم في البداية
+                        dtcc.Columns.Add("رقم", typeof(int)).SetOrdinal(0);
+
+                        // تعبئة الترقيم
+                        int counter = 1;
+                        foreach (DataRow row in dtcc.Rows)
+                        {
+                            row["رقم"] = counter++;
+                        }
+
+                        // عرض النتيجة في DataGridView
+                        dataGridView6.DataSource = dtcc;
+                        datagridviewstyle(dataGridView6);
+
+                        // إخفاء عمود id لأنه داخلي
+                        if (dataGridView6.Columns["id"] != null)
+                            dataGridView6.Columns["id"].Visible = false;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("SQL Error : " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unexpected Error : " + ex.Message);
+            }
+        }
+
+        int selectedCCId = -1;
+
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            if (selectedCCId == -1)
+            {
+                MessageBox.Show("الرجاء اختيار سجل للحذف");
+                return;
+            }
+
+            if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                try
+                {
+                    conn.DatabaseConnection constring = new conn.DatabaseConnection();
+                    using (SqlConnection condele = constring.OpenConnection())
+                    {
+                        using(SqlCommand cmddele = new SqlCommand("DELETE FROM Course_Classroom WHERE id = @id", condele))
+                        {
+                            cmddele.Parameters.AddWithValue("@id", selectedCCId);
+                            int rowsAffected = cmddele.ExecuteNonQuery();
+
+                            if (rowsAffected > 0)
+                            {
+                                MessageBox.Show("تم الحذف بنجاح");
+                                LoadCourseClassroom(); // إعادة تحميل البيانات
+                                selectedCCId = -1;     // إعادة التعيين
+                            }
+                            else
+                            {
+                                MessageBox.Show("لم يتم العثور على السجل المطلوب");
+                            }
+                        }  
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("خطأ: " + ex.Message);
+                }
+            }
+
+        }
+        private void ClearFields()
+        {
+            // إعادة تعيين الـ ComboBoxes
+            comboBox8.Text = "";
+            comboBox10.Text = "";
+            comboBox11.Text = "";
+            comboBox12.Text = "";
+            comboBox9.Text = "";
+            comboBox2.Text = "";
+            comboBox6.Text = "";
+            comboBox7.Text = "";
+
+            // إعادة تعيين NumericUpDown
+            numericUpDown1.Value = numericUpDown1.Minimum; // أو 0 حسب ما يناسبك
+
+            // إعادة تعيين الصف المحدد
+            selectedCCId = -1;
+
+            // إزالة تحديد أي صف في DataGridView
+            dataGridView6.ClearSelection();
+        }
+
+        private void dataGridView6_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dataGridView6.Rows[e.RowIndex];
+
+                // حفظ الـ ID للصف المحدد
+                selectedCCId = Convert.ToInt32(row.Cells["id"].Value);
+
+                // تظليل الصف
+                dataGridView6.Rows[e.RowIndex].Selected = true;
+
+                // عرض البيانات في الحقول
+                comboBox8.Text = row.Cells["اسم المادة"].Value.ToString();
+                comboBox10.Text = row.Cells["المجموعة"].Value.ToString();
+                comboBox11.Text = row.Cells["اليوم"].Value.ToString();
+                comboBox12.Text = row.Cells["وقت البداية"].Value.ToString();
+                comboBox9.Text = row.Cells["الدكتور"].Value.ToString();
+                comboBox2.Text = row.Cells["اسم القاعة"].Value.ToString();
+                comboBox6.Text = row.Cells["القسم"].Value.ToString();
+                comboBox7.Text = row.Cells["السنة"].Value.ToString();
+                numericUpDown1.Value = Convert.ToDecimal(row.Cells["العدد"].Value);
+            }
+        }
+
+        private void button26_Click(object sender, EventArgs e)
+        {
+            ClearFields();
         }
     }
 }
