@@ -115,6 +115,7 @@
             this.dataGridView6 = new System.Windows.Forms.DataGridView();
             this.button18 = new System.Windows.Forms.Button();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.label52 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label25 = new System.Windows.Forms.Label();
             this.comboBox12 = new System.Windows.Forms.ComboBox();
@@ -132,6 +133,7 @@
             this.label29 = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
             this.label32 = new System.Windows.Forms.Label();
+            this.label53 = new System.Windows.Forms.Label();
             this.label33 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.tabPage6 = new System.Windows.Forms.TabPage();
@@ -163,8 +165,6 @@
             this.txtCourseCode = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
-            this.label52 = new System.Windows.Forms.Label();
-            this.label53 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -229,7 +229,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 40);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(5);
             this.tabPage1.Size = new System.Drawing.Size(899, 522);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "ادارة الاقسام";
@@ -1372,6 +1372,16 @@
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "ربط الدكتور بالمادة";
             // 
+            // label52
+            // 
+            this.label52.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(158, 130);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(119, 23);
+            this.label52.TabIndex = 59;
+            this.label52.Text = "عدد الطلبة للمادة";
+            // 
             // numericUpDown1
             // 
             this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1515,7 +1525,7 @@
             this.button19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button19.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button19.ForeColor = System.Drawing.Color.White;
-            this.button19.Location = new System.Drawing.Point(348, 175);
+            this.button19.Location = new System.Drawing.Point(337, 175);
             this.button19.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button19.Name = "button19";
             this.button19.Size = new System.Drawing.Size(168, 36);
@@ -1556,6 +1566,18 @@
             this.label32.TabIndex = 25;
             this.label32.Text = "القسم";
             // 
+            // label53
+            // 
+            this.label53.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label53.Font = new System.Drawing.Font("Times New Roman", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label53.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.label53.Location = new System.Drawing.Point(51, 120);
+            this.label53.Name = "label53";
+            this.label53.Size = new System.Drawing.Size(101, 37);
+            this.label53.TabIndex = 60;
+            this.label53.Text = "120";
+            this.label53.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // label33
             // 
             this.label33.Anchor = System.Windows.Forms.AnchorStyles.Top;
@@ -1573,7 +1595,7 @@
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label9.Location = new System.Drawing.Point(389, 30);
+            this.label9.Location = new System.Drawing.Point(378, 30);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(181, 35);
             this.label9.TabIndex = 44;
@@ -1934,28 +1956,6 @@
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(0, 35);
             this.label42.TabIndex = 46;
-            // 
-            // label52
-            // 
-            this.label52.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(158, 130);
-            this.label52.Name = "label52";
-            this.label52.Size = new System.Drawing.Size(119, 23);
-            this.label52.TabIndex = 59;
-            this.label52.Text = "عدد الطلبة للمادة";
-            // 
-            // label53
-            // 
-            this.label53.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label53.Font = new System.Drawing.Font("Times New Roman", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label53.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label53.Location = new System.Drawing.Point(51, 120);
-            this.label53.Name = "label53";
-            this.label53.Size = new System.Drawing.Size(101, 37);
-            this.label53.TabIndex = 60;
-            this.label53.Text = "120";
-            this.label53.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // departments_management
             // 

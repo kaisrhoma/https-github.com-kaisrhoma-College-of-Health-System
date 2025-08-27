@@ -1621,7 +1621,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                     using (SqlCommand cmddate2 = new SqlCommand(q, con))
                     {
-                        cmddate2.Parameters.AddWithValue("@course_id", (int)comboBox8.SelectedValue);
+                        int selectedCourse = Convert.ToInt32(comboBox8.SelectedValue);
+                        cmddate2.Parameters.AddWithValue("@course_id", selectedCourse);
                         cmddate2.Parameters.AddWithValue("@academic_year_start", academicYearStart);
 
                         // هنا لازم تستخدم ExecuteScalar مش ExecuteNonQuery عشان تسترجع العدد
@@ -1751,6 +1752,14 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             comboBox12.DataSource = new BindingSource(times, null);
             comboBox12.DisplayMember = "Value"; // يعرض التوقيت بالعربي
             comboBox12.ValueMember = "Key";      // أو ممكن تخليه sqlFormat لو تريد
+
+        } 
+        public void ddepartments()
+        {
+
+        }
+        public void dyears()
+        {
 
         }
 
