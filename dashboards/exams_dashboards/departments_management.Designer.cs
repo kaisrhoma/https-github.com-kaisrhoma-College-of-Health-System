@@ -115,6 +115,10 @@
             this.dataGridView6 = new System.Windows.Forms.DataGridView();
             this.button18 = new System.Windows.Forms.Button();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.label54 = new System.Windows.Forms.Label();
+            this.button26 = new System.Windows.Forms.Button();
+            this.label52 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label25 = new System.Windows.Forms.Label();
             this.comboBox12 = new System.Windows.Forms.ComboBox();
@@ -164,10 +168,6 @@
             this.txtCourseCode = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
-            this.label52 = new System.Windows.Forms.Label();
-            this.button26 = new System.Windows.Forms.Button();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.label54 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1381,6 +1381,53 @@
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "ربط الدكتور بالمادة";
             // 
+            // comboBox2
+            // 
+            this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Location = new System.Drawing.Point(27, 44);
+            this.comboBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(157, 31);
+            this.comboBox2.TabIndex = 63;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            // 
+            // label54
+            // 
+            this.label54.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label54.AutoSize = true;
+            this.label54.ForeColor = System.Drawing.Color.Black;
+            this.label54.Location = new System.Drawing.Point(191, 52);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(49, 23);
+            this.label54.TabIndex = 62;
+            this.label54.Text = "القاعة";
+            // 
+            // button26
+            // 
+            this.button26.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button26.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.button26.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button26.ForeColor = System.Drawing.Color.White;
+            this.button26.Location = new System.Drawing.Point(293, 175);
+            this.button26.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.button26.Name = "button26";
+            this.button26.Size = new System.Drawing.Size(128, 36);
+            this.button26.TabIndex = 61;
+            this.button26.Text = "جديد";
+            this.button26.UseVisualStyleBackColor = false;
+            this.button26.Click += new System.EventHandler(this.button26_Click_1);
+            // 
+            // label52
+            // 
+            this.label52.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(144, 175);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(119, 23);
+            this.label52.TabIndex = 59;
+            this.label52.Text = "عدد الطلبة للمادة";
+            // 
             // numericUpDown1
             // 
             this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1409,19 +1456,22 @@
             // comboBox12
             // 
             this.comboBox12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox12.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.comboBox12.FormattingEnabled = true;
-            this.comboBox12.Location = new System.Drawing.Point(28, 81);
+            this.comboBox12.Location = new System.Drawing.Point(27, 122);
             this.comboBox12.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox12.Name = "comboBox12";
             this.comboBox12.Size = new System.Drawing.Size(157, 31);
             this.comboBox12.TabIndex = 56;
+            this.comboBox12.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.comboBox12_DrawItem);
+            this.comboBox12.SelectedIndexChanged += new System.EventHandler(this.comboBox12_SelectedIndexChanged);
             // 
             // label36
             // 
             this.label36.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label36.AutoSize = true;
             this.label36.ForeColor = System.Drawing.Color.Black;
-            this.label36.Location = new System.Drawing.Point(442, 52);
+            this.label36.Location = new System.Drawing.Point(754, 130);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(46, 23);
             this.label36.TabIndex = 55;
@@ -1431,11 +1481,12 @@
             // 
             this.comboBox11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox11.FormattingEnabled = true;
-            this.comboBox11.Location = new System.Drawing.Point(28, 39);
+            this.comboBox11.Location = new System.Drawing.Point(28, 81);
             this.comboBox11.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox11.Name = "comboBox11";
             this.comboBox11.Size = new System.Drawing.Size(157, 31);
             this.comboBox11.TabIndex = 49;
+            this.comboBox11.SelectedIndexChanged += new System.EventHandler(this.comboBox11_SelectedIndexChanged);
             // 
             // label35
             // 
@@ -1455,7 +1506,7 @@
             this.comboBox10.Location = new System.Drawing.Point(275, 85);
             this.comboBox10.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox10.Name = "comboBox10";
-            this.comboBox10.Size = new System.Drawing.Size(157, 31);
+            this.comboBox10.Size = new System.Drawing.Size(159, 31);
             this.comboBox10.TabIndex = 47;
             // 
             // label34
@@ -1463,7 +1514,7 @@
             this.label34.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label34.AutoSize = true;
             this.label34.ForeColor = System.Drawing.Color.Black;
-            this.label34.Location = new System.Drawing.Point(190, 85);
+            this.label34.Location = new System.Drawing.Point(190, 127);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(73, 23);
             this.label34.TabIndex = 46;
@@ -1473,20 +1524,21 @@
             // 
             this.comboBox9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox9.FormattingEnabled = true;
-            this.comboBox9.Location = new System.Drawing.Point(527, 127);
+            this.comboBox9.Location = new System.Drawing.Point(275, 44);
             this.comboBox9.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox9.Name = "comboBox9";
-            this.comboBox9.Size = new System.Drawing.Size(210, 31);
+            this.comboBox9.Size = new System.Drawing.Size(159, 31);
             this.comboBox9.TabIndex = 45;
+            this.comboBox9.SelectedIndexChanged += new System.EventHandler(this.comboBox9_SelectedIndexChanged);
             // 
             // comboBox8
             // 
             this.comboBox8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox8.FormattingEnabled = true;
-            this.comboBox8.Location = new System.Drawing.Point(275, 44);
+            this.comboBox8.Location = new System.Drawing.Point(527, 125);
             this.comboBox8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBox8.Name = "comboBox8";
-            this.comboBox8.Size = new System.Drawing.Size(157, 31);
+            this.comboBox8.Size = new System.Drawing.Size(210, 31);
             this.comboBox8.TabIndex = 44;
             this.comboBox8.SelectedIndexChanged += new System.EventHandler(this.comboBox8_SelectedIndexChanged);
             // 
@@ -1517,7 +1569,7 @@
             this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label19.AutoSize = true;
             this.label19.ForeColor = System.Drawing.Color.Black;
-            this.label19.Location = new System.Drawing.Point(197, 47);
+            this.label19.Location = new System.Drawing.Point(191, 86);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(40, 23);
             this.label19.TabIndex = 40;
@@ -1536,13 +1588,14 @@
             this.button19.TabIndex = 29;
             this.button19.Text = "إضافة المحاضرة";
             this.button19.UseVisualStyleBackColor = false;
+            this.button19.Click += new System.EventHandler(this.button19_Click);
             // 
             // label29
             // 
             this.label29.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label29.AutoSize = true;
             this.label29.ForeColor = System.Drawing.Color.Black;
-            this.label29.Location = new System.Drawing.Point(744, 126);
+            this.label29.Location = new System.Drawing.Point(442, 52);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(56, 23);
             this.label29.TabIndex = 35;
@@ -1579,7 +1632,7 @@
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(101, 37);
             this.label53.TabIndex = 60;
-            this.label53.Text = "120";
+            this.label53.Text = "0";
             this.label53.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label33
@@ -1960,51 +2013,6 @@
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(0, 35);
             this.label42.TabIndex = 46;
-            // 
-            // label52
-            // 
-            this.label52.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(144, 175);
-            this.label52.Name = "label52";
-            this.label52.Size = new System.Drawing.Size(119, 23);
-            this.label52.TabIndex = 59;
-            this.label52.Text = "عدد الطلبة للمادة";
-            // 
-            // button26
-            // 
-            this.button26.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button26.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.button26.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button26.ForeColor = System.Drawing.Color.White;
-            this.button26.Location = new System.Drawing.Point(293, 175);
-            this.button26.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.button26.Name = "button26";
-            this.button26.Size = new System.Drawing.Size(128, 36);
-            this.button26.TabIndex = 61;
-            this.button26.Text = "جديد";
-            this.button26.UseVisualStyleBackColor = false;
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(28, 123);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(157, 31);
-            this.comboBox2.TabIndex = 63;
-            // 
-            // label54
-            // 
-            this.label54.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label54.AutoSize = true;
-            this.label54.ForeColor = System.Drawing.Color.Black;
-            this.label54.Location = new System.Drawing.Point(190, 127);
-            this.label54.Name = "label54";
-            this.label54.Size = new System.Drawing.Size(49, 23);
-            this.label54.TabIndex = 62;
-            this.label54.Text = "القاعة";
             // 
             // departments_management
             // 
