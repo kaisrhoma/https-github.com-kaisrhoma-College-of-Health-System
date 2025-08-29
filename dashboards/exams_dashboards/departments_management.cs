@@ -36,6 +36,12 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             dataGridViewDepartment.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewDepartment.MultiSelect = false;
         }
+        public class ReservedPeriod
+        {
+            public TimeSpan Start { get; set; }
+            public TimeSpan End { get; set; }
+        }
+
         private void LoadInstructors()
         {
             try
@@ -1844,9 +1850,9 @@ WHERE ci.course_id = @course_id
         public void dtimes()
         {
             comboBox12.Items.Clear();
-            for (int hour = 7; hour <= 20; hour++)
+            for (int hour = 0; hour < 24; hour++)
             {
-                string timeText = new DateTime(1, 1, 1, hour, 0, 0).ToString("HH:mm:ss");
+                string timeText = new DateTime(1, 1, 1, hour, 0, 0).ToString("HH:mm");
                 comboBox12.Items.Add(timeText);
             }
 
@@ -1854,7 +1860,6 @@ WHERE ci.course_id = @course_id
             comboBox12.DrawMode = DrawMode.OwnerDrawFixed;
             comboBox12.DrawItem += comboBox12_DrawItem;
         }
-
 
 
         // ==================== تعبئة الأيام ====================
@@ -2193,7 +2198,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                 comboBox7.Text = row.Cells["السنة"].Value.ToString();
                 object value = row.Cells["العدد"].Value;
                 numericUpDown1.Value = (value != DBNull.Value) ? Convert.ToDecimal(value) : 0;
-
+                UpdateReservedTimes();
             }
         }
 
@@ -2278,65 +2283,110 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
 
                     TimeSpan end = start.Add(TimeSpan.FromHours(courseUnits));
 
-                    // 1️⃣ تحقق من وجود المجموعة مسبقًا
+                    // 1️⃣ تحقق من تعارض القاعة (نفس اليوم + نفس القاعة)
+                    string qCheckRoom = @"
+                                       SELECT COUNT(*) 
+                                       FROM Course_Classroom
+                                       WHERE classroom_id = @classroom_id
+                                         AND lecture_day = @lecture_day
+                                         AND (
+                                               (@start_time >= start_time AND @start_time < end_time) OR
+                                               (@end_time > start_time AND @end_time <= end_time) OR
+                                               (@start_time <= start_time AND @end_time >= end_time)
+                                             )
+                                       ";
+
+                    using (SqlCommand cmdRoom = new SqlCommand(qCheckRoom, conninsert))
+                    {
+                        cmdRoom.Parameters.AddWithValue("@classroom_id", classroomIdIn);
+                        cmdRoom.Parameters.AddWithValue("@lecture_day", lectureDayIn);
+                        cmdRoom.Parameters.AddWithValue("@start_time", start);
+                        cmdRoom.Parameters.AddWithValue("@end_time", end);
+
+                        int existsRoom = (int)cmdRoom.ExecuteScalar();
+                        if (existsRoom > 0)
+                        {
+                            MessageBox.Show("❌ القاعة محجوزة في هذا الوقت.");
+                            return;
+                        }
+                    }
+
+                    // 2️⃣ تحقق من تعارض الدكتور (نفس اليوم + أي قاعة) مع تفاصيل
+                    string qCheckInstructor = @"
+                                            SELECT TOP 1 
+                                                c.course_name,
+                                                cl.room_name,
+                                                cc.start_time,
+                                                cc.end_time
+                                            FROM Course_Classroom cc
+                                            JOIN Courses c ON cc.course_id = c.course_id
+                                            JOIN Classrooms cl ON cc.classroom_id = cl.classroom_id
+                                            WHERE cc.instructor_id = @instructor_id
+                                              AND cc.lecture_day = @lecture_day
+                                              AND (
+                                                    (@start_time >= cc.start_time AND @start_time < cc.end_time) OR
+                                                    (@end_time > cc.start_time AND @end_time <= cc.end_time) OR
+                                                    (@start_time <= cc.start_time AND @end_time >= cc.end_time)
+                                                  )
+                                            ";
+
+                    using (SqlCommand cmdInstructor = new SqlCommand(qCheckInstructor, conninsert))
+                    {
+                        cmdInstructor.Parameters.AddWithValue("@instructor_id", instructorIdIn);
+                        cmdInstructor.Parameters.AddWithValue("@lecture_day", lectureDayIn);
+                        cmdInstructor.Parameters.AddWithValue("@start_time", start);
+                        cmdInstructor.Parameters.AddWithValue("@end_time", end);
+
+                        using (SqlDataReader reader = cmdInstructor.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string courseName = reader["course_name"].ToString();
+                                string roomName = reader["room_name"].ToString();
+                                string startTime = reader["start_time"].ToString();
+                                string endTime = reader["end_time"].ToString();
+
+                                MessageBox.Show(
+                                    $"❌ الدكتور لديه محاضرة أخرى في هذا الوقت:\n" +
+                                    $"المادة: {courseName}\n" +
+                                    $"القاعة: {roomName}\n" +
+                                    $"من {startTime} إلى {endTime}"
+                                );
+                                return;
+                            }
+                        }
+                    }
+
+
+                    // 3️⃣ تحقق من المجموعة (نفس المادة + نفس المجموعة)
                     string qCheckGroup = @"
-SELECT COUNT(*) 
-FROM Course_Classroom
-WHERE course_id = @course_id
-  AND classroom_id = @classroom_id
-  AND group_number = @group_number
-";
-                    using (SqlCommand cmdCheck = new SqlCommand(qCheckGroup, conninsert))
-                    {
-                        cmdCheck.Parameters.AddWithValue("@course_id", courseIdIn);
-                        cmdCheck.Parameters.AddWithValue("@classroom_id", classroomIdIn);
-                        cmdCheck.Parameters.AddWithValue("@group_number", groupNumIn);
+                                         SELECT COUNT(*) 
+                                         FROM Course_Classroom
+                                         WHERE course_id = @course_id
+                                           AND group_number = @group_number
+                                         ";
 
-                        int count = Convert.ToInt32(cmdCheck.ExecuteScalar());
-                        if (count > 0)
+                    using (SqlCommand cmdGroup = new SqlCommand(qCheckGroup, conninsert))
+                    {
+                        cmdGroup.Parameters.AddWithValue("@course_id", courseIdIn);
+                        cmdGroup.Parameters.AddWithValue("@group_number", groupNumIn);
+
+                        int existsGroup = (int)cmdGroup.ExecuteScalar();
+                        if (existsGroup > 0)
                         {
-                            MessageBox.Show("⚠ هذه المجموعة للمادة والقاعة موجودة مسبقًا!");
+                            MessageBox.Show("❌ هذه المجموعة موجودة مسبقًا لهذه المادة، اختر مجموعة جديدة.");
                             return;
                         }
                     }
 
-                    // 2️⃣ تحقق من تعارض الوقت في نفس القاعة واليوم
-                    string qCheckTime = @"
-SELECT COUNT(*) 
-FROM Course_Classroom
-WHERE classroom_id = @classroom_id
-  AND lecture_day = @lecture_day
-  AND (
-        (@start_time >= start_time AND @start_time < end_time) OR
-        (@end_time > start_time AND @end_time <= end_time) OR
-        (@start_time <= start_time AND @end_time >= end_time)
-      )
-  AND (instructor_id = @instructor_id OR group_number = @group_number)
-";
-                    using (SqlCommand cmdCheckTime = new SqlCommand(qCheckTime, conninsert))
-                    {
-                        cmdCheckTime.Parameters.AddWithValue("@classroom_id", classroomIdIn);
-                        cmdCheckTime.Parameters.AddWithValue("@lecture_day", lectureDayIn);
-                        cmdCheckTime.Parameters.AddWithValue("@start_time", start);
-                        cmdCheckTime.Parameters.AddWithValue("@end_time", end);
-                        cmdCheckTime.Parameters.AddWithValue("@instructor_id", instructorIdIn);
-                        cmdCheckTime.Parameters.AddWithValue("@group_number", groupNumIn);
-
-                        int conflictCount = Convert.ToInt32(cmdCheckTime.ExecuteScalar());
-                        if (conflictCount > 0)
-                        {
-                            MessageBox.Show("⚠ الوقت المختار يتعارض مع محاضرة أخرى في نفس القاعة أو مع الدكتور/المجموعة!");
-                            return;
-                        }
-                    }
 
                     // 3️⃣ إدخال المحاضرة
                     string qinsert = @"
-INSERT INTO Course_Classroom 
-(course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day,instructor_id)
-VALUES
-(@course_id, @classroom_id, @group_number, @capacity, @start_time, @end_time, @lecture_day,@instructor_id)
-";
+                    INSERT INTO Course_Classroom 
+                    (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day,instructor_id)
+                    VALUES
+                    (@course_id, @classroom_id, @group_number, @capacity, @start_time, @end_time, @lecture_day,@instructor_id)
+                    ";
                     using (SqlCommand cmdInsert = new SqlCommand(qinsert, conninsert))
                     {
                         cmdInsert.Parameters.AddWithValue("@instructor_id", instructorIdIn);
@@ -2352,6 +2402,8 @@ VALUES
                     }
 
                     MessageBox.Show("✅ تم إضافة المحاضرة بنجاح!");
+                    ClearFields();
+                    LoadCourseClassroom();
                 }
             }
             catch (SqlException ex)
@@ -2364,25 +2416,33 @@ VALUES
             }
         }
 
-
-        // ==================== تحميل الأوقات المحجوزة ====================
-        private void LoadReservedTimes(int classroomId, int lectureDay)
+        private List<(TimeSpan Start, TimeSpan End, string CourseName, string RoomName, string InstructorName)> reservedTimes = new List<(TimeSpan, TimeSpan, string, string, string)>();
+        private void LoadReservedTimes(int classroomId, int lectureDay, int ignoreCCId = 0)
         {
             reservedTimes.Clear();
 
-            conn.DatabaseConnection db = new conn.DatabaseConnection();
-            using (SqlConnection con = db.OpenConnection())
+            using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
             {
                 string q = @"
-SELECT start_time, end_time
-FROM Course_Classroom
-WHERE classroom_id = @classroom_id
-  AND lecture_day = @lecture_day";
+    SELECT cc.start_time, cc.end_time, c.course_name, cl.room_name, i.full_name
+    FROM Course_Classroom cc
+    JOIN Courses c ON cc.course_id = c.course_id
+    JOIN Classrooms cl ON cc.classroom_id = cl.classroom_id
+    LEFT JOIN Instructors i ON i.instructor_id = cc.instructor_id
+    WHERE cc.classroom_id = @classroom_id
+      AND cc.lecture_day = @lecture_day";
+
+                // إذا كان ignoreCCId > 0 أضف الشرط لتجاهل الصف الحالي
+                if (ignoreCCId > 0)
+                    q += " AND cc.id <> @cc_id";
 
                 using (SqlCommand cmd = new SqlCommand(q, con))
                 {
                     cmd.Parameters.AddWithValue("@classroom_id", classroomId);
                     cmd.Parameters.AddWithValue("@lecture_day", lectureDay);
+
+                    if (ignoreCCId > 0)
+                        cmd.Parameters.AddWithValue("@cc_id", ignoreCCId);
 
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
@@ -2390,22 +2450,27 @@ WHERE classroom_id = @classroom_id
                         {
                             TimeSpan start = (TimeSpan)rdr["start_time"];
                             TimeSpan end = (TimeSpan)rdr["end_time"];
+                            string courseName = rdr["course_name"].ToString();
+                            string roomName = rdr["room_name"].ToString();
+                            string instructorName = rdr["full_name"]?.ToString() ?? "";
 
-                            // أضف كل ساعة في الفترة المحجوزة
-                            for (var t = start; t < end; t = t.Add(TimeSpan.FromHours(1)))
-                            {
-                                reservedTimes.Add(t);
-                            }
+                            reservedTimes.Add((start, end, courseName, roomName, instructorName));
                         }
                     }
                 }
             }
 
-            comboBox12.Invalidate(); // إعادة الرسم لتطبيق الألوان
+            comboBox12.Invalidate(); // إعادة رسم لتوضيح الأوقات المحجوزة
         }
 
 
-        private List<TimeSpan> reservedTimes = new List<TimeSpan>();
+
+
+
+
+
+
+        // ==================== رسم ComboBox مع تظليل الأوقات المحجوزة ====================
         private void comboBox12_DrawItem(object sender, DrawItemEventArgs e)
         {
             if (e.Index < 0) return;
@@ -2414,7 +2479,33 @@ WHERE classroom_id = @classroom_id
             string timeText = cb.Items[e.Index].ToString();
             TimeSpan itemTime = TimeSpan.Parse(timeText);
 
-            bool isReserved = reservedTimes.Contains(itemTime);
+            int lectureDurationHours = 0;
+            if (comboBox8.SelectedValue != null)
+            {
+                int courseId = Convert.ToInt32(comboBox8.SelectedValue);
+                using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
+                {
+                    string qUnits = "SELECT units FROM Courses WHERE course_id = @course_id";
+                    using (SqlCommand cmd = new SqlCommand(qUnits, con))
+                    {
+                        cmd.Parameters.AddWithValue("@course_id", courseId);
+                        object result = cmd.ExecuteScalar();
+                        if (result != null) lectureDurationHours = Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            // حساب وقت النهاية مع دوران 24 ساعة
+            TimeSpan duration = TimeSpan.FromHours(lectureDurationHours);
+            TimeSpan endTime = TimeSpan.FromHours((itemTime.TotalHours + duration.TotalHours) % 24);
+
+            bool isReserved = reservedTimes.Any(r =>
+            {
+                if (r.Start < r.End) // محاضرة داخل اليوم
+                    return itemTime < r.End && endTime > r.Start;
+                else // محاضرة تمتد بعد منتصف الليل
+                    return (itemTime < r.End || endTime > r.Start);
+            });
 
             e.DrawBackground();
             using (Brush brush = new SolidBrush(isReserved ? Color.Red : e.ForeColor))
@@ -2424,15 +2515,46 @@ WHERE classroom_id = @classroom_id
             e.DrawFocusRectangle();
         }
 
+
+
+
+        // ==================== تحقق عند اختيار وقت البداية ====================
         private void comboBox12_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox12.SelectedIndex < 0) return;
 
-            TimeSpan selectedTime = TimeSpan.Parse(comboBox12.SelectedItem.ToString());
+            TimeSpan startTime = TimeSpan.Parse(comboBox12.SelectedItem.ToString());
 
-            if (reservedTimes.Contains(selectedTime))
+            int lectureDurationHours = 0;
+            if (comboBox8.SelectedValue != null)
             {
-                MessageBox.Show("⚠ هذا الوقت محجوز بالفعل!");
+                int courseId = Convert.ToInt32(comboBox8.SelectedValue);
+                using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
+                {
+                    string qUnits = "SELECT units FROM Courses WHERE course_id = @course_id";
+                    using (SqlCommand cmd = new SqlCommand(qUnits, con))
+                    {
+                        cmd.Parameters.AddWithValue("@course_id", courseId);
+                        object result = cmd.ExecuteScalar();
+                        if (result != null) lectureDurationHours = Convert.ToInt32(result);
+                    }
+                }
+            }
+            TimeSpan duration = TimeSpan.FromHours(lectureDurationHours);
+            TimeSpan endTime = TimeSpan.FromHours((startTime.TotalHours + duration.TotalHours) % 24);
+
+
+            var conflict = reservedTimes.FirstOrDefault(r =>
+            {
+                if (r.Start < r.End)
+                    return startTime < r.End && endTime > r.Start;
+                else
+                    return (startTime < r.End || endTime > r.Start);
+            });
+
+            if (conflict != default)
+            {
+                MessageBox.Show($"⚠ الفترة المختارة تتعارض مع محاضرة:\nالمادة: {conflict.CourseName}\nالقاعة: {conflict.RoomName}\nالدكتور: {conflict.InstructorName}");
                 comboBox12.SelectedIndex = -1;
             }
         }
@@ -2441,17 +2563,23 @@ WHERE classroom_id = @classroom_id
         {
             if (comboBox2.SelectedIndex >= 0 && comboBox11.SelectedIndex >= 0)
             {
-                // الحصول على classroom_id
                 DataRowView drvRoom = comboBox2.SelectedItem as DataRowView;
                 int classroomId = Convert.ToInt32(drvRoom["classroom_id"]);
 
-                // الحصول على lecture_day
                 var selectedDay = (KeyValuePair<int, string>)comboBox11.SelectedItem;
                 int lectureDay = selectedDay.Key;
 
-                LoadReservedTimes(classroomId, lectureDay);
+                if (selectedCCId > 0)
+                    LoadReservedTimes(classroomId, lectureDay, selectedCCId); // تعديل: تجاهل المحاضرة الحالية
+                else
+                    LoadReservedTimes(classroomId, lectureDay); // إضافة: أخذ كل الأوقات المحجوزة
+
+                comboBox12.Invalidate(); // إعادة الرسم لتوضيح الأوقات المحجوزة
             }
         }
+
+
+
 
         private void comboBox9_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -2773,5 +2901,182 @@ WHERE classroom_id = @classroom_id
             LoadInstructorCourses();
             comboBox5_SelectedIndexChanged(null, null);
         }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            if (selectedCCId == 0)
+            {
+                MessageBox.Show("اختر محاضرة من القائمة للتعديل!");
+                return;
+            }
+
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection connUpdate = db.OpenConnection())
+                {
+                    // ==================== التحقق من الحقول ====================
+                    if (comboBox9.SelectedValue == null) { MessageBox.Show("اختر الدكتور!"); return; }
+                    int instructorIdIn = Convert.ToInt32(comboBox9.SelectedValue);
+
+                    if (comboBox8.SelectedValue == null) { MessageBox.Show("اختر المادة!"); return; }
+                    int courseIdIn = Convert.ToInt32(comboBox8.SelectedValue);
+
+                    DataRowView drvRoom = comboBox2.SelectedItem as DataRowView;
+                    if (drvRoom == null) { MessageBox.Show("اختر القاعة!"); return; }
+                    int classroomIdIn = Convert.ToInt32(drvRoom["classroom_id"]);
+
+                    if (comboBox11.SelectedItem == null) { MessageBox.Show("اختر اليوم!"); return; }
+                    var selectedDay = (KeyValuePair<int, string>)comboBox11.SelectedItem;
+                    int lectureDayIn = selectedDay.Key;
+
+                    if (comboBox10.SelectedValue == null) { MessageBox.Show("اختر المجموعة!"); return; }
+                    int groupNumIn = Convert.ToInt32(comboBox10.SelectedValue);
+
+                    if (numericUpDown1.Value <= 0) { MessageBox.Show("حدد العدد بشكل صحيح!"); return; }
+                    int capacityIn = Convert.ToInt32(numericUpDown1.Value);
+
+                    if (comboBox12.SelectedItem == null) { MessageBox.Show("اختر وقت البداية!"); return; }
+                    TimeSpan start = TimeSpan.Parse(comboBox12.SelectedItem.ToString());
+
+                    // ==================== جلب مدة المحاضرة ====================
+                    int courseUnits = 0;
+                    string qUnits = "SELECT units FROM Courses WHERE course_id = @course_id";
+                    using (SqlCommand cmdGetUnits = new SqlCommand(qUnits, connUpdate))
+                    {
+                        cmdGetUnits.Parameters.AddWithValue("@course_id", courseIdIn);
+                        courseUnits = Convert.ToInt32(cmdGetUnits.ExecuteScalar());
+                    }
+                    TimeSpan end = start.Add(TimeSpan.FromHours(courseUnits));
+
+                    // ==================== التحقق من تعارض القاعة ====================
+                    string qCheckRoom = @"
+                SELECT COUNT(*) 
+                FROM Course_Classroom
+                WHERE classroom_id = @classroom_id
+                  AND lecture_day = @lecture_day
+                  AND id <> @cc_id
+                  AND (
+                        (@start_time >= start_time AND @start_time < end_time) OR
+                        (@end_time > start_time AND @end_time <= end_time) OR
+                        (@start_time <= start_time AND @end_time >= end_time)
+                      )";
+                    using (SqlCommand cmdRoom = new SqlCommand(qCheckRoom, connUpdate))
+                    {
+                        cmdRoom.Parameters.AddWithValue("@classroom_id", classroomIdIn);
+                        cmdRoom.Parameters.AddWithValue("@lecture_day", lectureDayIn);
+                        cmdRoom.Parameters.AddWithValue("@start_time", start);
+                        cmdRoom.Parameters.AddWithValue("@end_time", end);
+                        cmdRoom.Parameters.AddWithValue("@cc_id", selectedCCId);
+
+                        int existsRoom = (int)cmdRoom.ExecuteScalar();
+                        if (existsRoom > 0) { MessageBox.Show("❌ القاعة محجوزة في هذا الوقت."); return; }
+                    }
+
+                    // ==================== التحقق من تعارض الدكتور ====================
+                    string qCheckInstructor = @"
+                SELECT TOP 1 
+                    c.course_name, cl.room_name, cc.start_time, cc.end_time
+                FROM Course_Classroom cc
+                JOIN Courses c ON cc.course_id = c.course_id
+                JOIN Classrooms cl ON cc.classroom_id = cl.classroom_id
+                WHERE cc.instructor_id = @instructor_id
+                  AND cc.lecture_day = @lecture_day
+                  AND cc.id <> @cc_id
+                  AND (
+                        (@start_time >= cc.start_time AND @start_time < cc.end_time) OR
+                        (@end_time > cc.start_time AND @end_time <= cc.end_time) OR
+                        (@start_time <= cc.start_time AND @end_time >= cc.end_time)
+                      )";
+                    using (SqlCommand cmdInstructor = new SqlCommand(qCheckInstructor, connUpdate))
+                    {
+                        cmdInstructor.Parameters.AddWithValue("@instructor_id", instructorIdIn);
+                        cmdInstructor.Parameters.AddWithValue("@lecture_day", lectureDayIn);
+                        cmdInstructor.Parameters.AddWithValue("@start_time", start);
+                        cmdInstructor.Parameters.AddWithValue("@end_time", end);
+                        cmdInstructor.Parameters.AddWithValue("@cc_id", selectedCCId);
+
+                        using (SqlDataReader reader = cmdInstructor.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string courseName = reader["course_name"].ToString();
+                                string roomName = reader["room_name"].ToString();
+                                string startTime = reader["start_time"].ToString();
+                                string endTime = reader["end_time"].ToString();
+                                MessageBox.Show(
+                                    $"❌ الدكتور لديه محاضرة أخرى في هذا الوقت:\n" +
+                                    $"المادة: {courseName}\n" +
+                                    $"القاعة: {roomName}\n" +
+                                    $"من {startTime} إلى {endTime}"
+                                );
+                                return;
+                            }
+                        }
+                    }
+
+                    // ==================== التحقق من المجموعة ====================
+                    string qCheckGroup = @"
+                SELECT COUNT(*) 
+                FROM Course_Classroom
+                WHERE course_id = @course_id
+                  AND group_number = @group_number
+                  AND id <> @cc_id";
+                    using (SqlCommand cmdGroup = new SqlCommand(qCheckGroup, connUpdate))
+                    {
+                        cmdGroup.Parameters.AddWithValue("@course_id", courseIdIn);
+                        cmdGroup.Parameters.AddWithValue("@group_number", groupNumIn);
+                        cmdGroup.Parameters.AddWithValue("@cc_id", selectedCCId);
+
+                        int existsGroup = (int)cmdGroup.ExecuteScalar();
+                        if (existsGroup > 0)
+                        {
+                            MessageBox.Show("❌ هذه المجموعة موجودة مسبقًا لهذه المادة، اختر مجموعة جديدة.");
+                            return;
+                        }
+                    }
+
+                    // ==================== تحديث المحاضرة ====================
+                    string qUpdate = @"
+                UPDATE Course_Classroom
+                SET course_id = @course_id,
+                    classroom_id = @classroom_id,
+                    group_number = @group_number,
+                    capacity = @capacity,
+                    start_time = @start_time,
+                    end_time = @end_time,
+                    lecture_day = @lecture_day,
+                    instructor_id = @instructor_id
+                WHERE id = @cc_id";
+                    using (SqlCommand cmdUpdate = new SqlCommand(qUpdate, connUpdate))
+                    {
+                        cmdUpdate.Parameters.AddWithValue("@course_id", courseIdIn);
+                        cmdUpdate.Parameters.AddWithValue("@classroom_id", classroomIdIn);
+                        cmdUpdate.Parameters.AddWithValue("@group_number", groupNumIn);
+                        cmdUpdate.Parameters.AddWithValue("@capacity", capacityIn);
+                        cmdUpdate.Parameters.AddWithValue("@start_time", start);
+                        cmdUpdate.Parameters.AddWithValue("@end_time", end);
+                        cmdUpdate.Parameters.AddWithValue("@lecture_day", lectureDayIn);
+                        cmdUpdate.Parameters.AddWithValue("@instructor_id", instructorIdIn);
+                        cmdUpdate.Parameters.AddWithValue("@cc_id", selectedCCId);
+
+                        cmdUpdate.ExecuteNonQuery();
+                    }
+
+                    MessageBox.Show("✅ تم تعديل المحاضرة بنجاح!");
+                    ClearFields();
+                    LoadCourseClassroom();
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("SQL Error: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
     }
 }
