@@ -294,7 +294,9 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
 
         private void button1_Click(object sender, EventArgs e)
         {
-            try
+            if (MessageBox.Show("هل أنت متأكد ؟", "تأكيد ",
+                              MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                try
             {
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                 {
@@ -633,8 +635,9 @@ ORDER BY s.university_number, r.year_number, c.course_name;
 
         private void button2_Click(object sender, EventArgs e)
         {
-
-            try
+            if (MessageBox.Show("هل أنت متأكد ؟", "تأكيد ",
+                           MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
@@ -1384,10 +1387,13 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                 return;
             }
 
+
             int departmentId = Convert.ToInt32(comboDepartment.SelectedValue);
             int academicYear = Convert.ToInt32(comboYear4.SelectedItem);
             string selectedRound = comboExamRound.SelectedItem.ToString();
-
+      if (MessageBox.Show("هل أنت متأكد ؟", "تأكيد ",
+                              MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -1467,6 +1473,7 @@ WHERE s.exam_round = N'دور ثاني'
 WITH CurrentYearFails AS (
     SELECT 
         s.student_id,
+        s.current_year,
         COUNT(CASE WHEN g.total_grade < 60 THEN 1 END) AS current_year_fails
     FROM Students s
     INNER JOIN Registrations r ON s.student_id = r.student_id
@@ -1478,10 +1485,11 @@ WITH CurrentYearFails AS (
       AND r.academic_year_start = @academicYearStart
       AND r.status = N'مسجل'
       AND s.exam_round = N'دور ثاني'
-    GROUP BY s.student_id
+    GROUP BY s.student_id, s.current_year
 )
 UPDATE s
 SET exam_round = CASE
+    WHEN cf.current_year = 4 AND cf.current_year_fails >= 1 THEN N'إعادة سنة'  -- السطر المضاف
     WHEN cf.current_year_fails = 0 THEN N'دور أول'
     WHEN cf.current_year_fails BETWEEN 1 AND 2 THEN N'مرحل'
     WHEN cf.current_year_fails >= 3 THEN N'إعادة سنة'
@@ -1489,6 +1497,7 @@ SET exam_round = CASE
 END
 FROM Students s
 INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;
+
 ";
                         using (SqlCommand cmd = new SqlCommand(query, conn))
                         {

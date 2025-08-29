@@ -31,6 +31,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             InitializeControls();
             LoadDepartments1();
             LoadYears();
+            LoadInstructors1();
+            LoadYears1();
             dataGridViewDepartment.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewDepartment.MultiSelect = false;
         }
@@ -2464,6 +2466,312 @@ WHERE classroom_id = @classroom_id
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateReservedTimes();
+        }
+        //ربط المواد بي الاساتده
+        private void LoadYears1()
+        {
+            comboBoxYear4.Items.Clear();
+            for (int i = 1; i <= 4; i++)
+                comboBox5.Items.Add(i);
+            if (comboBox5.Items.Count > 0)
+                comboBox5.SelectedIndex = 0;
+        }
+
+        private void LoadInstructors1()
+        {
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                SqlDataAdapter da = new SqlDataAdapter("SELECT instructor_id, full_name FROM Instructors", con);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                comboBox4.DataSource = dt;
+                comboBox4.DisplayMember = "full_name";
+                comboBox4.ValueMember = "instructor_id";
+
+                comboBox3.DataSource = dt.Copy(); // ComboBox للتعديل
+                comboBox3.DisplayMember = "full_name";
+                comboBox3.ValueMember = "instructor_id";
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+        private void LoadInstructorCourses()
+        {
+            if (comboBox4.SelectedValue == null || comboBox4.SelectedValue is DataRowView)
+                return;
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                int instructorId = Convert.ToInt32(comboBox4.SelectedValue);
+
+                SqlCommand cmd = new SqlCommand(@"
+            SELECT c.course_id, c.course_name AS [اسم المادة], c.course_code AS [رمز المادة]
+            FROM Courses c
+            INNER JOIN Course_Instructor ci ON ci.course_id = c.course_id
+            WHERE ci.instructor_id = @id", con);
+                cmd.Parameters.AddWithValue("@id", instructorId);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                dataGridView2.DataSource = dt;
+
+                if (!dataGridView2.Columns.Contains("ترقيم"))
+                {
+                    DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn();
+                    col.Name = "ترقيم";
+                    col.HeaderText = "م";
+                    col.Width = 50;
+                    dataGridView2.Columns.Insert(0, col);
+                }
+                for (int i = 0; i < dataGridView2.Rows.Count; i++)
+                    dataGridView2.Rows[i].Cells["ترقيم"].Value = i + 1;
+
+                if (dataGridView2.Columns.Contains("course_id"))
+                    dataGridView2.Columns["course_id"].Visible = false;
+                dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                if (dt.Rows.Count == 0)
+                    label55.Text = "⚠️ لا توجد مواد مرتبطة بهذا الأستاذ.";
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+
+        private void button27_Click(object sender, EventArgs e)
+        {
+            if (dataGridView3.CurrentRow == null || comboBox4.SelectedValue == null)
+            {
+                MessageBox.Show("⚠️ الرجاء اختيار مادة وأستاذ أولاً");
+                return;
+            }
+
+            int courseId = Convert.ToInt32(dataGridView3.CurrentRow.Cells["course_id"].Value);
+            int instructorId = Convert.ToInt32(comboBox4.SelectedValue);
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                SqlCommand cmd = new SqlCommand("INSERT INTO Course_Instructor(course_id, instructor_id) VALUES(@c, @i)", con);
+                cmd.Parameters.AddWithValue("@c", courseId);
+                cmd.Parameters.AddWithValue("@i", instructorId);
+                cmd.ExecuteNonQuery();
+
+                label55.Text = "✅ تم ربط المادة بالأستاذ بنجاح.";
+                label55.ForeColor = Color.Green;
+            }
+            catch (SqlException)
+            {
+                MessageBox.Show("⚠️ المادة مرتبطة بالفعل بهذا الأستاذ.");
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+            comboBoxYear4_SelectedIndexChanged(null, null);
+            LoadInstructorCourses();
+        }
+
+        private void comboBox5_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                SqlCommand cmd = new SqlCommand(@"
+            SELECT c.course_id, c.course_name AS [اسم المادة], c.course_code AS [رمز المادة]
+            FROM Courses c
+            WHERE c.year_number = @year", con);
+                cmd.Parameters.AddWithValue("@year", comboBox5.SelectedItem);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                dataGridView3.DataSource = dt;
+
+                // عمود الترقيم
+                if (!dataGridView3.Columns.Contains("ترقيم"))
+                {
+                    DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn();
+                    col.Name = "ترقيم";
+                    col.HeaderText = "م";
+                    col.Width = 20;
+                    dataGridView3.Columns.Insert(0, col);
+                }
+                for (int i = 0; i < dataGridView3.Rows.Count; i++)
+                    dataGridView3.Rows[i].Cells["ترقيم"].Value = i + 1;
+
+                if (dataGridView3.Columns.Contains("course_id"))
+                    dataGridView3.Columns["course_id"].Visible = false;
+                dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+        }
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadInstructorCourses();
+        }
+
+        private void button28_Click(object sender, EventArgs e)
+        {
+            if (dataGridView2.CurrentRow == null)
+            {
+                label55.Text = "⚠️ الرجاء اختيار مادة لتعديل الأستاذ.";
+                label55.ForeColor = Color.Red;
+                return;
+            }
+
+            if (comboBox3.SelectedValue == null || comboBox3.SelectedValue is DataRowView)
+            {
+                label55.Text = "⚠️ الرجاء اختيار أستاذ جديد.";
+                label55.ForeColor = Color.Red;
+                return;
+            }
+
+            int courseId = Convert.ToInt32(dataGridView2.CurrentRow.Cells["course_id"].Value);
+            int newInstId = Convert.ToInt32(comboBox3.SelectedValue);
+            int oldInstId = Convert.ToInt32(comboBox4.SelectedValue);
+
+            // ✅ تحقق إذا نفس الأستاذ
+            if (newInstId == oldInstId)
+            {
+                label55.Text = "⚠️ لا يمكن تحديث المادة بنفس الأستاذ.";
+                label55.ForeColor = Color.Red;
+                return;
+            }
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                // ✅ تحقق إذا الأستاذ الجديد موجود لنفس المادة مسبقاً
+                SqlCommand checkCmd = new SqlCommand(
+                    "SELECT COUNT(*) FROM Course_Instructor WHERE course_id = @courseId AND instructor_id = @newInst", con);
+                checkCmd.Parameters.AddWithValue("@courseId", courseId);
+                checkCmd.Parameters.AddWithValue("@newInst", newInstId);
+
+                int exists = (int)checkCmd.ExecuteScalar();
+                if (exists > 0)
+                {
+                    label55.Text = "⚠️ هذا الأستاذ مرتبط بالفعل بهذه المادة.";
+                    label55.ForeColor = Color.Red;
+                    return;
+                }
+
+                // 🔹 تنفيذ التحديث
+                SqlCommand cmd = new SqlCommand(
+                    "UPDATE Course_Instructor SET instructor_id = @newInst WHERE course_id = @courseId AND instructor_id = @oldInst", con);
+                cmd.Parameters.AddWithValue("@newInst", newInstId);
+                cmd.Parameters.AddWithValue("@courseId", courseId);
+                cmd.Parameters.AddWithValue("@oldInst", oldInstId);
+                cmd.ExecuteNonQuery();
+
+                label55.Text = "✅ تم تعديل الأستاذ للمادة: " + dataGridView3.CurrentRow.Cells["اسم المادة"].Value.ToString();
+                label55.ForeColor = Color.Green;
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+            LoadInstructorCourses();
+            comboBox5_SelectedIndexChanged(null, null);
+        }
+
+        private void button29_Click(object sender, EventArgs e)
+        {
+
+    
+            // الحصول على الصف الفعلي الذي ضغط عليه المستخدم
+            DataGridViewRow row = null;
+
+            if (dataGridView2.SelectedRows.Count > 0)
+                row = dataGridView2.SelectedRows[0];
+            else if (dataGridView2.CurrentRow != null)
+                row = dataGridView2.CurrentRow;
+
+            if (row == null || row.IsNewRow || row.Cells["course_id"].Value == null || row.Cells["course_id"].Value == DBNull.Value)
+            {
+                label55.Text = "⚠️ الرجاء اختيار مادة صحيحة للحذف.";
+                label55.ForeColor = Color.Red;
+                return;
+            }
+
+            // التحقق من اختيار أستاذ
+            if (comboBox4.SelectedValue == null || comboBox4.SelectedValue is DataRowView)
+            {
+                label55.Text = "⚠️ الرجاء اختيار أستاذ أولاً.";
+                label55.ForeColor = Color.Red;
+                return;
+            }
+
+            int courseId = Convert.ToInt32(row.Cells["course_id"].Value);
+            int instructorId = Convert.ToInt32(comboBox4.SelectedValue);
+
+            if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد الحذف",
+                                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
+
+            try
+            {
+                if (con.State != ConnectionState.Open)
+                    con.Open();
+
+                SqlCommand cmd = new SqlCommand(
+                    "DELETE FROM Course_Instructor WHERE course_id = @c AND instructor_id = @i", con);
+                cmd.Parameters.AddWithValue("@c", courseId);
+                cmd.Parameters.AddWithValue("@i", instructorId);
+
+                int affected = cmd.ExecuteNonQuery();
+
+                if (affected == 0)
+                {
+                    label55.Text = "ℹ️ لا يوجد ربط لهذا الأستاذ مع هذه المادة.";
+                    label55.ForeColor = Color.DarkGoldenrod;
+                }
+                else
+                {
+                    label55.Text = "✅ تم حذف الربط بنجاح.";
+                    label55.ForeColor = Color.Green;
+                }
+            }
+            finally
+            {
+                if (con.State == ConnectionState.Open)
+                    con.Close();
+            }
+
+            // تحديث الجداول بعد الحذف
+            LoadInstructorCourses();
+            comboBox5_SelectedIndexChanged(null, null);
         }
     }
 }
