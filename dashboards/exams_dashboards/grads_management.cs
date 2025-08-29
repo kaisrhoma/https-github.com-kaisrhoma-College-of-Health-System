@@ -294,8 +294,8 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("هل أنت متأكد ؟", "تأكيد ",
-                              MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            //if (MessageBox.Show("هل أنت متأكد ؟", "تأكيد ",
+                             // MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                 try
             {
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
