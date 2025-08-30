@@ -53,7 +53,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.button8 = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.panel3 = new System.Windows.Forms.Panel();
             this.label11 = new System.Windows.Forms.Label();
             this.button9 = new System.Windows.Forms.Button();
@@ -73,6 +72,8 @@
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printDocument2 = new System.Drawing.Printing.PrintDocument();
             this.printDocument3 = new System.Drawing.Printing.PrintDocument();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -281,6 +282,7 @@
             // 
             this.tabPage3.AutoScroll = true;
             this.tabPage3.BackColor = System.Drawing.Color.White;
+            this.tabPage3.Controls.Add(this.checkBox2);
             this.tabPage3.Controls.Add(this.button3);
             this.tabPage3.Controls.Add(this.button6);
             this.tabPage3.Controls.Add(this.dataGridView1);
@@ -377,8 +379,8 @@
             // 
             this.tabPage4.AutoScroll = true;
             this.tabPage4.BackColor = System.Drawing.Color.White;
+            this.tabPage4.Controls.Add(this.checkBox1);
             this.tabPage4.Controls.Add(this.panel2);
-            this.tabPage4.Controls.Add(this.progressBar1);
             this.tabPage4.Controls.Add(this.panel3);
             this.tabPage4.Controls.Add(this.groupBox2);
             this.tabPage4.Controls.Add(this.groupBox1);
@@ -439,14 +441,6 @@
             this.button8.Text = "بحث";
             this.button8.UseVisualStyleBackColor = false;
             this.button8.Click += new System.EventHandler(this.button8_Click);
-            // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(254, 407);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(362, 23);
-            this.progressBar1.TabIndex = 60;
-            this.progressBar1.Visible = false;
             // 
             // panel3
             // 
@@ -654,6 +648,28 @@
             // 
             this.printDocument3.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument3_PrintPage);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(499, 82);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(117, 27);
+            this.checkBox1.TabIndex = 61;
+            this.checkBox1.Text = "طالب تمهيدي";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(295, 106);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(117, 27);
+            this.checkBox2.TabIndex = 62;
+            this.checkBox2.Text = "طالب تمهيدي";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
             // certificates_reports
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -733,8 +749,9 @@
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Drawing.Printing.PrintDocument printDocument2;
         private System.Drawing.Printing.PrintDocument printDocument3;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox checkBox2;
     }
 }

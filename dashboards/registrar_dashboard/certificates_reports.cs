@@ -326,6 +326,7 @@ ORDER BY c.year_number, c.course_name;";
                     }
 
                     int ac_year = DateTime.Now.Month >= month ? DateTime.Now.Year : DateTime.Now.Year - 1;
+                    ac_year = checkBox2.Checked ? (ac_year - 1) : ac_year;
 
                     string q = @"
                                SELECT
@@ -816,6 +817,26 @@ ORDER BY c.year_number, c.course_name;";
                         return;
                     }
 
+                    int month2;
+
+                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
+                    {
+                        month2 = Convert.ToInt32(cmddate.ExecuteScalar());
+                    }
+
+                    int academicYearStart = DateTime.Now.Month >= month2 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+                    academicYearStart = checkBox1.Checked ? (academicYearStart - 1) : academicYearStart;
+                    DialogResult dr = MessageBox.Show(
+                    "AcademicYearStart = " + academicYearStart + "\n\nهل تريد الاستمرار في الترقية؟",
+                    "تأكيد الترقية",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                    if (dr == DialogResult.No)
+                    {
+                        return; // يوقف العملية إذا اخترت لا
+                    }
+
                     // ✅ جلب المواد الخاصة بالسنة والقسم
                     SqlCommand coursesCmd = new SqlCommand(@"
                                                         SELECT c.course_id, c.course_name
@@ -832,6 +853,8 @@ ORDER BY c.year_number, c.course_name;";
 
                     List<string> موادممتلئة = new List<string>();
                     int عددالموادالمسجلة = 0;
+
+
 
                     foreach (DataRow row in courses.Rows)
                     {
@@ -871,20 +894,12 @@ ORDER BY c.year_number, c.course_name;";
 
                             if (currentCount < capacity)
                             {
-                                int month2;
-
-                                using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
-                                {
-                                    month2 = Convert.ToInt32(cmddate.ExecuteScalar());
-                                }
-
-                                int academicYearStart = DateTime.Now.Month >= month2 ? DateTime.Now.Year : DateTime.Now.Year - 1;
-
+                                
 
                                 SqlCommand insertCmd = new SqlCommand(@"
                                 IF NOT EXISTS (
                                     SELECT 1 FROM Registrations 
-                                    WHERE student_id = @studentId AND course_id = @courseId AND academic_year_start = @academicYearStart
+                                    WHERE student_id = @studentId AND course_id = @courseId
                                 )
                                 INSERT INTO Registrations 
                                 (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
@@ -974,6 +989,25 @@ ORDER BY c.year_number, c.course_name;";
                     Dictionary<string, List<string>> fullcourses = new Dictionary<string, List<string>>();
                     int countfullcourses = 0;
 
+                    int month3;
+
+                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
+                    {
+                        month3 = Convert.ToInt32(cmddate.ExecuteScalar());
+                    }
+
+                    int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+                    academicYearStart = checkBox1.Checked ? (academicYearStart - 1) : academicYearStart;
+                    DialogResult dr = MessageBox.Show(
+                    "AcademicYearStart = " + academicYearStart + "\n\nهل تريد الاستمرار في الترقية؟",
+                    "تأكيد الترقية",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                    if (dr == DialogResult.No)
+                    {
+                        return; // يوقف العملية إذا اخترت لا
+                    }
 
                     foreach (DataRow row in courses.Rows)
                     {
@@ -1025,20 +1059,10 @@ ORDER BY c.year_number, c.course_name;";
 
                                 if (currentCount < capacity)
                                 {
-                                    int month3;
-
-                                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
-                                    {
-                                        month3 = Convert.ToInt32(cmddate.ExecuteScalar());
-                                    }
-
-                                    int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
-
-
                                     SqlCommand insertCmd = new SqlCommand(@"
                                     IF NOT EXISTS (
                                         SELECT 1 FROM Registrations 
-                                        WHERE student_id = @studentId AND course_id = @courseId AND academic_year_start = @academicYearStart
+                                        WHERE student_id = @studentId AND course_id = @courseId
                                     )
                                     INSERT INTO Registrations 
                                     (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
