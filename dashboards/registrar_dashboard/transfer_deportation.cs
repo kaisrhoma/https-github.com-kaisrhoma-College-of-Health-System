@@ -166,7 +166,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
             try
             {
-                // نملأ الكومبوبوكس بالقيم من 1 إلى 9
+                //نملأ الكومبوبوكس بالقيم من 1 إلى12
                 for (int i = 1; i <= 12; i++)
                 {
                     comboBox1.Items.Add(i);
