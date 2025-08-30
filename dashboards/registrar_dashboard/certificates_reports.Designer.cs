@@ -42,6 +42,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.button3 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -49,6 +50,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label7 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -72,8 +74,6 @@
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printDocument2 = new System.Drawing.Printing.PrintDocument();
             this.printDocument3 = new System.Drawing.Printing.PrintDocument();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -298,6 +298,17 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "ورقة تنزيل المواد";
             // 
+            // checkBox2
+            // 
+            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(295, 106);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(117, 27);
+            this.checkBox2.TabIndex = 62;
+            this.checkBox2.Text = "طالب تمهيدي";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
             // button3
             // 
             this.button3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -395,6 +406,17 @@
             this.tabPage4.Size = new System.Drawing.Size(899, 522);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "تنزيل المواد";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(499, 82);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(117, 27);
+            this.checkBox1.TabIndex = 61;
+            this.checkBox1.Text = "طالب تمهيدي";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // panel2
             // 
@@ -556,7 +578,7 @@
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(166, 15);
+            this.label10.Location = new System.Drawing.Point(184, 15);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(44, 23);
             this.label10.TabIndex = 53;
@@ -568,7 +590,7 @@
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(7, 11);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(153, 31);
+            this.comboBox2.Size = new System.Drawing.Size(172, 31);
             this.comboBox2.TabIndex = 51;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
@@ -647,28 +669,6 @@
             // printDocument3
             // 
             this.printDocument3.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument3_PrintPage);
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(499, 82);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(117, 27);
-            this.checkBox1.TabIndex = 61;
-            this.checkBox1.Text = "طالب تمهيدي";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(295, 106);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(117, 27);
-            this.checkBox2.TabIndex = 62;
-            this.checkBox2.Text = "طالب تمهيدي";
-            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // certificates_reports
             // 

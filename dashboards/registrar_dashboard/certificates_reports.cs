@@ -28,7 +28,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         {
             InitializeComponent();
         }
-
         PrintDocument printDocument = new PrintDocument();
         DataTable printTable;
         DataTable supjectTable;
@@ -201,8 +200,13 @@ ORDER BY c.year_number, c.course_name;";
 
         }
 
+        private bool isload = false;
         private void certificates_reports_Load(object sender, EventArgs e)
         {
+            //isload = true;
+            comboBox1.SelectedIndexChanged -= comboBox1_SelectedIndexChanged;
+            comboBox2.SelectedIndexChanged -= comboBox2_SelectedIndexChanged;
+
             var study_year = new Dictionary<int, string>()
             {
                 {1, "سنة أولى"},
@@ -214,6 +218,7 @@ ORDER BY c.year_number, c.course_name;";
             comboBox1.DataSource = new BindingSource(study_year, null);
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";
+            comboBox1.SelectedIndex = 0;
 
             try
             {
@@ -228,12 +233,15 @@ ORDER BY c.year_number, c.course_name;";
                     comboBox2.DataSource = new BindingSource(dt, null);
                     comboBox2.DisplayMember = "dep_name";
                     comboBox2.ValueMember = "department_id";
+                    comboBox2.SelectedIndex = 0;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("There is an Error : " + ex.Message);
             }
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            comboBox2.SelectedIndexChanged += comboBox2_SelectedIndexChanged;
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -628,6 +636,7 @@ ORDER BY c.year_number, c.course_name;";
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
+            
             dataGridView5.DataSource = null;
             try
             {
@@ -642,8 +651,22 @@ ORDER BY c.year_number, c.course_name;";
                         "WHERE c.year_number = @YearNumber AND cd.department_id = @DepartmentID";
 
                     SqlCommand cmd = new SqlCommand(q, con);
-                    cmd.Parameters.AddWithValue("@YearNumber", comboBox1.SelectedValue);
-                    cmd.Parameters.AddWithValue("@DepartmentID", Convert.ToInt32(comboBox2.SelectedValue));
+                    if(comboBox1.SelectedItem == null )
+                    {
+                        MessageBox.Show("اختر القسم");
+                        return;
+                    }
+                    var selecty = (KeyValuePair<int,string>)comboBox1.SelectedItem;
+                    int sy = selecty.Key;
+                    if (comboBox2.SelectedItem == null)
+                    {
+                        MessageBox.Show("اختر القسم");
+                        return;
+                    }
+                    int sdep = Convert.ToInt32(comboBox2.SelectedValue);
+
+                    cmd.Parameters.AddWithValue("@YearNumber", sy);
+                    cmd.Parameters.AddWithValue("@DepartmentID", sdep);
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
@@ -661,6 +684,7 @@ ORDER BY c.year_number, c.course_name;";
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            
             dataGridView5.DataSource = null;
             if (comboBox2.SelectedItem != null)
             {

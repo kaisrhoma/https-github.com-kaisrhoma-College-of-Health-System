@@ -28,7 +28,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             datagrid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             datagrid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
-
         public class DownloadResult
         {
             public int StudentId { get; set; }                 // رقم الطالب
@@ -419,9 +418,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             return result;
         }
 
-
-
-        private void button6_Click(object sender, EventArgs e)
+        public void updateStudentsStatus(int updateNumber)
         {
             // التحقق من بداية السنة الدراسية الجديدة
             try
@@ -475,279 +472,55 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     }
 
                     int academicYearStart = DateTime.Now.Month >= monthStart ? DateTime.Now.Year : DateTime.Now.Year - 1;
-
-                    // جلب جميع الطلاب المستمرين حسب الحالة
-                    SqlCommand cmdStudents = new SqlCommand(@"
-                SELECT student_id, current_year, department_id, exam_round
-                FROM Students
-                WHERE status_id = '1'", con);
-
-                    DataTable dtStudents = new DataTable();
-                    new SqlDataAdapter(cmdStudents).Fill(dtStudents);
-
-                    int promoted = 0, failedDownload = 0, partialDownload = 0, fullSuccess = 0;
-
-                    foreach (DataRow student in dtStudents.Rows)
+                    if(string.IsNullOrEmpty(textBox2.Text) && updateNumber == 3)
                     {
-                        int studentId = Convert.ToInt32(student["student_id"]);
-                        int currentYear = Convert.ToInt32(student["current_year"]);
-                        int deptId = Convert.ToInt32(student["department_id"]);
-                        string examRound = student["exam_round"].ToString();
-
-                        int newYear = currentYear;
-                        bool shouldDownloadNewYear = false;
-
-                        // الحالة 1: دور أول ناجح أو دور أول السنة الرابعة
-                        if (examRound == "دور أول")
-                        {
-                            if (currentYear < 4)
-                            {
-                                newYear = currentYear + 1;
-                                shouldDownloadNewYear = true;
-
-                                // المواد الناجحة يتم وضع course_classroom_id = NULL
-                                SqlCommand cmdPassCourses = new SqlCommand(@"
-            UPDATE Registrations
-            SET course_classroom_id = NULL
-            WHERE student_id = @studentId
-              AND academic_year_start = @lastAcademicYear
-              AND course_id IN (
-                  SELECT course_id FROM Grades
-                  WHERE student_id = @studentId AND success_status = N'ناجح'
-              )", con);
-
-                                cmdPassCourses.Parameters.AddWithValue("@studentId", studentId);
-                                cmdPassCourses.Parameters.AddWithValue("@lastAcademicYear", academicYearStart - 1);
-                                cmdPassCourses.ExecuteNonQuery();
-                            }
-                            else // السنة الرابعة
-                            {
-                                SqlCommand cmdGraduate = new SqlCommand(@"
-            UPDATE Students 
-            SET status_id = '4', exam_round = N'دور أول' 
-            WHERE student_id = @studentId;
-
-            UPDATE Registrations
-            SET course_classroom_id = NULL
-            WHERE student_id = @studentId
-              AND academic_year_start = @lastAcademicYear;
-        ", con);
-
-                                cmdGraduate.Parameters.AddWithValue("@studentId", studentId);
-                                cmdGraduate.Parameters.AddWithValue("@lastAcademicYear", academicYearStart - 1);
-                                cmdGraduate.ExecuteNonQuery();
-
-                                continue; // لا حاجة لتنزيل مواد للسنة الخامسة
-                            }
-                        }
-                        // الحالة 2: مرحل أو الحالة 3: إعادة سنة
-                        else if (examRound == "مرحل" || examRound == "إعادة سنة")
-                        {
-                            newYear = currentYear + 1;
-                            shouldDownloadNewYear = true;
-
-                            // إعادة المواد الراسبة فقط
-                            SqlCommand cmdFailCourses = new SqlCommand(@"
-        SELECT r.course_id
-        FROM Registrations r
-        JOIN Grades g ON r.course_id = g.course_id AND r.student_id = g.student_id
-        WHERE r.student_id = @studentId
-        AND g.success_status = N'راسب'", con);
-                            cmdFailCourses.Parameters.AddWithValue("@studentId", studentId);
-                            DataTable dtFail = new DataTable();
-                            new SqlDataAdapter(cmdFailCourses).Fill(dtFail);
-
-                            foreach (DataRow fail in dtFail.Rows)
-                            {
-                                int courseId = Convert.ToInt32(fail["course_id"]);
-
-                                // جلب مجموعة رقم 1 من Course_Classroom
-                                SqlCommand cmdGroup1 = new SqlCommand(@"
-            SELECT TOP 1 id FROM Course_Classroom 
-            WHERE course_id = @courseId
-            ORDER BY group_number", con);
-                                cmdGroup1.Parameters.AddWithValue("@courseId", courseId);
-                                int groupId = Convert.ToInt32(cmdGroup1.ExecuteScalar());
-
-                                SqlCommand cmdReset = new SqlCommand(@"
-            UPDATE Registrations 
-            SET academic_year_start = @newYear, course_classroom_id = @groupId
-            WHERE student_id = @studentId AND course_id = @courseId;
-
-            UPDATE Grades
-            SET final_grade = NULL, work_grade = NULL, total_grade = NULL, success_status = NULL
-            WHERE student_id = @studentId AND course_id = @courseId;", con);
-
-                                cmdReset.Parameters.AddWithValue("@studentId", studentId);
-                                cmdReset.Parameters.AddWithValue("@courseId", courseId);
-                                cmdReset.Parameters.AddWithValue("@newYear", academicYearStart);
-                                cmdReset.Parameters.AddWithValue("@groupId", groupId);
-                                cmdReset.ExecuteNonQuery();
-                            }
-
-                            if (examRound == "إعادة سنة")
-                            {
-                                SqlCommand cmdUpdateRound = new SqlCommand(@"
-            UPDATE Students 
-            SET exam_round = N'دور أول' 
-            WHERE student_id = @studentId", con);
-                                cmdUpdateRound.Parameters.AddWithValue("@studentId", studentId);
-                                cmdUpdateRound.ExecuteNonQuery();
-
-                                continue; // لا حاجة لتنزيل مواد جديدة للسنة الحالية
-                            }
-                        }
-
-
-                        // تحديث السنة الدراسية للطالب
-                        SqlCommand cmdUpdateYear = new SqlCommand(@"
-                    UPDATE Students SET current_year = @newYear, exam_round = N'دور أول'
-                    WHERE student_id = @studentId", con);
-                        cmdUpdateYear.Parameters.AddWithValue("@newYear", newYear);
-                        cmdUpdateYear.Parameters.AddWithValue("@studentId", studentId);
-                        cmdUpdateYear.ExecuteNonQuery();
-                        promoted++;
-
-                        // تنزيل المواد للسنة الجديدة إذا لزم الأمر
-                        if (shouldDownloadNewYear)
-                        {
-                            var result = DownloadForOneStudent(studentId, newYear, deptId,academicYearStart);
-                            if (result.AllCoursesFull) failedDownload++;
-                            else if (result.SomeCoursesFull) partialDownload++;
-                            else if (result.HasAnyRegistered) fullSuccess++;
-                        }
-                    }
-
-                    // عرض النتائج
-                    MessageBox.Show($@"نتيجة الترقية:
-                                    ✔️ عدد الطلاب الذين تمت ترقيتهم: {promoted}
-                                    ✅ نجاح كامل (تم تسجيل جميع المواد): {fullSuccess}
-                                    ⚠️ نجاح جزئي (تم تسجيل بعض المواد فقط): {partialDownload}
-                                    ❌ فشل في تسجيل أي مادة: {failedDownload}");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("حدث خطأ أثناء الترقية: " + ex.Message);
-            }
-
-            progressBar1.Visible = false;
-            button6.Enabled = true;
-            label1.Visible = false;
-        }
-
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                using (SaveFileDialog sfd = new SaveFileDialog())
-                {
-                    sfd.Filter = "Backup Files (*.bak)|*.bak";
-                    sfd.FileName = "Cohs_DB_Backup_" + DateTime.Now.ToString("yyyy-MM-dd") + ".bak";
-
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                    {
-                        string backupFile = sfd.FileName;
-
-                        string sqlBackup = $"BACKUP DATABASE Cohs_DB TO DISK = '{backupFile}' WITH INIT, NAME = 'Cohs_DB Backup'";
-
-                        using (SqlConnection con = new SqlConnection(@"Data Source=.\SQLEXPRESS;Initial Catalog=master;Integrated Security=True"))
-                        {
-                            con.Open();
-                            using (SqlCommand cmd = new SqlCommand(sqlBackup, con))
-                            {
-                                cmd.ExecuteNonQuery();
-                            }
-                        }
-
-                        label1.Text = "تم حفظ النسخة الاحتياطية بنجاح";
-                        label1.ForeColor = Color.Green;
-                    }
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-                label1.Text = "لا يمكن الكتابة في هذا المجلد، اختر مجلداً آخر";
-                label1.ForeColor = Color.Red;
-            }
-            catch (Exception )
-            {
-                label1.Text = "خطأ في النسخ الاحتياطي: ";
-                label1.ForeColor = Color.Red;
-            }
-            finally
-            {
-                label1.Visible = true;
-            }
-
-
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            // التحقق من بداية السنة الدراسية الجديدة
-            try
-            {
-                conn.DatabaseConnection dbCheck = new conn.DatabaseConnection();
-                using (SqlConnection con = dbCheck.OpenConnection())
-                {
-                    int monthStart;
-                    using (SqlCommand cmdMonth = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1", con))
-                    {
-                        monthStart = Convert.ToInt32(cmdMonth.ExecuteScalar());
-                    }
-
-                    if (DateTime.Now.Month < monthStart)
-                    {
-                        MessageBox.Show("لا يمكن الترقية قبل بداية السنة الدراسية الجديدة.");
+                        MessageBox.Show("يجب ادخال الرقم الجامعي اولا");
                         return;
                     }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("حدث خطأ: " + ex.Message);
-                return;
-            }
-
-            // تأكيد الترقية
-            string input = Interaction.InputBox("تأكيد الترقية", "ادخل الرمز لتأكيد الترقية للمرحلة التمهيدية فقط", "الرمز هنا");
-            if (input != "2025")
-            {
-                MessageBox.Show("رمز خاطئ، يرجى إعادة المحاولة.");
-                return;
-            }
-
-            // اظهار شريط التقدم
-            label1.Visible = true;
-            progressBar1.Visible = true;
-            progressBar1.Style = ProgressBarStyle.Marquee;
-            button2.Enabled = false;
-            Application.DoEvents();
-
-            try
-            {
-                conn.DatabaseConnection db = new conn.DatabaseConnection();
-                using (SqlConnection con = db.OpenConnection())
-                {
-
-                    int monthStart;
-                    using (SqlCommand cmdMonth = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1", con))
+                    int univNumb = Convert.ToInt32(textBox2.Text.Trim());
+                    string queryUpdate = "";
+                    if (updateNumber == 1)
                     {
-                        monthStart = Convert.ToInt32(cmdMonth.ExecuteScalar());
+                        queryUpdate = @"
+                SELECT student_id, current_year, department_id, exam_round
+                FROM Students
+                WHERE status_id = '1'";
                     }
-
-                    int academicYearStart = DateTime.Now.Month >= monthStart ? DateTime.Now.Year : DateTime.Now.Year - 1;
-
-                    // جلب جميع الطلاب المستمرين حسب الحالة
-                    SqlCommand cmdStudents = new SqlCommand(@"
+                    else if (updateNumber == 2)
+                    {
+                        queryUpdate = @"
                 SELECT student_id, current_year, department_id, exam_round
                 FROM Students
                 WHERE status_id = '1'
-                  AND current_year = 1", con);
+                  AND current_year = 1";
+                    }else
+                    {
+                        queryUpdate = @"
+    SELECT student_id, current_year, department_id, exam_round
+    FROM Students
+    WHERE university_number = @univNumb 
+      AND status_id = '1'";
+                        using (SqlCommand checkistherestu = new SqlCommand("select count(*) from students where university_number = @universityNumb", con))
+                        {
+                            checkistherestu.Parameters.AddWithValue("@universityNumb", univNumb);
+                            int effec = (int)checkistherestu.ExecuteScalar(); // هنا مضمون يرجع 0 أو أكثر
+                            if (effec == 0)
+                            {
+                                MessageBox.Show("لا يوجد طالب بهذا الرقم الجامعي!");
+                                progressBar1.Visible = false;
+                                button6.Enabled = true;
+                                label1.Visible = false;
+                                return;
+                            }
+                        }
 
+
+                    }
+
+                    // جلب جميع الطلاب المستمرين حسب الحالة
+                    SqlCommand cmdStudents = new SqlCommand(queryUpdate, con);
+                    if (updateNumber == 3)
+                        cmdStudents.Parameters.AddWithValue("@univNumb", univNumb);
                     DataTable dtStudents = new DataTable();
                     new SqlDataAdapter(cmdStudents).Fill(dtStudents);
 
@@ -898,9 +671,73 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             }
 
             progressBar1.Visible = false;
-            button2.Enabled = true;
+            button6.Enabled = true;
             label1.Visible = false;
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            updateStudentsStatus(1);
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            updateStudentsStatus(2);
+        }
+        private void button7_Click(object sender, EventArgs e)
+        {
+            updateStudentsStatus(3);
+        }
+
+
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (SaveFileDialog sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = "Backup Files (*.bak)|*.bak";
+                    sfd.FileName = "Cohs_DB_Backup_" + DateTime.Now.ToString("yyyy-MM-dd") + ".bak";
+
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        string backupFile = sfd.FileName;
+
+                        string sqlBackup = $"BACKUP DATABASE Cohs_DB TO DISK = '{backupFile}' WITH INIT, NAME = 'Cohs_DB Backup'";
+
+                        using (SqlConnection con = new SqlConnection(@"Data Source=.\SQLEXPRESS;Initial Catalog=master;Integrated Security=True"))
+                        {
+                            con.Open();
+                            using (SqlCommand cmd = new SqlCommand(sqlBackup, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        label1.Text = "تم حفظ النسخة الاحتياطية بنجاح";
+                        label1.ForeColor = Color.Green;
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                label1.Text = "لا يمكن الكتابة في هذا المجلد، اختر مجلداً آخر";
+                label1.ForeColor = Color.Red;
+            }
+            catch (Exception )
+            {
+                label1.Text = "خطأ في النسخ الاحتياطي: ";
+                label1.ForeColor = Color.Red;
+            }
+            finally
+            {
+                label1.Visible = true;
+            }
+
+        }
+
+        
 
         private void button4_Click(object sender, EventArgs e)
         {
@@ -929,5 +766,12 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 MessageBox.Show("خطأ أثناء التحديث: " + ex.Message);
             }
         }
+
+        private void progressBar1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        
     }
 }
