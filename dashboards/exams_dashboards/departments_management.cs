@@ -200,7 +200,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
             }
         }
-        private void    LoadDepartments()
+        private void LoadDepartments()
         {
             try
             {
@@ -302,7 +302,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button1_Click(object sender, EventArgs e)
         {
-     
+
             if (selectedDeptId == -1)
             {
                 MessageBox.Show("الرجاء اختيار قسم للحذف");
@@ -830,7 +830,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button13_Click(object sender, EventArgs e)
         {
-         
+
             if (dataGridView5.SelectedCells.Count == 0)
             {
                 label10.Text = "يرجى تحديد صف للحذف";
@@ -1150,7 +1150,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button9_Click(object sender, EventArgs e)
         {
-        
+
             if (hiddenInstructorId == 0)
             {
                 label47.Text = "يرجى اختيار مدرس من القائمة أولاً";
@@ -1666,103 +1666,6 @@ WHERE ci.course_id = @course_id
             {
                 MessageBox.Show("Error : " + ex.Message);
             }
-
-
-            //    if (comboBox6.SelectedValue == null || comboBox7.SelectedValue == null || comboBox8.SelectedValue == null)
-            //        return;
-
-            //    try
-            //    {
-            //        conn.DatabaseConnection dbstudent = new conn.DatabaseConnection();
-            //        using (SqlConnection con = dbstudent.OpenConnection())
-            //        {
-            //            int month2;
-            //            using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1", con))
-            //            {
-            //                month2 = Convert.ToInt32(cmddate.ExecuteScalar());
-            //            }
-
-            //            int academicYearStart = DateTime.Now.Month >= month2 ? DateTime.Now.Year : DateTime.Now.Year - 1;
-
-            //            string q = @"
-            //SELECT COUNT(*)
-            //FROM Students s
-            //INNER JOIN Registrations r ON s.student_id = r.student_id
-            //INNER JOIN Course_Department cd ON r.course_id = cd.course_id
-            //WHERE s.status_id = 1
-            //  AND cd.department_id = @department_id
-            //  AND r.academic_year_start = @academic_year_start
-            //  AND s.current_year = @current_year
-            //  AND r.course_id = @course_id
-            //";
-
-            //            using (SqlCommand cmd = new SqlCommand(q, con))
-            //            {
-            //                int selectedDep = Convert.ToInt32(comboBox6.SelectedValue);
-            //                int selectedYear = Convert.ToInt32(comboBox7.SelectedValue);
-            //                int selectedCourse = Convert.ToInt32(comboBox8.SelectedValue);
-
-            //                cmd.Parameters.AddWithValue("@department_id", selectedDep);
-            //                cmd.Parameters.AddWithValue("@academic_year_start", academicYearStart);
-            //                cmd.Parameters.AddWithValue("@current_year", selectedYear);
-            //                cmd.Parameters.AddWithValue("@course_id", selectedCourse);
-
-            //                int count = Convert.ToInt32(cmd.ExecuteScalar());
-            //                label53.Text = count.ToString();
-            //            }
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        MessageBox.Show("Error : " + ex.Message);
-            //    }
-            //            if (comboBox6.SelectedValue == null || comboBox7.SelectedValue == null || comboBox8.SelectedValue == null)
-            //                return;
-
-            //            try
-            //            {
-            //                conn.DatabaseConnection dbstudent = new conn.DatabaseConnection();
-            //                using (SqlConnection con = dbstudent.OpenConnection())
-            //                {
-            //                    int month2;
-            //                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1", con))
-            //                    {
-            //                        month2 = Convert.ToInt32(cmddate.ExecuteScalar());
-            //                    }
-
-            //                    int academicYearStart = DateTime.Now.Month >= month2 ? DateTime.Now.Year : DateTime.Now.Year - 1;
-
-            //                    string q = @"
-            //SELECT COUNT(*)
-            //FROM Students s
-            //INNER JOIN Registrations r ON s.student_id = r.student_id
-            //INNER JOIN Course_Department cd ON r.course_id = cd.course_id
-            //WHERE s.status_id = 1
-            //  AND cd.department_id = @department_id
-            //  AND r.academic_year_start = @academic_year_start
-            //  AND r.course_id = @course_id
-            //";
-
-            //                    using (SqlCommand cmd = new SqlCommand(q, con))
-            //                    {
-            //                        int selectedDep = Convert.ToInt32(comboBox6.SelectedValue);
-            //                        int selectedCourse = Convert.ToInt32(comboBox8.SelectedValue);
-
-            //                        cmd.Parameters.AddWithValue("@department_id", selectedDep);
-            //                        cmd.Parameters.AddWithValue("@academic_year_start", academicYearStart);
-            //                        cmd.Parameters.AddWithValue("@course_id", selectedCourse);
-
-            //                        int count = Convert.ToInt32(cmd.ExecuteScalar());
-            //                        label53.Text = count.ToString();
-            //                    }
-            //                }
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                MessageBox.Show("Error : " + ex.Message);
-            //            }
-
-
         }
 
 
@@ -1778,7 +1681,7 @@ WHERE ci.course_id = @course_id
             dtimes();
             drooms();
             isLoading = false;
-        } 
+        }
         public void ddepartments()
         {
             try
@@ -1905,56 +1808,7 @@ WHERE ci.course_id = @course_id
                 MessageBox.Show("خطأ: " + ex.Message);
             }
         }
-        //private void LoadCoursesInstractors()
-        //{
-        //    if (comboBox6.SelectedValue == null || comboBox7.SelectedValue == null)
-        //        return;
 
-        //    int selectedDep;
-        //    if (comboBox6.SelectedValue is DataRowView drvDep)
-        //        selectedDep = Convert.ToInt32(drvDep["department_id"]);
-        //    else
-        //        selectedDep = Convert.ToInt32(comboBox6.SelectedValue);
-
-        //    int selectedYear;
-        //    if (comboBox7.SelectedValue is DataRowView drvYear)
-        //        selectedYear = Convert.ToInt32(drvYear["Key"]); // بالكود الحالي، القيمة الصحيحة من Key
-        //    else
-        //        selectedYear = Convert.ToInt32(comboBox7.SelectedValue);
-
-        //    try
-        //    {
-        //        conn.DatabaseConnection dbconnect = new conn.DatabaseConnection();
-        //        using (SqlConnection con4 = dbconnect.OpenConnection())
-        //        {
-        //            string q4 = @"
-        //        SELECT c.course_name, c.course_id
-        //        FROM Courses c
-        //        JOIN Course_Department cd ON c.course_id = cd.course_id
-        //        WHERE cd.department_id = @department_id 
-        //          AND c.year_number = @year_number
-        //    ";
-        //            using (SqlCommand cmdconnect = new SqlCommand(q4, con4))
-        //            {
-        //                cmdconnect.Parameters.AddWithValue("@department_id", selectedDep);
-        //                cmdconnect.Parameters.AddWithValue("@year_number", selectedYear);
-
-        //                SqlDataAdapter daconn = new SqlDataAdapter(cmdconnect);
-        //                DataTable dtcon = new DataTable();
-        //                daconn.Fill(dtcon);
-
-        //                comboBox8.DataSource = dtcon;
-        //                comboBox8.DisplayMember = "course_name";
-        //                comboBox8.ValueMember = "course_id";
-        //                comboBox8.SelectedIndex = -1;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("There is an Error : " + ex.Message);
-        //    }
-        //}
         private void LoadCoursesInstractors()
         {
             if (comboBox6.SelectedValue == null || comboBox7.SelectedValue == null)
@@ -2127,7 +1981,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                     conn.DatabaseConnection constring = new conn.DatabaseConnection();
                     using (SqlConnection condele = constring.OpenConnection())
                     {
-                        using(SqlCommand cmddele = new SqlCommand("DELETE FROM Course_Classroom WHERE id = @id", condele))
+                        using (SqlCommand cmddele = new SqlCommand("DELETE FROM Course_Classroom WHERE id = @id", condele))
                         {
                             cmddele.Parameters.AddWithValue("@id", selectedCCId);
                             int rowsAffected = cmddele.ExecuteNonQuery();
@@ -2142,7 +1996,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                             {
                                 MessageBox.Show("لم يتم العثور على السجل المطلوب");
                             }
-                        }  
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -2583,7 +2437,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
 
         private void comboBox9_SelectedIndexChanged(object sender, EventArgs e)
         {
-           
+
         }
 
         private void comboBox11_SelectedIndexChanged(object sender, EventArgs e)
@@ -2837,7 +2691,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
         private void button29_Click(object sender, EventArgs e)
         {
 
-    
+
             // الحصول على الصف الفعلي الذي ضغط عليه المستخدم
             DataGridViewRow row = null;
 

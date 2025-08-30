@@ -565,9 +565,6 @@ ORDER BY c.year_number, c.course_name;";
             PrintPreviewDialog preview = new PrintPreviewDialog();
             preview.Document = printDocument2;
             preview.ShowDialog();
-
-            // أو لطباعة مباشرة:
-            //printDocument2.Print();
         }
 
 
@@ -1075,9 +1072,6 @@ ORDER BY c.year_number, c.course_name;";
             PrintPreviewDialog preview = new PrintPreviewDialog();
             preview.Document = printDocument3;
             preview.ShowDialog();
-
-            // أو لطباعة مباشرة:
-            // printDocument3.Print();
         }
 
         private void tabPage3_Click(object sender, EventArgs e)
