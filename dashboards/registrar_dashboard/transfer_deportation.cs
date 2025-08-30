@@ -552,7 +552,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         FROM Registrations r
         JOIN Grades g ON r.course_id = g.course_id AND r.student_id = g.student_id
         WHERE r.student_id = @studentId
-        AND g.success_status = N'رسوب'", con);
+        AND g.success_status = N'راسب'", con);
                             cmdFailCourses.Parameters.AddWithValue("@studentId", studentId);
                             DataTable dtFail = new DataTable();
                             new SqlDataAdapter(cmdFailCourses).Fill(dtFail);
@@ -818,7 +818,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         FROM Registrations r
         JOIN Grades g ON r.course_id = g.course_id AND r.student_id = g.student_id
         WHERE r.student_id = @studentId
-        AND g.success_status = N'رسوب'", con);
+        AND g.success_status = N'راسب'", con);
                             cmdFailCourses.Parameters.AddWithValue("@studentId", studentId);
                             DataTable dtFail = new DataTable();
                             new SqlDataAdapter(cmdFailCourses).Fill(dtFail);

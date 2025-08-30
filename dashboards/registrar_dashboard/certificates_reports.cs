@@ -643,7 +643,7 @@ ORDER BY c.year_number, c.course_name;";
 
                     SqlCommand cmd = new SqlCommand(q, con);
                     cmd.Parameters.AddWithValue("@YearNumber", comboBox1.SelectedValue);
-                    cmd.Parameters.AddWithValue("@DepartmentID", comboBox2.SelectedIndex + 1);
+                    cmd.Parameters.AddWithValue("@DepartmentID", Convert.ToInt32(comboBox2.SelectedValue));
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);

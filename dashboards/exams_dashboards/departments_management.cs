@@ -2598,7 +2598,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
         //ربط المواد بي الاساتده
         private void LoadYears1()
         {
-            comboBoxYear4.Items.Clear();
+            comboBox5.Items.Clear();
             for (int i = 1; i <= 4; i++)
                 comboBox5.Items.Add(i);
             if (comboBox5.Items.Count > 0)
