@@ -143,6 +143,28 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         private void transfer_deportation_Load(object sender, EventArgs e)
         {
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    // جلب أكبر سنة جامعية موجودة في جدول Registrations
+                    SqlCommand cmd = new SqlCommand(@"
+                SELECT ISNULL(MAX(academic_year_start), YEAR(GETDATE())) 
+                FROM Registrations", con);
+
+                    int maxAcademicYear = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    // ضبط القيمة الافتراضية للـ numericUpDown
+                    numericUpDown1.Value = maxAcademicYear;
+                    numericUpDown2.Value = maxAcademicYear + 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+
             textBox1.Focus();
             try
             {
@@ -157,6 +179,10 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     comboBox2.DataSource = new BindingSource(dt, null);
                     comboBox2.DisplayMember = "dep_name";
                     comboBox2.ValueMember = "department_id";
+
+                    comboBox3.DataSource = new BindingSource(dt, null);
+                    comboBox3.DisplayMember = "dep_name";
+                    comboBox3.ValueMember = "department_id";
                 }
             }
             catch (Exception ex)
@@ -453,13 +479,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 return;
             }
 
-            // اظهار شريط التقدم
-            label1.Visible = true;
-            progressBar1.Visible = true;
-            progressBar1.Style = ProgressBarStyle.Marquee;
-            button6.Enabled = false;
-            Application.DoEvents();
-
             try
             {
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
@@ -669,10 +688,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             {
                 MessageBox.Show("حدث خطأ أثناء الترقية: " + ex.Message);
             }
-
-            progressBar1.Visible = false;
-            button6.Enabled = true;
-            label1.Visible = false;
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -772,6 +787,132 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         }
 
-        
+        public void updateStudentsdep()
+        {
+            if (comboBox3.SelectedValue == null)
+            {
+                MessageBox.Show("يرجى تحديد القسم الجديد.");
+                return;
+            }
+            if (comboBox3.SelectedItem.ToString() == "عام")
+            {
+                MessageBox.Show("لايمكن التحديث للقسم العام");
+                return;
+            }
+
+            int newDepartmentId = Convert.ToInt32(comboBox3.SelectedValue);
+            List<int> selectedStudentIds = new List<int>();
+
+            // اجمع IDs الطلاب المحددين
+            foreach (DataGridViewRow row in dataGridView2.Rows)
+            {
+                bool isSelected = Convert.ToBoolean(row.Cells["Select"].Value);
+                if (isSelected)
+                {
+                    selectedStudentIds.Add(Convert.ToInt32(row.Cells["student_id"].Value));
+                }
+            }
+
+            if (selectedStudentIds.Count == 0)
+            {
+                MessageBox.Show("يرجى اختيار طالب واحد على الأقل.");
+                return;
+            }
+
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    foreach (int studentId in selectedStudentIds)
+                    {
+                        SqlCommand cmd = new SqlCommand(@"
+UPDATE Students
+SET department_id = @newDept
+WHERE student_id = @studentId", con);
+
+                        cmd.Parameters.AddWithValue("@newDept", newDepartmentId);
+                        cmd.Parameters.AddWithValue("@studentId", studentId);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                MessageBox.Show("تم تحديث القسم للطلاب المحددين بنجاح.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ: " + ex.Message);
+            }
+        }
+
+        public void getStudentsYearOne()
+        {
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    // SQL لجلب طلاب السنة الأولى، القسم العام، والحالة مستمر
+                    string query = @"
+                                  SELECT s.student_id, 
+                                         s.university_number AS [الرقم الجامعي], 
+                                         s.full_name AS [الاسم], 
+                                         s.current_year AS [السنة الحالية], 
+                                         st.description AS [الحالة],
+                                         d.dep_name AS [القسم]
+                                  FROM Students s
+                                  JOIN Departments d ON s.department_id = d.department_id
+                                  JOIN Status st ON s.status_id = st.status_id
+                                  WHERE s.current_year = 1
+                                    AND st.description = N'مستمر'
+                                    AND s.exam_round NOT IN (N'دور أول', N'دور ثاني')";
+
+                    // مستمر
+
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        dataGridView2.DataSource = null;
+                        MessageBox.Show("لا يوجد طلاب سنة أولى مستمرين في القسم العام.");
+                    }
+                    else
+                    {
+                        dataGridView2.DataSource = dt;
+                        datagridviewstyle(dataGridView2);
+                        dataGridView2.Columns["student_id"].Visible = false;
+                        // افترض أن dt تم ربطه بـ DataGridView بالفعل
+                        if (!dataGridView2.Columns.Contains("Select"))
+                        {
+                            DataGridViewCheckBoxColumn chk = new DataGridViewCheckBoxColumn();
+                            chk.Name = "Select";
+                            chk.HeaderText = "اختر";
+                            chk.Width = 50;
+                            chk.ReadOnly = false;
+                            dataGridView2.Columns.Insert(0, chk); // لإظهار العمود أولًا
+                        }
+
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ: " + ex.Message);
+            }
+        }
+        private void button8_Click(object sender, EventArgs e)
+        {
+            getStudentsYearOne();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            updateStudentsdep();
+            getStudentsYearOne();
+        }
     }
 }

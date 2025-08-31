@@ -28,13 +28,13 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         {
             textBox2.Text = "";
             textBox3.Text = "";
-            textBox5.Text = "";
-            textBox6.Text = "";
             radioButton1.Checked = false;
             radioButton2.Checked = false;
             comboBox3.SelectedItem = null;
             comboBox4.SelectedItem = null;
-            comboBox5.SelectedItem = null;
+            int index = comboBox1.Items.IndexOf("ليبي");
+            if (index >= 0)
+                comboBox1.SelectedIndex = index;
             dateTimePicker1.Value = DateTime.Now;
         }
 
@@ -75,10 +75,9 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             bool hasError = false;
             hasError = checkTextBoxes(textBox2.Text,textBox2,hasError);
             hasError = checkTextBoxes(textBox3.Text,textBox3, hasError);
-            hasError = checkTextBoxes(textBox5.Text,textBox5, hasError);
+            hasError = checkComboBoxes(comboBox1, hasError);
             hasError = checkComboBoxes(comboBox3,hasError);
             hasError = checkComboBoxes(comboBox4,hasError);
-            hasError = checkComboBoxes(comboBox5,hasError);
 
             if (!dateTimePicker1.Checked)
             {
@@ -103,85 +102,221 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             return !hasError; // إذا لا يوجد خطأ -> true
         }
 
+        public void DownloadCoursesForStudent(int studentId, int selectedYear, int departmentId)
+        {
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    int? academicYearStart = (selectedYear == 1 ? (int?)numericUpDown1.Value : null);
+                    int totalRegistered = 0;
+                    List<string> fullCourses = new List<string>();
+
+                    // 1️⃣ تنزيل مواد السنة الأولى دائماً للقسم العام
+                    int generalDepartmentId = GetGeneralDepartmentId(con); // دالة لجلب ID القسم العام
+                    RegisterCoursesForYear(studentId, 1, generalDepartmentId,
+                        selectedYear == 1 ? academicYearStart : null,
+                        con, ref totalRegistered, fullCourses, selectedYear > 1);
+
+                    // 2️⃣ تنزيل المواد لبقية السنوات (من 2 وحتى السنة المختارة -1)
+                    for (int y = 2; y < selectedYear; y++)
+                    {
+                        RegisterCoursesForYear(studentId, y, departmentId, null, con, ref totalRegistered, fullCourses, true);
+                    }
+
+                    // 3️⃣ رسالة النتيجة
+                    if (totalRegistered == 0)
+                        MessageBox.Show("No courses were registered.");
+                    else if (fullCourses.Count > 0)
+                        MessageBox.Show("Student registered except for the following courses:\n" + string.Join("\n", fullCourses));
+                    else
+                        MessageBox.Show("All courses registered successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        // دالة مساعدة لتسجيل المواد
+        private void RegisterCoursesForYear(int studentId, int year, int deptId, int? academicYearStart,
+                                            SqlConnection con, ref int totalRegistered, List<string> fullCourses, bool forceNull)
+        {
+            SqlCommand coursesCmd = new SqlCommand(@"
+        SELECT c.course_id, c.course_name
+        FROM Courses c
+        JOIN Course_Department cd ON cd.course_id = c.course_id
+        WHERE c.year_number = @year AND cd.department_id = @dept", con);
+            coursesCmd.Parameters.AddWithValue("@year", year);
+            coursesCmd.Parameters.AddWithValue("@dept", deptId);
+
+            DataTable courses = new DataTable();
+            new SqlDataAdapter(coursesCmd).Fill(courses);
+
+            foreach (DataRow courseRow in courses.Rows)
+            {
+                int courseId = Convert.ToInt32(courseRow["course_id"]);
+                string courseName = courseRow["course_name"].ToString();
+                int? classroomId = null;
+
+                // إذا السنة الأولى والسنة المختارة = 1 => البحث عن Classroom متاح
+                if (year == 1 && !forceNull)
+                {
+                    SqlCommand getGroupsCmd = new SqlCommand(@"
+                SELECT cc.id, cc.capacity
+                FROM Course_Classroom cc
+                WHERE cc.course_id = @courseId", con);
+                    getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+
+                    DataTable groups = new DataTable();
+                    new SqlDataAdapter(getGroupsCmd).Fill(groups);
+
+                    foreach (DataRow g in groups.Rows)
+                    {
+                        int gid = Convert.ToInt32(g["id"]);
+                        int capacity = Convert.ToInt32(g["capacity"]);
+
+                        SqlCommand countCmd = new SqlCommand(@"
+                    SELECT COUNT(*) FROM Registrations 
+                    WHERE course_classroom_id = @gid", con);
+                        countCmd.Parameters.AddWithValue("@gid", gid);
+
+                        if ((int)countCmd.ExecuteScalar() < capacity)
+                        {
+                            classroomId = gid;
+                            break;
+                        }
+                    }
+                }
+
+                SqlCommand insertCmd = new SqlCommand(@"
+            IF NOT EXISTS (
+                SELECT 1 FROM Registrations 
+                WHERE student_id = @studentId AND course_id = @courseId
+            )
+            INSERT INTO Registrations
+            (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
+            VALUES
+            (@studentId, @courseId, @year, N'مسجل', @classroomId, @academicYearStart)", con);
+
+                insertCmd.Parameters.AddWithValue("@studentId", studentId);
+                insertCmd.Parameters.AddWithValue("@courseId", courseId);
+                insertCmd.Parameters.AddWithValue("@year", year);
+                insertCmd.Parameters.AddWithValue("@classroomId", classroomId.HasValue ? (object)classroomId.Value : DBNull.Value);
+                insertCmd.Parameters.AddWithValue("@academicYearStart", academicYearStart.HasValue ? (object)academicYearStart.Value : DBNull.Value);
+
+                int affected = insertCmd.ExecuteNonQuery();
+                if (affected > 0) totalRegistered++;
+                else if (classroomId == null && year == 1 && !forceNull) fullCourses.Add(courseName);
+            }
+        }
+
+        // دالة مساعدة لجلب ID القسم العام
+        private int GetGeneralDepartmentId(SqlConnection con)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT department_id FROM Departments WHERE dep_name = N'عام'", con);
+            return Convert.ToInt32(cmd.ExecuteScalar());
+        }
+
+        private int GetStatusId(SqlConnection con, string statusDescription)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT status_id FROM Status WHERE description = @desc", con);
+            cmd.Parameters.AddWithValue("@desc", statusDescription);
+            return Convert.ToInt32(cmd.ExecuteScalar());
+        }
+
+
+
+
 
         //اضافة طالب جديد الى القاعدة في التاب الأول
         private void button7_Click(object sender, EventArgs e)
         {
-            if (CheckNullFields())
+            if (!CheckNullFields())
             {
-                string fullName = textBox2.Text.Trim();
-                Regex regexName = new Regex(@"^[\p{L}\s]+$");
-                if (!regexName.IsMatch(fullName))
-                {
-                    label1.ForeColor = Color.Red;
-                    label1.Text = "⚠ الاسم يجب أن يحتوي على حروف فقط.!";
-                    return;
-                }
+                label1.ForeColor = Color.Red;
+                label1.Text = "يرجى ملئ الحقول !";
+                return;
+            }
 
-                string uni = textBox3.Text.Trim();
-                if (!uni.All(char.IsDigit))
-                {
-                    label1.ForeColor = Color.Red;
-                    label1.Text = "⚠ الرقم الجامعي يجب أن يحتوي على أرقام فقط.!";
-                    return;
-                }
+            string fullName = textBox2.Text.Trim();
+            if (!Regex.IsMatch(fullName, @"^[\p{L}\s]+$"))
+            {
+                label1.ForeColor = Color.Red;
+                label1.Text = "⚠ الاسم يجب أن يحتوي على حروف فقط.!";
+                return;
+            }
 
-                bool st_gender = false;
-                if (radioButton1.Checked) st_gender = true;
+            string uni = textBox3.Text.Trim();
+            if (!uni.All(char.IsDigit))
+            {
+                label1.ForeColor = Color.Red;
+                label1.Text = "⚠ الرقم الجامعي يجب أن يحتوي على أرقام فقط.!";
+                return;
+            }
 
-                conn.DatabaseConnection db = new conn.DatabaseConnection();
-                SqlConnection con = db.OpenConnection();
+            bool st_gender = radioButton1.Checked;
+            int selectedYear = Convert.ToInt32(comboBox4.SelectedValue);
+            int departmentId = Convert.ToInt32(comboBox3.SelectedValue);
 
-                // ✅ أولاً: التحقق من أن الرقم الجامعي غير موجود بالفعل
-                string uniNum = textBox3.Text.Trim();
+            conn.DatabaseConnection db = new conn.DatabaseConnection();
+            using (SqlConnection con = db.OpenConnection())
+            {
+                // تحقق من الرقم الجامعي
                 SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Students WHERE university_number = @uni", con);
-                checkCmd.Parameters.AddWithValue("@uni", uniNum);
+                checkCmd.Parameters.Add("@uni", SqlDbType.NVarChar).Value = uni;
                 int exists = (int)checkCmd.ExecuteScalar();
-                
                 if (exists > 0)
                 {
                     label1.ForeColor = Color.Red;
                     label1.Text = "⚠ الرقم الجامعي موجود مسبقًا!";
-                    db.CloseConnection();
-                    return; // وقف العملية
+                    return;
                 }
 
-                string q = "INSERT INTO Students (university_number, full_name, college, department_id, current_year, status_id, documents_path, gender, birth_date, nationality, exam_round) " +
-                           "VALUES (@university_number, @full_name, N'كلية العلوم الصحية', @department_id, @current_year, @status_id, NULL, @gender, @birth_date, @nationality,N'دور أول')";
+                // إدراج الطالب
+                string q = @"INSERT INTO Students 
+                     (university_number, full_name, college, department_id, current_year, status_id, gender, birth_date, nationality, exam_round) 
+                     VALUES (@university_number, @full_name, N'كلية العلوم الصحية', @department_id, @current_year, @status_id, @gender, @birth_date, @nationality, N'دور أول')";
 
                 SqlCommand cmd = new SqlCommand(q, con);
-                cmd.Parameters.AddWithValue("@university_number", textBox3.Text.Trim());
-                cmd.Parameters.AddWithValue("@full_name", textBox2.Text.Trim());
-                cmd.Parameters.AddWithValue("@department_id", comboBox3.SelectedValue);
-                cmd.Parameters.AddWithValue("@current_year", comboBox4.SelectedValue);
-                cmd.Parameters.AddWithValue("@status_id", comboBox5.SelectedValue);
-                cmd.Parameters.AddWithValue("@gender", st_gender);
-                cmd.Parameters.AddWithValue("@birth_date", dateTimePicker1.Value);
-                cmd.Parameters.AddWithValue("@nationality", textBox5.Text.Trim());
+                cmd.Parameters.Add("@university_number", SqlDbType.NVarChar).Value = uni;
+                cmd.Parameters.Add("@full_name", SqlDbType.NVarChar).Value = fullName;
+                cmd.Parameters.Add("@department_id", SqlDbType.Int).Value = departmentId;
+                cmd.Parameters.Add("@current_year", SqlDbType.Int).Value = selectedYear;
+                int statusId = (selectedYear == 1 ? GetStatusId(con, "مستمر") : GetStatusId(con, "محول"));
+                cmd.Parameters.Add("@status_id", SqlDbType.Int).Value = statusId;
+                cmd.Parameters.Add("@gender", SqlDbType.Bit).Value = st_gender;
+                cmd.Parameters.Add("@birth_date", SqlDbType.Date).Value = dateTimePicker1.Value.Date;
+                cmd.Parameters.Add("@nationality", SqlDbType.NVarChar).Value = comboBox1.SelectedItem.ToString();
 
                 try
                 {
                     cmd.ExecuteNonQuery();
+
+                    // جلب المعرف الجديد للطالب
+                    SqlCommand getIdCmd = new SqlCommand("SELECT TOP 1 student_id FROM Students WHERE university_number = @uni ORDER BY student_id DESC", con);
+                    getIdCmd.Parameters.Add("@uni", SqlDbType.NVarChar).Value = uni;
+                    int studentId = (int)getIdCmd.ExecuteScalar();
+
                     label1.ForeColor = Color.Green;
                     label1.Text = "تمت إضافة الطالب بنجاح";
                     SetFieldsEmpty();
+
+                    // تنزيل المواد مباشرة
+                    DownloadCoursesForStudent(studentId, selectedYear, departmentId);
                 }
                 catch (Exception ex)
                 {
                     label1.ForeColor = Color.Red;
                     label1.Text = "خطأ: " + ex.Message;
                 }
-                finally
-                {
-                    db.CloseConnection();
-                }
-            }
-            else
-            {
-                label1.ForeColor = Color.Red;
-                label1.Text = "يرجى ملئ الحقول !";
             }
         }
+
+
+
 
 
 
@@ -191,17 +326,70 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             label1.Text = "";
             textBox2.Focus();
 
+            string[] nationalities = new string[]
+    {
+        "أفغاني", "ألباني", "جزائري", "أمريكي ساموا", "أندوري", "أنغولي", "أنتيغوا وبربودا",
+        "أرجنتيني", "أرميني", "أسترالي", "نمساوي", "أذربيجاني", "باهامي", "بحريني",
+        "بنغلاديشي", "باربادوسي", "بيلاروسي", "بلجيكي", "بليزي", "بيني", "بوتاني", "بوليفي",
+        "البوسنة والهرسك", "بوتسواني", "برازيلي", "بروتغالي", "بروني", "بلغاري", "بوركيني",
+        "بوروندي", "كمبودي", "كاميروني", "كندي", "الرأس الأخضر", "جمهورية إفريقيا الوسطى",
+        "تشادي", "تشيلي", "صيني", "كولومبي", "قبرصي", "كوكوني", "كوبي", "تشيكي", "ديموقراطي الكونغو",
+        "الدنماركي", "جيبوتي", "دومينيكا", "دومينيكاني", "تيموري", "الإكوادوري", "مصري", "السلفادوري",
+        "غيني الاستوائي", "إريتري", "إستوني", "إثيوبي", "فيجي", "فنلندي", "فرنسي", "الغابوني",
+        "غامبي", "جورجي", "ألماني", "غانا", "يوناني", "جرينادا", "غواتيمالي", "غيني", "غيني بيساو",
+        "غيانا", "هايتي", "هondوراسي", "هنغاري", "أيسلندي", "هندي", "إندونيسي", "إيراني", "عراقي",
+        "أيرلندي", "إيطالي", "جامايكي", "ياباني", "أردني", "قزاخستان", "كينيا", "كيريباتي",
+        "كوريا الشمالية", "كوريا الجنوبية", "كويت", "قيرغيزستان", "لاوسي", "لاتفيا", "لبناني", "ليسوتو",
+        "ليبيريا", "ليبي", "ليختنشتاين", "لتواني", "لوكسمبورغ", "مدغشقر", "مالاوي", "ماليزيا",
+        "جزر المالديف", "مالي", "مالطا", "جزر مارشال", "موريتانيا", "موريشيوس", "المكسيك",
+        "ولايات ميكرونيسيا المتحدة", "مولدوفا", "موناكو", "منغوليا", "الجبل الأسود", "المغربي", "موزمبيق",
+        "ميانمار", "ناميبيا", "ناورو", "نيبال", "هولندي", "نيوزيلندا", "نيكاراغوا", "النيجيري",
+        "النيجر", "النرويج", "عماني", "باكستان", "بالاو", "بنما", "بابوا غينيا الجديدة", "باراغواي",
+        "بيرو", "الفلبين", "بولندا", "البرتغال", "قطر", "روماني", "روسي", "رواندي", "سانت كيتس ونيفيس",
+        "سانت لوسيا", "سانت فنسنت والغرينادين", "ساموا", "سان مارينو", "ساو تومي وبرينسيبي", "السعودية",
+        "السنغافوري", "سلوفاكي", "سلوفيني", "جزر سليمان", "الصومال", "جنوب أفريقيا", "جنوب السودان",
+        "إسباني", "سريلانكي", "السودان", "سوري", "سورينام", "سوازيلاند", "السويدي", "سويسري",
+        "سوريالي", "طاجيكستان", "تنزانيا", "تايلاندي", "توغو", "تونسي", "تركيا", "تركمانستان", "توفالو",
+        "أوغندي", "أوكراني", "الإماراتي", "بريطاني", "أمريكي", "أوروغواي", "أوزبكستان", "فانواتو",
+        "فنزويلا", "فيتنامي", "اليمني", "زامبي", "زيمبابوي"
+    };
+
+            // ترتيب أبجدي
+            Array.Sort(nationalities, StringComparer.CurrentCulture);
+            comboBox1.Items.AddRange(nationalities);
+
+            // تعيين "ليبي" كافتراضي
+            int index = comboBox1.Items.IndexOf("ليبي");
+            if (index >= 0)
+                comboBox1.SelectedIndex = index;
+
+            // تفعيل البحث أثناء الكتابة
+            comboBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            comboBox1.AutoCompleteSource = AutoCompleteSource.ListItems;
+
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDown; // يسمح بالكتابة
+            comboBox1.DropDownHeight = 1; // يجعل القائمة شبه مخفية
+            comboBox1.IntegralHeight = false; // منع تغيير الحجم التلقائي
             try
             {
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
                 using (SqlConnection con = db.OpenConnection())
                 {
+                    int month3;
+
+                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
+                    {
+                        month3 = Convert.ToInt32(cmddate.ExecuteScalar());
+                    }
+
+                    int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+                    numericUpDown1.Value = academicYearStart;
                     string q = "select * from Departments";
                     SqlDataAdapter da = new SqlDataAdapter(q, con);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
-                    comboBox3.DataSource = new BindingSource(dt, null);
+                    comboBox3.DataSource = dt;
                     comboBox3.DisplayMember = "dep_name";
                     comboBox3.ValueMember = "department_id";
                 }
@@ -219,31 +407,12 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 {3, "3"},
                 {4, "4"}
             };
-
+            comboBox4.SelectedIndexChanged -= comboBox4_SelectedIndexChanged;
             comboBox4.DataSource = new BindingSource(study_year, null);
             comboBox4.DisplayMember = "Value";
             comboBox4.ValueMember = "Key";
-
-            try
-            {
-                conn.DatabaseConnection db = new conn.DatabaseConnection();
-                using (SqlConnection con = db.OpenConnection())
-                {
-                    string q = "select * from Status";
-                    SqlDataAdapter da = new SqlDataAdapter(q, con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-
-                    comboBox5.DataSource = new BindingSource(dt, null);
-                    comboBox5.DisplayMember = "description";
-                    comboBox5.ValueMember = "status_id";
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("There is an Error : " + ex.Message);
-            }
-            
+            comboBox4.SelectedIndex = -1;
+            comboBox4.SelectedIndexChanged += comboBox4_SelectedIndexChanged;
         }
 
 
@@ -276,7 +445,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         private void comboBox5_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            textBox5.Focus();
         }
 
         private void textBox5_KeyDown(object sender, KeyEventArgs e)
@@ -708,8 +876,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         setColumnHeaderText("birth_date", dataGridView1, "تاريخ الميلاد");
                         setColumnHeaderText("nationality", dataGridView1, "الجنسية");
                         setColumnHeaderText("exam_round", dataGridView1, "الدور");
-
-                        setColumnComboBox(dataGridView1, "description", "student_status", "الحالة الدراسية", "description", new List<string> { "مستمر", "مؤجل", "مستبعد", "خريج"});
+                        setColumnComboBox(dataGridView1, "description", "student_status", "الحالة الدراسية", "description", new List<string> { "مستمر", "مؤجل", "مستبعد", "خريج","محول"});
                     }
                 }
             }
@@ -774,5 +941,34 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
+
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox4.SelectedValue == null) return;
+
+            int selectedYear = Convert.ToInt32(comboBox4.SelectedValue);
+
+            if (selectedYear == 1)
+            {
+                // السنة الأولى => اختر "عام" تلقائيًا
+                foreach (DataRowView row in comboBox3.Items)
+                {
+                    if (row["dep_name"].ToString().Equals("عام", StringComparison.OrdinalIgnoreCase))
+                    {
+                        comboBox3.SelectedValue = row["department_id"];
+                        comboBox3.Enabled = false; // منع التغيير
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                comboBox3.Enabled = true;
+            }
+        }
+
+
+
     }
 }
