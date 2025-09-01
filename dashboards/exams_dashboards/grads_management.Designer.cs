@@ -63,6 +63,7 @@
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.button10 = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.numericUpDownYear1 = new System.Windows.Forms.NumericUpDown();
             this.label16 = new System.Windows.Forms.Label();
@@ -75,7 +76,6 @@
             this.button11 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.button10 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).BeginInit();
@@ -131,7 +131,7 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage1.Size = new System.Drawing.Size(672, 426);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "إدخال نتائج الإمتحانات";
+            this.tabPage1.Text = "إدخال نتائج الامتحنات";
             this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
             // 
             // button9
@@ -572,23 +572,38 @@
             this.tabPage4.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage4.Size = new System.Drawing.Size(672, 426);
             this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "إدخال نتائج الإمتحانات";
+            this.tabPage4.Text = "إدخال نتائج طالب";
+            // 
+            // button10
+            // 
+            this.button10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.button10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button10.ForeColor = System.Drawing.SystemColors.Window;
+            this.button10.Location = new System.Drawing.Point(42, 93);
+            this.button10.Margin = new System.Windows.Forms.Padding(2);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(67, 26);
+            this.button10.TabIndex = 20;
+            this.button10.Text = "بحث";
+            this.button10.UseVisualStyleBackColor = false;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // label13
             // 
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(278, 94);
+            this.label13.Location = new System.Drawing.Point(233, 94);
             this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(33, 19);
+            this.label13.Size = new System.Drawing.Size(79, 19);
             this.label13.TabIndex = 19;
-            this.label13.Text = "العام";
+            this.label13.Text = "العام الجامعي";
             // 
             // numericUpDownYear1
             // 
             this.numericUpDownYear1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownYear1.Location = new System.Drawing.Point(163, 91);
+            this.numericUpDownYear1.Location = new System.Drawing.Point(114, 91);
             this.numericUpDownYear1.Name = "numericUpDownYear1";
             this.numericUpDownYear1.Size = new System.Drawing.Size(110, 26);
             this.numericUpDownYear1.TabIndex = 18;
@@ -669,9 +684,9 @@
             this.label15.Location = new System.Drawing.Point(254, 22);
             this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(189, 26);
+            this.label15.Size = new System.Drawing.Size(148, 26);
             this.label15.TabIndex = 6;
-            this.label15.Text = "إدخال نتائج الإمتحانات";
+            this.label15.Text = "إدخال نتائج طالب";
             // 
             // button11
             // 
@@ -708,21 +723,6 @@
             // 
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            // 
-            // button10
-            // 
-            this.button10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.button10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button10.ForeColor = System.Drawing.SystemColors.Window;
-            this.button10.Location = new System.Drawing.Point(78, 93);
-            this.button10.Margin = new System.Windows.Forms.Padding(2);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(67, 26);
-            this.button10.TabIndex = 20;
-            this.button10.Text = "احتساب";
-            this.button10.UseVisualStyleBackColor = false;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // grads_management
             // 

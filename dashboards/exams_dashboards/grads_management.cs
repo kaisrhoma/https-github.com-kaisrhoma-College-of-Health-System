@@ -200,8 +200,6 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 MessageBox.Show("حدث خطأ أثناء تحميل المواد: " + ex.Message);
             }
         }
-
-
         private void LoadStudents(int courseId, string examRound)
         {
             try
@@ -211,7 +209,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     conn.Open();
 
                     string query = @"
-           SELECT 
+SELECT 
     s.university_number AS [رقم القيد],
     s.full_name AS [اسم الطالب],
     CAST(g.work_grade AS NVARCHAR) AS [درجة الأعمال],
@@ -220,21 +218,26 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
     g.success_status AS [حالة الطالب],
     s.exam_round AS [الدور]
 FROM Students s
-INNER JOIN Registrations r ON s.student_id = r.student_id
-LEFT JOIN Grades g ON s.student_id = g.student_id AND g.course_id = r.course_id
-WHERE r.course_id = @courseId
-  AND r.status = N'مسجل'
-AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
-
+INNER JOIN Registrations r 
+    ON s.student_id = r.student_id
+    AND r.course_id = @courseId
+    AND r.status = N'مسجل'
+    AND r.academic_year_start = (
+        SELECT MAX(r2.academic_year_start)
+        FROM Registrations r2
+        WHERE r2.student_id = s.student_id
+          AND r2.course_id = @courseId
+    )
+LEFT JOIN Grades g 
+    ON s.student_id = g.student_id 
+    AND g.course_id = r.course_id
 ";
 
+                    // شرط الدور (اختياري)
                     if (!string.IsNullOrEmpty(examRound))
                     {
-                        query += " AND s.exam_round = @examRound ";
+                        query += " WHERE s.exam_round = @examRound ";
                     }
-
-                    query += @"
-                ORDER BY s.student_id;";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -258,6 +261,63 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
                 MessageBox.Show("حدث خطأ أثناء تحميل الطلاب: " + ex.Message);
             }
         }
+
+        //        private void LoadStudents(int courseId, string examRound)
+        //        {
+        //            try
+        //            {
+        //                using (SqlConnection conn = new SqlConnection(connectionString))
+        //                {
+        //                    conn.Open();
+
+        //                    string query = @"
+
+        //";
+
+        //                    if (!string.IsNullOrEmpty(examRound))
+        //                    {
+        //                        query += " AND s.exam_round = @examRound ";
+        //                    }
+
+        //                    query += @"
+        //           SELECT 
+        //    s.university_number AS [رقم القيد],
+        //    s.full_name AS [اسم الطالب],
+        //    CAST(g.work_grade AS NVARCHAR) AS [درجة الأعمال],
+        //    CAST(g.final_grade AS NVARCHAR) AS [درجة الامتحان النهائي],
+        //    CAST(g.total_grade AS NVARCHAR) AS [المجموع الكلي],
+        //    g.success_status AS [حالة الطالب],
+        //    s.exam_round AS [الدور]
+        //FROM Students s
+        //INNER JOIN Registrations r ON s.student_id = r.student_id
+        //LEFT JOIN Grades g ON s.student_id = g.student_id AND g.course_id = r.course_id
+        //WHERE r.course_id = @courseId
+        //  AND r.status = N'مسجل'
+        //AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
+        //";
+
+        //                    using (SqlCommand cmd = new SqlCommand(query, conn))
+        //                    {
+        //                        cmd.Parameters.AddWithValue("@courseId", courseId);
+
+        //                        if (!string.IsNullOrEmpty(examRound))
+        //                        {
+        //                            cmd.Parameters.AddWithValue("@examRound", examRound);
+        //                        }
+
+        //                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        //                        DataTable dt = new DataTable();
+        //                        da.Fill(dt);
+
+        //                        dataGridViewGrades.DataSource = dt;
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show("حدث خطأ أثناء تحميل الطلاب: " + ex.Message);
+        //            }
+        //        }
 
 
 
@@ -301,8 +361,6 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                 {
                     conn.Open();
-
-                    // بدء المعاملة
                     using (SqlTransaction transaction = conn.BeginTransaction())
                     {
                         try
@@ -310,6 +368,7 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
                             int insertedCount = 0;
                             int updatedCount = 0;
                             int skippedCount = 0;
+
                             int courseId = Convert.ToInt32(comboCourse.SelectedValue);
                             string selectedRound = comboExamRound.SelectedItem?.ToString();
 
@@ -317,152 +376,184 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
                             {
                                 if (row.IsNewRow) continue;
 
-                                string universityNumber = row.Cells["رقم القيد"].Value?.ToString();
+                                string uniNumber = row.Cells["رقم القيد"].Value?.ToString();
                                 string studentName = row.Cells["اسم الطالب"].Value?.ToString();
 
-                                string workGradeStr = row.Cells["درجة الأعمال"].Value?.ToString().Trim();
-                                string finalGradeStr = row.Cells["درجة الامتحان النهائي"].Value?.ToString().Trim();
+                                string workStr = row.Cells["درجة الأعمال"].Value?.ToString().Trim();
+                                string finalStr = row.Cells["درجة الامتحان النهائي"].Value?.ToString().Trim();
 
-                                bool isWorkGradeValid = !(string.IsNullOrEmpty(workGradeStr) || workGradeStr == "لم ترصد");
-                                bool isFinalGradeValid = !(string.IsNullOrEmpty(finalGradeStr) || finalGradeStr == "لم ترصد");
+                                bool hasWork = !string.IsNullOrEmpty(workStr) && workStr != "لم ترصد";
+                                bool hasFinal = !string.IsNullOrEmpty(finalStr) && finalStr != "لم ترصد";
 
-                                if (!isWorkGradeValid && !isFinalGradeValid)
+                                // إذا كلاهما فارغ → تخطي
+                                if (!hasWork && !hasFinal)
                                 {
                                     skippedCount++;
                                     continue;
                                 }
 
-                                int workGrade = 0;
-                                int finalGrade = 0;
+                                int wg = 0;
+                                int fg = 0;
+                                int? workGrade = null;
+                                int? finalGrade = null;
 
-                                if (isWorkGradeValid && !int.TryParse(workGradeStr, out workGrade))
+                                if (hasWork)
                                 {
-                                    MessageBox.Show($"⚠️ قيمة غير صالحة في درجة الأعمال للطالب: {studentName}");
-                                    continue;
-                                }
-
-                                if (isFinalGradeValid && !int.TryParse(finalGradeStr, out finalGrade))
-                                {
-                                    MessageBox.Show($"⚠️ قيمة غير صالحة في درجة الامتحان النهائي للطالب: {studentName}");
-                                    continue;
-                                }
-
-                                if (isWorkGradeValid && (workGrade < 0 || workGrade > 40))
-                                {
-                                    MessageBox.Show($"⚠️ درجة الأعمال يجب أن تكون بين 0 و 40 للطالب: {studentName}");
-                                    continue;
-                                }
-                                if (isFinalGradeValid && (finalGrade < 0 || finalGrade > 60))
-                                {
-                                    MessageBox.Show($"⚠️ درجة الامتحان النهائي يجب أن تكون بين 0 و 60 للطالب: {studentName}");
-                                    continue;
-                                }
-
-                                int totalGrade = workGrade + finalGrade;
-
-                                // جلب student_id حسب رقم القيد
-                                string studentIdQuery = "SELECT student_id FROM Students WHERE university_number = @uniNumber";
-                                int studentId = -1;
-                                using (SqlCommand cmdStudentId = new SqlCommand(studentIdQuery, conn, transaction))
-                                {
-                                    cmdStudentId.Parameters.AddWithValue("@uniNumber", universityNumber);
-                                    var res = cmdStudentId.ExecuteScalar();
-                                    if (res != null)
-                                        studentId = Convert.ToInt32(res);
-                                    else
+                                    if (!int.TryParse(workStr, out wg))
+                                    {
+                                        MessageBox.Show($"⚠️ قيمة غير صالحة في درجة الأعمال للطالب: {studentName}");
                                         continue;
+                                    }
+                                    if (wg < 0 || wg > 40)
+                                    {
+                                        MessageBox.Show($"⚠️ درجة الأعمال يجب أن تكون بين 0 و 40 للطالب: {studentName}");
+                                        continue;
+                                    }
+                                    workGrade = wg;
                                 }
 
-                                // تحقق هل السجل موجود
-                                string checkGradesQuery = @"
-                            SELECT work_grade, final_grade FROM Grades 
-                            WHERE student_id = @studentId AND course_id = @courseId";
-
-                                using (SqlCommand checkGradesCmd = new SqlCommand(checkGradesQuery, conn, transaction))
+                                if (hasFinal)
                                 {
-                                    checkGradesCmd.Parameters.AddWithValue("@studentId", studentId);
-                                    checkGradesCmd.Parameters.AddWithValue("@courseId", courseId);
+                                    if (!int.TryParse(finalStr, out fg))
+                                    {
+                                        MessageBox.Show($"⚠️ قيمة غير صالحة في درجة النهائي للطالب: {studentName}");
+                                        continue;
+                                    }
+                                    if (fg < 0 || fg > 60)
+                                    {
+                                        MessageBox.Show($"⚠️ درجة الامتحان النهائي يجب أن تكون بين 0 و 60 للطالب: {studentName}");
+                                        continue;
+                                    }
+                                    finalGrade = fg;
+                                }
 
-                                    using (SqlDataReader reader = checkGradesCmd.ExecuteReader())
+                                // جلب student_id
+                                string getIdQuery = "SELECT student_id FROM Students WHERE university_number=@uni";
+                                int studentId = -1;
+                                using (SqlCommand cmdId = new SqlCommand(getIdQuery, conn, transaction))
+                                {
+                                    cmdId.Parameters.AddWithValue("@uni", uniNumber);
+                                    var res = cmdId.ExecuteScalar();
+                                    if (res != null) studentId = Convert.ToInt32(res);
+                                    else continue;
+                                }
+
+                                // التحقق من السجل الحالي
+                                string checkQuery = @"SELECT work_grade, final_grade FROM Grades WHERE student_id=@sid AND course_id=@cid";
+                                using (SqlCommand cmdCheck = new SqlCommand(checkQuery, conn, transaction))
+                                {
+                                    cmdCheck.Parameters.AddWithValue("@sid", studentId);
+                                    cmdCheck.Parameters.AddWithValue("@cid", courseId);
+
+                                    using (SqlDataReader reader = cmdCheck.ExecuteReader())
                                     {
                                         if (reader.Read())
                                         {
-                                            object dbWorkGradeObj = reader["work_grade"];
-                                            object dbFinalGradeObj = reader["final_grade"];
+                                            int dbWork = reader["work_grade"] == DBNull.Value ? -1 : Convert.ToInt32(reader["work_grade"]);
+                                            int dbFinal = reader["final_grade"] == DBNull.Value ? -1 : Convert.ToInt32(reader["final_grade"]);
 
-                                            int dbWorkGrade = (dbWorkGradeObj == DBNull.Value) ? -1 : Convert.ToInt32(dbWorkGradeObj);
-                                            int dbFinalGrade = (dbFinalGradeObj == DBNull.Value) ? -1 : Convert.ToInt32(dbFinalGradeObj);
-
-                                            bool allowUpdate = (dbWorkGrade == -1 || dbWorkGrade == 0) && (dbFinalGrade == -1 || dbFinalGrade == 0);
+                                            // ===========================
+                                            // الشرط الجديد: تخطي إذا كلاهما موجود مسبقًا
+                                            // ===========================
+                                            if (dbWork != -1 && dbFinal != -1)
+                                            {
+                                                skippedCount++;
+                                                reader.Close();
+                                                continue; // تخطي الصف بالكامل
+                                            }
 
                                             reader.Close();
 
-                                            if (allowUpdate)
+                                            // الأعمال: لا يمكن تعديلها بعد الإدخال
+                                            if (workGrade.HasValue)
                                             {
-                                                string updateQuery = @"
-                                            UPDATE Grades 
-                                            SET work_grade = @workGrade,
-                                                final_grade = @finalGrade,
-                                                total_grade = @totalGrade,
-                                                success_status = CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'راسب' END
-                                            WHERE student_id = @studentId AND course_id = @courseId";
-
-                                                using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn, transaction))
+                                                if (dbWork != -1 && workGrade != dbWork)
                                                 {
-                                                    updateCmd.Parameters.AddWithValue("@studentId", studentId);
-                                                    updateCmd.Parameters.AddWithValue("@courseId", courseId);
-                                                    updateCmd.Parameters.AddWithValue("@workGrade", workGrade);
-                                                    updateCmd.Parameters.AddWithValue("@finalGrade", finalGrade);
-                                                    updateCmd.Parameters.AddWithValue("@totalGrade", totalGrade);
-                                                    updateCmd.ExecuteNonQuery();
+                                                    MessageBox.Show($"⚠️ لا يمكن تعديل درجة الأعمال بعد إدخالها للطالب: {studentName}");
+                                                    workGrade = dbWork;
                                                 }
-
-                                                // سجل التغيير
-                                                string auditQuery = @"
-                                            INSERT INTO Audit_Log (user_id, action, table_name, record_id)
-                                            VALUES (@userId, 'UPDATE', 'Grades', @recordId)";
-                                                using (SqlCommand auditCmd = new SqlCommand(auditQuery, conn, transaction))
+                                                else if (dbWork == -1)
                                                 {
-                                                    auditCmd.Parameters.AddWithValue("@userId", Session.userID);
-                                                    auditCmd.Parameters.AddWithValue("@recordId", studentId);
-                                                    auditCmd.ExecuteNonQuery();
+                                                    dbWork = workGrade.Value;
                                                 }
-
-                                                updatedCount++;
                                             }
-                                            else
+
+                                            // النهائي: يمكن التعديل فقط إذا كانت القيمة فارغة
+                                            if (finalGrade.HasValue)
                                             {
-                                                skippedCount++;
+                                                if (dbFinal != -1 && finalGrade != dbFinal)
+                                                {
+                                                    MessageBox.Show($"⚠️ لا يمكن تعديل درجة النهائي بعد إدخالها للطالب: {studentName}");
+                                                    finalGrade = dbFinal;
+                                                }
+                                                else if (dbFinal == -1)
+                                                {
+                                                    dbFinal = finalGrade.Value;
+                                                }
                                             }
+
+                                            int? newWork = workGrade.HasValue ? workGrade : (dbWork != -1 ? dbWork : (int?)null);
+                                            int? newFinal = finalGrade.HasValue ? finalGrade : (dbFinal != -1 ? dbFinal : (int?)null);
+                                            int total = (newWork ?? 0) + (newFinal ?? 0);
+                                            string status = (newFinal.HasValue ? (total >= 60 ? "نجاح" : "راسب") : null);
+
+                                            string updateQuery = @"
+                                        UPDATE Grades
+                                        SET work_grade=@w, final_grade=@f, total_grade=@t,
+                                            success_status=CASE WHEN @s IS NOT NULL THEN @s ELSE success_status END
+                                        WHERE student_id=@sid AND course_id=@cid";
+
+                                            using (SqlCommand cmdUpdate = new SqlCommand(updateQuery, conn, transaction))
+                                            {
+                                                cmdUpdate.Parameters.AddWithValue("@w", (object)newWork ?? DBNull.Value);
+                                                cmdUpdate.Parameters.AddWithValue("@f", (object)newFinal ?? DBNull.Value);
+                                                cmdUpdate.Parameters.AddWithValue("@t", total);
+                                                cmdUpdate.Parameters.AddWithValue("@s", (object)status ?? DBNull.Value);
+                                                cmdUpdate.Parameters.AddWithValue("@sid", studentId);
+                                                cmdUpdate.Parameters.AddWithValue("@cid", courseId);
+                                                cmdUpdate.ExecuteNonQuery();
+                                            }
+
+                                            // سجل التحديث
+                                            string audit = "INSERT INTO Audit_Log (user_id, action, table_name, record_id) VALUES (@uid,'UPDATE','Grades',@rid)";
+                                            using (SqlCommand cmdAudit = new SqlCommand(audit, conn, transaction))
+                                            {
+                                                cmdAudit.Parameters.AddWithValue("@uid", Session.userID);
+                                                cmdAudit.Parameters.AddWithValue("@rid", studentId);
+                                                cmdAudit.ExecuteNonQuery();
+                                            }
+
+                                            updatedCount++;
                                         }
                                         else
                                         {
                                             reader.Close();
 
-                                            string insertQuery = @"
-                                        INSERT INTO Grades (student_id, course_id, work_grade, final_grade, total_grade, success_status)
-                                        VALUES (@studentId, @courseId, @workGrade, @finalGrade, @totalGrade,
-                                                CASE WHEN @totalGrade >= 60 THEN N'نجاح' ELSE N'راسب' END)";
+                                            int? newWork = workGrade; // يبقى NULL إذا لم يدخل
+                                            int? newFinal = finalGrade; // يبقى NULL إذا لم يدخل
+                                            int total = (newWork ?? 0) + (newFinal ?? 0);
+                                            string status = (newFinal.HasValue ? (total >= 60 ? "نجاح" : "راسب") : null);
 
-                                            using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn, transaction))
+                                            string insertQuery = @"INSERT INTO Grades (student_id, course_id, work_grade, final_grade, total_grade, success_status)
+                                                   VALUES (@sid,@cid,@w,@f,@t,@s)";
+                                            using (SqlCommand cmdInsert = new SqlCommand(insertQuery, conn, transaction))
                                             {
-                                                insertCmd.Parameters.AddWithValue("@studentId", studentId);
-                                                insertCmd.Parameters.AddWithValue("@courseId", courseId);
-                                                insertCmd.Parameters.AddWithValue("@workGrade", workGrade);
-                                                insertCmd.Parameters.AddWithValue("@finalGrade", finalGrade);
-                                                insertCmd.Parameters.AddWithValue("@totalGrade", totalGrade);
-                                                insertCmd.ExecuteNonQuery();
+                                                cmdInsert.Parameters.AddWithValue("@sid", studentId);
+                                                cmdInsert.Parameters.AddWithValue("@cid", courseId);
+                                                cmdInsert.Parameters.AddWithValue("@w", (object)newWork ?? DBNull.Value);
+                                                cmdInsert.Parameters.AddWithValue("@f", (object)newFinal ?? DBNull.Value);
+                                                cmdInsert.Parameters.AddWithValue("@t", total);
+                                                cmdInsert.Parameters.AddWithValue("@s", (object)status ?? DBNull.Value);
+                                                cmdInsert.ExecuteNonQuery();
                                             }
 
                                             // سجل الإدخال
-                                            string auditQuery = @"
-                                        INSERT INTO Audit_Log (user_id, action, table_name, record_id)
-                                        VALUES (@userId, 'INSERT', 'Grades', @recordId)";
-                                            using (SqlCommand auditCmd = new SqlCommand(auditQuery, conn, transaction))
+                                            string audit = "INSERT INTO Audit_Log (user_id, action, table_name, record_id) VALUES (@uid,'INSERT','Grades',@rid)";
+                                            using (SqlCommand cmdAudit = new SqlCommand(audit, conn, transaction))
                                             {
-                                                auditCmd.Parameters.AddWithValue("@userId", Session.userID);
-                                                auditCmd.Parameters.AddWithValue("@recordId", studentId);
-                                                auditCmd.ExecuteNonQuery();
+                                                cmdAudit.Parameters.AddWithValue("@uid", Session.userID);
+                                                cmdAudit.Parameters.AddWithValue("@rid", studentId);
+                                                cmdAudit.ExecuteNonQuery();
                                             }
 
                                             insertedCount++;
@@ -471,15 +562,12 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
                                 }
                             }
 
-                            // كل شيء نجح، نفّذ Commit
                             transaction.Commit();
-
                             label11.Text = $"✅ تم الحفظ:\n📥 تم الإدخال: {insertedCount}\n✏️ تم التحديث: {updatedCount}\n⏭ تم التخطي: {skippedCount}";
                             LoadStudents(courseId, selectedRound);
                         }
                         catch (Exception exInner)
                         {
-                            // أي خطأ => Rollback
                             transaction.Rollback();
                             MessageBox.Show("❌ حدث خطأ، تم التراجع عن جميع العمليات:\n" + exInner.Message);
                         }
@@ -490,6 +578,217 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
             {
                 MessageBox.Show("❌ خطأ أثناء الاتصال أو العملية:\n" + exOuter.Message);
             }
+            //try
+            //{
+            //    using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            //    {
+            //        conn.Open();
+            //        using (SqlTransaction transaction = conn.BeginTransaction())
+            //        {
+            //            try
+            //            {
+            //                int insertedCount = 0;
+            //                int updatedCount = 0;
+            //                int skippedCount = 0;
+
+            //                int courseId = Convert.ToInt32(comboCourse.SelectedValue);
+            //                string selectedRound = comboExamRound.SelectedItem?.ToString();
+
+            //                foreach (DataGridViewRow row in dataGridViewGrades.Rows)
+            //                {
+            //                    if (row.IsNewRow) continue;
+
+            //                    string uniNumber = row.Cells["رقم القيد"].Value?.ToString();
+            //                    string studentName = row.Cells["اسم الطالب"].Value?.ToString();
+
+            //                    string workStr = row.Cells["درجة الأعمال"].Value?.ToString().Trim();
+            //                    string finalStr = row.Cells["درجة الامتحان النهائي"].Value?.ToString().Trim();
+
+            //                    bool hasWork = !string.IsNullOrEmpty(workStr) && workStr != "لم ترصد";
+            //                    bool hasFinal = !string.IsNullOrEmpty(finalStr) && finalStr != "لم ترصد";
+
+            //                    // إذا كلاهما فارغ → تخطي
+            //                    if (!hasWork && !hasFinal)
+            //                    {
+            //                        skippedCount++;
+            //                        continue;
+            //                    }
+
+            //                    int wg = 0;
+            //                    int fg = 0;
+            //                    int? workGrade = null;
+            //                    int? finalGrade = null;
+
+            //                    if (hasWork)
+            //                    {
+            //                        if (!int.TryParse(workStr, out wg))
+            //                        {
+            //                            MessageBox.Show($"⚠️ قيمة غير صالحة في درجة الأعمال للطالب: {studentName}");
+            //                            continue;
+            //                        }
+            //                        if (wg < 0 || wg > 40)
+            //                        {
+            //                            MessageBox.Show($"⚠️ درجة الأعمال يجب أن تكون بين 0 و 40 للطالب: {studentName}");
+            //                            continue;
+            //                        }
+            //                        workGrade = wg;
+            //                    }
+
+            //                    if (hasFinal)
+            //                    {
+            //                        if (!int.TryParse(finalStr, out fg))
+            //                        {
+            //                            MessageBox.Show($"⚠️ قيمة غير صالحة في درجة النهائي للطالب: {studentName}");
+            //                            continue;
+            //                        }
+            //                        if (fg < 0 || fg > 60)
+            //                        {
+            //                            MessageBox.Show($"⚠️ درجة الامتحان النهائي يجب أن تكون بين 0 و 60 للطالب: {studentName}");
+            //                            continue;
+            //                        }
+            //                        finalGrade = fg;
+            //                    }
+
+            //                    // جلب student_id
+            //                    string getIdQuery = "SELECT student_id FROM Students WHERE university_number=@uni";
+            //                    int studentId = -1;
+            //                    using (SqlCommand cmdId = new SqlCommand(getIdQuery, conn, transaction))
+            //                    {
+            //                        cmdId.Parameters.AddWithValue("@uni", uniNumber);
+            //                        var res = cmdId.ExecuteScalar();
+            //                        if (res != null) studentId = Convert.ToInt32(res);
+            //                        else continue;
+            //                    }
+
+            //                    // التحقق من السجل الحالي
+            //                    string checkQuery = @"SELECT work_grade, final_grade FROM Grades WHERE student_id=@sid AND course_id=@cid";
+            //                    using (SqlCommand cmdCheck = new SqlCommand(checkQuery, conn, transaction))
+            //                    {
+            //                        cmdCheck.Parameters.AddWithValue("@sid", studentId);
+            //                        cmdCheck.Parameters.AddWithValue("@cid", courseId);
+
+            //                        using (SqlDataReader reader = cmdCheck.ExecuteReader())
+            //                        {
+            //                            if (reader.Read())
+            //                            {
+            //                                int dbWork = reader["work_grade"] == DBNull.Value ? -1 : Convert.ToInt32(reader["work_grade"]);
+            //                                int dbFinal = reader["final_grade"] == DBNull.Value ? -1 : Convert.ToInt32(reader["final_grade"]);
+            //                                reader.Close();
+
+            //                                // الأعمال: لا يمكن تعديلها بعد الإدخال
+            //                                if (workGrade.HasValue)
+            //                                {
+            //                                    if (dbWork != -1 && workGrade != dbWork)
+            //                                    {
+            //                                        MessageBox.Show($"⚠️ لا يمكن تعديل درجة الأعمال بعد إدخالها للطالب: {studentName}");
+            //                                        workGrade = dbWork;
+            //                                    }
+            //                                    else if (dbWork == -1)
+            //                                    {
+            //                                        dbWork = workGrade.Value;
+            //                                    }
+            //                                }
+
+            //                                // النهائي: يمكن التعديل فقط إذا كانت القيمة فارغة
+            //                                if (finalGrade.HasValue)
+            //                                {
+            //                                    if (dbFinal != -1 && finalGrade != dbFinal)
+            //                                    {
+            //                                        MessageBox.Show($"⚠️ لا يمكن تعديل درجة النهائي بعد إدخالها للطالب: {studentName}");
+            //                                        finalGrade = dbFinal;
+            //                                    }
+            //                                    else if (dbFinal == -1)
+            //                                    {
+            //                                        dbFinal = finalGrade.Value;
+            //                                    }
+            //                                }
+
+            //                                int? newWork = workGrade.HasValue ? workGrade : (dbWork != -1 ? dbWork : (int?)null);
+            //                                int? newFinal = finalGrade.HasValue ? finalGrade : (dbFinal != -1 ? dbFinal : (int?)null);
+            //                                int total = (newWork ?? 0) + (newFinal ?? 0);
+            //                                string status = (newFinal.HasValue ? (total >= 60 ? "نجاح" : "راسب") : null);
+
+            //                                string updateQuery = @"
+            //                            UPDATE Grades
+            //                            SET work_grade=@w, final_grade=@f, total_grade=@t,
+            //                                success_status=CASE WHEN @s IS NOT NULL THEN @s ELSE success_status END
+            //                            WHERE student_id=@sid AND course_id=@cid";
+
+            //                                using (SqlCommand cmdUpdate = new SqlCommand(updateQuery, conn, transaction))
+            //                                {
+            //                                    cmdUpdate.Parameters.AddWithValue("@w", (object)newWork ?? DBNull.Value);
+            //                                    cmdUpdate.Parameters.AddWithValue("@f", (object)newFinal ?? DBNull.Value);
+            //                                    cmdUpdate.Parameters.AddWithValue("@t", total);
+            //                                    cmdUpdate.Parameters.AddWithValue("@s", (object)status ?? DBNull.Value);
+            //                                    cmdUpdate.Parameters.AddWithValue("@sid", studentId);
+            //                                    cmdUpdate.Parameters.AddWithValue("@cid", courseId);
+            //                                    cmdUpdate.ExecuteNonQuery();
+            //                                }
+
+            //                                // سجل التحديث
+            //                                string audit = "INSERT INTO Audit_Log (user_id, action, table_name, record_id) VALUES (@uid,'UPDATE','Grades',@rid)";
+            //                                using (SqlCommand cmdAudit = new SqlCommand(audit, conn, transaction))
+            //                                {
+            //                                    cmdAudit.Parameters.AddWithValue("@uid", Session.userID);
+            //                                    cmdAudit.Parameters.AddWithValue("@rid", studentId);
+            //                                    cmdAudit.ExecuteNonQuery();
+            //                                }
+
+            //                                updatedCount++;
+            //                            }
+            //                            else
+            //                            {
+            //                                reader.Close();
+
+            //                                int? newWork = workGrade; // يبقى NULL إذا لم يدخل
+            //                                int? newFinal = finalGrade; // يبقى NULL إذا لم يدخل
+            //                                int total = (newWork ?? 0) + (newFinal ?? 0);
+            //                                string status = (newFinal.HasValue ? (total >= 60 ? "نجاح" : "راسب") : null);
+
+            //                                string insertQuery = @"INSERT INTO Grades (student_id, course_id, work_grade, final_grade, total_grade, success_status)
+            //                                               VALUES (@sid,@cid,@w,@f,@t,@s)";
+            //                                using (SqlCommand cmdInsert = new SqlCommand(insertQuery, conn, transaction))
+            //                                {
+            //                                    cmdInsert.Parameters.AddWithValue("@sid", studentId);
+            //                                    cmdInsert.Parameters.AddWithValue("@cid", courseId);
+            //                                    cmdInsert.Parameters.AddWithValue("@w", (object)newWork ?? DBNull.Value);
+            //                                    cmdInsert.Parameters.AddWithValue("@f", (object)newFinal ?? DBNull.Value);
+            //                                    cmdInsert.Parameters.AddWithValue("@t", total);
+            //                                    cmdInsert.Parameters.AddWithValue("@s", (object)status ?? DBNull.Value);
+            //                                    cmdInsert.ExecuteNonQuery();
+            //                                }
+
+            //                                // سجل الإدخال
+            //                                string audit = "INSERT INTO Audit_Log (user_id, action, table_name, record_id) VALUES (@uid,'INSERT','Grades',@rid)";
+            //                                using (SqlCommand cmdAudit = new SqlCommand(audit, conn, transaction))
+            //                                {
+            //                                    cmdAudit.Parameters.AddWithValue("@uid", Session.userID);
+            //                                    cmdAudit.Parameters.AddWithValue("@rid", studentId);
+            //                                    cmdAudit.ExecuteNonQuery();
+            //                                }
+
+            //                                insertedCount++;
+            //                            }
+            //                        }
+            //                    }
+            //                }
+
+            //                transaction.Commit();
+            //                label11.Text = $"✅ تم الحفظ:\n📥 تم الإدخال: {insertedCount}\n✏️ تم التحديث: {updatedCount}\n⏭ تم التخطي: {skippedCount}";
+            //                LoadStudents(courseId, selectedRound);
+            //            }
+            //            catch (Exception exInner)
+            //            {
+            //                transaction.Rollback();
+            //                MessageBox.Show("❌ حدث خطأ، تم التراجع عن جميع العمليات:\n" + exInner.Message);
+            //            }
+            //        }
+            //    }
+            //}
+            //catch (Exception exOuter)
+            //{
+            //    MessageBox.Show("❌ خطأ أثناء الاتصال أو العملية:\n" + exOuter.Message);
+            //}
         }
         private void button9_Click(object sender, EventArgs e)
         {
@@ -526,7 +825,7 @@ AND (g.work_grade IS NULL OR g.final_grade IS NULL OR g.total_grade IS NULL)
                                 string query = @"
 UPDATE s
 SET exam_round = CASE 
-    WHEN fc.fail_count = 0 THEN N'دور أول'
+    WHEN fc.fail_count = 0 THEN N'مكتمل'
     WHEN fc.fail_count >= 1 THEN N'دور ثاني'
     ELSE s.exam_round
 END
@@ -585,7 +884,7 @@ WITH CurrentYearFails AS (
 UPDATE s
 SET exam_round = CASE
     WHEN cf.current_year = 4 AND cf.current_year_fails >= 1 THEN N'إعادة سنة'
-    WHEN cf.current_year_fails = 0 THEN N'دور أول'
+    WHEN cf.current_year_fails = 0 THEN N'مكتمل'
     WHEN cf.current_year_fails BETWEEN 1 AND 2 THEN N'مرحل'
     WHEN cf.current_year_fails >= 3 THEN N'إعادة سنة'
     ELSE s.exam_round
@@ -1576,7 +1875,7 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                                 string query = @"
 UPDATE s
 SET exam_round = CASE 
-    WHEN fc.fail_count = 0 THEN N'دور أول'
+    WHEN fc.fail_count = 0 THEN N'مكتمل'
     WHEN fc.fail_count >= 1 THEN N'دور ثاني'
     ELSE s.exam_round
 END
@@ -1639,7 +1938,7 @@ WITH CurrentYearFails AS (
 UPDATE s
 SET exam_round = CASE
     WHEN cf.current_year = 4 AND cf.current_year_fails >= 1 THEN N'إعادة سنة'
-    WHEN cf.current_year_fails = 0 THEN N'دور أول'
+    WHEN cf.current_year_fails = 0 THEN N'مكتمل'
     WHEN cf.current_year_fails BETWEEN 1 AND 2 THEN N'مرحل'
     WHEN cf.current_year_fails >= 3 THEN N'إعادة سنة'
     ELSE s.exam_round
@@ -1728,7 +2027,7 @@ ORDER BY s.student_id";
 
         private void button11_Click(object sender, EventArgs e)
         {
-            try
+  try
             {
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                 {
@@ -1756,70 +2055,79 @@ ORDER BY s.student_id";
                             string workStr = row.Cells["أعمال السنة"].Value?.ToString().Trim();
                             string finalStr = row.Cells["الامتحان النهائي"].Value?.ToString().Trim();
 
-                            int? workGrade = null;
-                            int? finalGrade = null;
-                            int? totalGrade = null;
-                            string status = "";
-
                             bool workEmpty = string.IsNullOrEmpty(workStr);
                             bool finalEmpty = string.IsNullOrEmpty(finalStr);
 
-                            // =============================================
-                            // حالات Work و Final
-                            // =============================================
+                            // ====================================================
+                            // تخطي الصف إذا كانت كلتا الدرجتين فارغة
+                            // ====================================================
                             if (workEmpty && finalEmpty)
                             {
-                                // كلاهما فارغ → تخطي
                                 skippedCount++;
                                 continue;
                             }
-                            else
+
+                            // جلب القيم القديمة من قاعدة البيانات
+                            int dbWork = -1, dbFinal = -1;
+                            using (SqlCommand cmdCheckOld = new SqlCommand(
+                                "SELECT work_grade, final_grade FROM Grades WHERE student_id=@sid AND course_id=@cid", conn, transaction))
                             {
-                                // أي حالة أخرى → يسمح بالحفظ أو التحديث
-                                if (!workEmpty)
+                                cmdCheckOld.Parameters.AddWithValue("@sid", studentId);
+                                cmdCheckOld.Parameters.AddWithValue("@cid", courseId);
+                                using (SqlDataReader reader = cmdCheckOld.ExecuteReader())
                                 {
-                                    if (!int.TryParse(workStr, out int wg) || wg > 40)
+                                    if (reader.Read())
                                     {
-                                        MessageBox.Show($"⚠️ أعمال السنة يجب أن تكون بين 0 و 40 للطالب {row.Cells["اسم الطالب"].Value}");
-                                        skippedCount++;
-                                        continue;
+                                        dbWork = reader["work_grade"] != DBNull.Value ? Convert.ToInt32(reader["work_grade"]) : -1;
+                                        dbFinal = reader["final_grade"] != DBNull.Value ? Convert.ToInt32(reader["final_grade"]) : -1;
                                     }
-                                    workGrade = wg;
-                                }
-                                else
-                                {
-                                    workGrade = null;
-                                }
-
-                                if (!finalEmpty)
-                                {
-                                    if (!int.TryParse(finalStr, out int fg) || fg > 60)
-                                    {
-                                        MessageBox.Show($"⚠️ الامتحان النهائي يجب أن يكون بين 0 و 60 للطالب {row.Cells["اسم الطالب"].Value}");
-                                        skippedCount++;
-                                        continue;
-                                    }
-                                    finalGrade = fg;
-                                }
-                                else
-                                {
-                                    finalGrade = null;
-                                }
-
-                                // حساب المجموع والحالة إذا كانت كلا الدرجتين موجودتين
-                                if (workGrade.HasValue || finalGrade.HasValue)
-                                {
-                                    totalGrade = (workGrade ?? 0) + (finalGrade ?? 0);
-                                    status = totalGrade >= 60 ? "نجاح" : "راسب";
-                                }
-                                else
-                                {
-                                    totalGrade = null;
-                                    status = null;
                                 }
                             }
 
+                            // ====================================================
+                            // شرط تخطي الصف إذا كانت كلتا الدرجتين موجودتين مسبقًا
+                            // ====================================================
+                            if (dbWork != -1 && dbFinal != -1)
+                            {
+                                skippedCount++;
+                                continue;
+                            }
 
+                            int? workGrade = null;
+                            int? finalGrade = null;
+
+                            // ====================================================
+                            // التحقق من Work
+                            // ====================================================
+                            if (!workEmpty)
+                            {
+                                if (!int.TryParse(workStr, out int wg) || wg < 0 || wg > 40)
+                                {
+                                    MessageBox.Show($"⚠️ أعمال السنة يجب أن تكون بين 0 و 40 للطالب {row.Cells["اسم الطالب"].Value}");
+                                    skippedCount++;
+                                    continue;
+                                }
+                                workGrade = wg;
+                            }
+
+                            // ====================================================
+                            // التحقق من Final
+                            // ====================================================
+                            if (!finalEmpty)
+                            {
+                                if (!int.TryParse(finalStr, out int fg) || fg < 0 || fg > 60)
+                                {
+                                    MessageBox.Show($"⚠️ الامتحان النهائي يجب أن يكون بين 0 و 60 للطالب {row.Cells["اسم الطالب"].Value}");
+                                    skippedCount++;
+                                    continue;
+                                }
+                                finalGrade = fg;
+                            }
+
+                            // حساب المجموع فقط (الحالة تحسب عند الحفظ)
+                            int? totalGrade = null;
+                            if (workGrade.HasValue || finalGrade.HasValue)
+                                totalGrade = (workGrade ?? 0) + (finalGrade ?? 0);
 
                             // تحقق من وجود الصف في Grades
                             int count;
@@ -1834,7 +2142,7 @@ ORDER BY s.student_id";
                             {
                                 string updateQuery = @"
 UPDATE Grades
-SET work_grade=@cw, final_grade=@fe, total_grade=@total, success_status=@status
+SET work_grade=@cw, final_grade=@fe, total_grade=@total, success_status=CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'نجاح' ELSE N'راسب' END
 WHERE student_id=@sid AND course_id=@cid";
 
                                 using (SqlCommand cmdUpdate = new SqlCommand(updateQuery, conn, transaction))
@@ -1842,7 +2150,6 @@ WHERE student_id=@sid AND course_id=@cid";
                                     cmdUpdate.Parameters.AddWithValue("@cw", (object)workGrade ?? DBNull.Value);
                                     cmdUpdate.Parameters.AddWithValue("@fe", (object)finalGrade ?? DBNull.Value);
                                     cmdUpdate.Parameters.AddWithValue("@total", (object)totalGrade ?? DBNull.Value);
-                                    cmdUpdate.Parameters.AddWithValue("@status", (object)status ?? DBNull.Value);
                                     cmdUpdate.Parameters.AddWithValue("@sid", studentId);
                                     cmdUpdate.Parameters.AddWithValue("@cid", courseId);
                                     cmdUpdate.ExecuteNonQuery();
@@ -1853,7 +2160,7 @@ WHERE student_id=@sid AND course_id=@cid";
                             {
                                 string insertQuery = @"
 INSERT INTO Grades(student_id, course_id, work_grade, final_grade, total_grade, success_status)
-VALUES(@sid,@cid,@cw,@fe,@total,@status)";
+VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'نجاح' ELSE N'راسب' END)";
 
                                 using (SqlCommand cmdInsert = new SqlCommand(insertQuery, conn, transaction))
                                 {
@@ -1862,7 +2169,6 @@ VALUES(@sid,@cid,@cw,@fe,@total,@status)";
                                     cmdInsert.Parameters.AddWithValue("@cw", (object)workGrade ?? DBNull.Value);
                                     cmdInsert.Parameters.AddWithValue("@fe", (object)finalGrade ?? DBNull.Value);
                                     cmdInsert.Parameters.AddWithValue("@total", (object)totalGrade ?? DBNull.Value);
-                                    cmdInsert.Parameters.AddWithValue("@status", (object)status ?? DBNull.Value);
                                     cmdInsert.ExecuteNonQuery();
                                 }
                                 insertedCount++;
@@ -1879,8 +2185,6 @@ VALUES(@sid,@cid,@cw,@fe,@total,@status)";
             {
                 MessageBox.Show("❌ خطأ أثناء العملية: " + ex.Message);
             }
-
-
         }
 
 
@@ -1898,7 +2202,6 @@ VALUES(@sid,@cid,@cw,@fe,@total,@status)";
             if (workEmpty && finalEmpty)
             {
                 row.Cells["المجموع"].Value = DBNull.Value;
-                row.Cells["الحالة"].Value = "";
                 return;
             }
 
@@ -1908,7 +2211,9 @@ VALUES(@sid,@cid,@cw,@fe,@total,@status)";
 
             int total = work + finalGrade;
             row.Cells["المجموع"].Value = total;
-            row.Cells["الحالة"].Value = total >= 60 ? "نجاح" : "راسب";
+
+            // حذف حساب الحالة من DataGridView
+            row.Cells["الحالة"].Value = "";
         }
     }
 
