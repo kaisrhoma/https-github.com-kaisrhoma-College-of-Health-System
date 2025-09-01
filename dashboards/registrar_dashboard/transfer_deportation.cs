@@ -1344,6 +1344,155 @@ WHERE student_id = @studentId", con);
             }
         }
 
+        private void PromoteFirstSecondThiredYearStudents()
+        {
+            int academicYear = (int)numericUpDown3.Value;
 
+            using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
+            {
+                GENERAL_DEPARTMENT_ID = GetGeneralDepartmentId(con);
+                // جلب طلاب السنة الأولى الذين exam_round ليست دور أول/دور ثاني
+                string q = @"
+            SELECT student_id, department_id, exam_round
+            FROM Students
+            WHERE current_year = 1 AND exam_round NOT IN (N'دور أول', N'دور ثاني')";
+
+                DataTable dtStudents = new DataTable();
+                new SqlDataAdapter(q, con).Fill(dtStudents);
+
+                // التحقق من أي طالب في القسم العام
+                foreach (DataRow student in dtStudents.Rows)
+                {
+                    int deptId = Convert.ToInt32(student["department_id"]);
+                    if (deptId == GENERAL_DEPARTMENT_ID)
+                    {
+                        MessageBox.Show("يوجد طالب في القسم العام، يرجى تغييره قبل الترقية.");
+                        return;
+                    }
+                }
+
+                // البدء بالترقية حسب الحالة
+                foreach (DataRow student in dtStudents.Rows)
+                {
+                    int studentId = Convert.ToInt32(student["student_id"]);
+                    string examRound = student["exam_round"].ToString();
+                    int deptId = Convert.ToInt32(student["department_id"]);
+
+                    switch (examRound)
+                    {
+                        case "مكتمل":
+                            PromoteCompleteStudent(con, studentId, deptId, academicYear);
+                            break;
+
+                        case "مرحل":
+                            PromoteRepeaterStudent(con, studentId, deptId, academicYear);
+                            break;
+
+                        case "إعادة سنة":
+                            RepeatStudent(con, studentId, academicYear);
+                            break;
+                    }
+
+                    // إعادة exam_round إلى دور أول
+                    using (SqlCommand cmdRound = new SqlCommand(
+                        "UPDATE Students SET exam_round = N'دور أول' WHERE student_id = @studentId", con))
+                    {
+                        cmdRound.Parameters.AddWithValue("@studentId", studentId);
+                        cmdRound.ExecuteNonQuery();
+                    }
+                }
+
+                MessageBox.Show("تمت ترقية طلاب السنة الأولى بنجاح.");
+            }
+        }
+
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                conn.DatabaseConnection dbchekfirst = new conn.DatabaseConnection();
+                using (SqlConnection con = dbchekfirst.OpenConnection()) // فتح الاتصال
+                {
+                    for (int year = 2; year <= 4; year++)
+                    {
+                        // تحقق من الطلبة الذين لم تُدخل درجاتهم بعد
+                        if (year != 2)
+                        {
+                            if (HasUnfinishedStudents(con, year))
+                            {
+                                MessageBox.Show($"⚠ هناك طلبة لم يتم إدخال درجاتهم بعد في السنة {year}، لا يمكن الترقية.");
+                                return;
+                            }
+                        }
+
+                        // تحقق من وجود طلبة قابلين للترقية
+                        if (!HasPromotableStudents(con, year))
+                        {
+                            MessageBox.Show($"⚠ ليس هناك طلاب في هذه السنة {year} للترقية.");
+                            return;
+                        }
+                    }
+                }
+                // استدعاء دالة الترقية الخاصة بالطلاب
+                PromoteFirstSecondThiredYearStudents();
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Error : " + ex.Message);
+            }
+        }
+        public void getStudentsYearOneTowThree()
+        {
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    // SQL لجلب طلاب السنة الأولى، القسم العام، والحالة مستمر
+                    string query = @"
+                                  SELECT s.student_id, 
+                                         s.university_number AS [الرقم الجامعي], 
+                                         s.full_name AS [الاسم], 
+                                         s.current_year AS [السنة الحالية], 
+                                         st.description AS [الحالة],
+                                         d.dep_name AS [القسم]
+                                  FROM Students s
+                                  JOIN Departments d ON s.department_id = d.department_id
+                                  JOIN Status st ON s.status_id = st.status_id
+                                  WHERE s.current_year NOT IN (1)
+                                    AND st.description = N'مستمر'
+                                    AND s.exam_round NOT IN (N'دور أول', N'دور ثاني')";
+
+                    // مستمر
+
+                    SqlDataAdapter da = new SqlDataAdapter(query, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        dataGridView3.DataSource = null;
+                        MessageBox.Show("لا يوجد طلاب سنة أولى مستمرين في القسم العام .او لم يتم إدخال درجاتهم بعد.");
+                    }
+                    else
+                    {
+                        dataGridView3.DataSource = dt;
+                        datagridviewstyle(dataGridView3);
+                        dataGridView3.Columns["student_id"].Visible = false;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ: " + ex.Message);
+            }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            getStudentsYearOneTowThree();
+        }
     }
 }
