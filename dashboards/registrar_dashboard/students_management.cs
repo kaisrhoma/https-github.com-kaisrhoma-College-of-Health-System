@@ -1,4 +1,5 @@
 ﻿using college_of_health_sciences.moduls;
+using DocumentFormat.OpenXml.Bibliography;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -140,6 +141,112 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             }
         }
 
+        // دالة تجيب أول دكتور مرتبط بالمادة
+        private int GetFirstInstructorForCourse(SqlConnection con, int courseId)
+        {
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT TOP 1 instructor_id 
+        FROM Course_Instructor 
+        WHERE course_id = @courseId 
+        ORDER BY instructor_id", con))
+            {
+                cmd.Parameters.AddWithValue("@courseId", courseId);
+                object result = cmd.ExecuteScalar();
+                if (result != null)
+                    return Convert.ToInt32(result);
+                else
+                    throw new Exception($"لا يوجد دكتور مرتبط بالمادة {courseId}");
+            }
+        }
+
+        // دالة تجيب أول قاعة موجودة
+        private int GetFirstClassroom(SqlConnection con)
+        {
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT TOP 1 classroom_id 
+        FROM Classrooms 
+        ORDER BY classroom_id", con))
+            {
+                object result = cmd.ExecuteScalar();
+                if (result != null)
+                    return Convert.ToInt32(result);
+                else
+                    throw new Exception("لا توجد قاعات متاحة في جدول Classrooms");
+            }
+        }
+
+
+        private int GetOrCreateGroup(SqlConnection con, int courseId, int? academicYearStart)
+        {
+            int groupId = 0;
+
+            // ✅ جلب كل المجموعات المرتبطة بالمادة
+            SqlCommand getGroupsCmd = new SqlCommand(@"
+        SELECT cc.id, cc.capacity, cc.group_number
+        FROM Course_Classroom cc
+        WHERE cc.course_id = @courseId
+        ORDER BY cc.group_number;", con);
+            getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+
+            DataTable groups = new DataTable();
+            new SqlDataAdapter(getGroupsCmd).Fill(groups);
+
+            foreach (DataRow group in groups.Rows)
+            {
+                int isgroupId = Convert.ToInt32(group["id"]);
+                int capacity = Convert.ToInt32(group["capacity"]);
+
+                SqlCommand countCmd = new SqlCommand(@"
+            SELECT COUNT(*) 
+            FROM Registrations 
+            WHERE course_classroom_id = @groupId 
+              AND academic_year_start = @academicYearStart", con);
+
+                countCmd.Parameters.AddWithValue("@groupId", isgroupId);
+                countCmd.Parameters.AddWithValue("@academicYearStart",
+                    academicYearStart.HasValue ? (object)academicYearStart.Value : DBNull.Value);
+
+                int currentCount = (int)countCmd.ExecuteScalar();
+
+                if (currentCount < capacity)
+                {
+                    groupId = isgroupId;
+                    break;
+                }
+            }
+
+            if (groupId == 0)
+            {
+                // جلب أول دكتور مرتبط بالمادة
+                int instructorId = GetFirstInstructorForCourse(con, courseId);
+
+                // جلب أول قاعة متاحة
+                int classroomId = GetFirstClassroom(con);
+
+                // إنشاء مجموعة جديدة برقم أكبر من آخر مجموعة
+                int nextGroupNumber = 1;
+                if (groups.Rows.Count > 0)
+                    nextGroupNumber = Convert.ToInt32(groups.Rows[groups.Rows.Count - 1]["group_number"]) + 1;
+
+                using (SqlCommand cmd = new SqlCommand(@"
+            INSERT INTO Course_Classroom
+            (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day, instructor_id)
+            OUTPUT INSERTED.id 
+            VALUES (@courseId, @classroomId, @groupNumber, 80, '09:00:00', '12:00:00',6, @instructorId)", con))
+                {
+                    cmd.Parameters.AddWithValue("@courseId", courseId);
+                    cmd.Parameters.AddWithValue("@classroomId", classroomId);
+                    cmd.Parameters.AddWithValue("@groupNumber", nextGroupNumber);
+                    cmd.Parameters.AddWithValue("@instructorId", instructorId);
+
+                    groupId = (int)cmd.ExecuteScalar();
+                }
+            }
+
+            return groupId;
+        }
+
+
         // دالة مساعدة لتسجيل المواد
         private void RegisterCoursesForYear(int studentId, int year, int deptId, int? academicYearStart,
                                             SqlConnection con, ref int totalRegistered, List<string> fullCourses, bool forceNull)
@@ -164,31 +271,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 // إذا السنة الأولى والسنة المختارة = 1 => البحث عن Classroom متاح
                 if (year == 1 && !forceNull)
                 {
-                    SqlCommand getGroupsCmd = new SqlCommand(@"
-                SELECT cc.id, cc.capacity
-                FROM Course_Classroom cc
-                WHERE cc.course_id = @courseId", con);
-                    getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
-
-                    DataTable groups = new DataTable();
-                    new SqlDataAdapter(getGroupsCmd).Fill(groups);
-
-                    foreach (DataRow g in groups.Rows)
-                    {
-                        int gid = Convert.ToInt32(g["id"]);
-                        int capacity = Convert.ToInt32(g["capacity"]);
-
-                        SqlCommand countCmd = new SqlCommand(@"
-                    SELECT COUNT(*) FROM Registrations 
-                    WHERE course_classroom_id = @gid", con);
-                        countCmd.Parameters.AddWithValue("@gid", gid);
-
-                        if ((int)countCmd.ExecuteScalar() < capacity)
-                        {
-                            classroomId = gid;
-                            break;
-                        }
-                    }
+                    classroomId = GetOrCreateGroup(con, courseId, academicYearStart);
                 }
 
                 SqlCommand insertCmd = new SqlCommand(@"
@@ -219,6 +302,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             SqlCommand cmd = new SqlCommand("SELECT department_id FROM Departments WHERE dep_name = N'عام'", con);
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
+
 
         private int GetStatusId(SqlConnection con, string statusDescription)
         {

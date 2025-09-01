@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Office.Word;
 using Microsoft.VisualBasic;
 using System;
@@ -914,5 +915,435 @@ WHERE student_id = @studentId", con);
             updateStudentsdep();
             getStudentsYearOne();
         }
+
+
+        private int GENERAL_DEPARTMENT_ID ; // رقم القسم العام
+
+        private void PromoteFirstYearStudents()
+        {
+            int academicYear = (int)numericUpDown2.Value;
+
+            using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
+            {
+                GENERAL_DEPARTMENT_ID = GetGeneralDepartmentId(con);
+                // جلب طلاب السنة الأولى الذين exam_round ليست دور أول/دور ثاني
+                string q = @"
+            SELECT student_id, department_id, exam_round
+            FROM Students
+            WHERE current_year = 1 AND exam_round NOT IN (N'دور أول', N'دور ثاني')";
+
+                DataTable dtStudents = new DataTable();
+                new SqlDataAdapter(q, con).Fill(dtStudents);
+
+                // التحقق من أي طالب في القسم العام
+                foreach (DataRow student in dtStudents.Rows)
+                {
+                    int deptId = Convert.ToInt32(student["department_id"]);
+                    if (deptId == GENERAL_DEPARTMENT_ID)
+                    {
+                        MessageBox.Show("يوجد طالب في القسم العام، يرجى تغييره قبل الترقية.");
+                        return;
+                    }
+                }
+
+                // البدء بالترقية حسب الحالة
+                foreach (DataRow student in dtStudents.Rows)
+                {
+                    int studentId = Convert.ToInt32(student["student_id"]);
+                    string examRound = student["exam_round"].ToString();
+                    int deptId = Convert.ToInt32(student["department_id"]);
+
+                    switch (examRound)
+                    {
+                        case "مكتمل":
+                            PromoteCompleteStudent(con, studentId, deptId, academicYear);
+                            break;
+
+                        case "مرحل":
+                            PromoteRepeaterStudent(con, studentId, deptId, academicYear);
+                            break;
+
+                        case "إعادة سنة":
+                            RepeatStudent(con, studentId, academicYear);
+                            break;
+                    }
+
+                    // إعادة exam_round إلى دور أول
+                    using (SqlCommand cmdRound = new SqlCommand(
+                        "UPDATE Students SET exam_round = N'دور أول' WHERE student_id = @studentId", con))
+                    {
+                        cmdRound.Parameters.AddWithValue("@studentId", studentId);
+                        cmdRound.ExecuteNonQuery();
+                    }
+                }
+
+                MessageBox.Show("تمت ترقية طلاب السنة الأولى بنجاح.");
+            }
+        }
+        private void ClearPassedCoursesClassrooms(SqlConnection con, int studentId)
+        {
+            // أولاً: نجيب آخر عام جامعي للطالب (من جدول Registrations أو الدرجات)
+            int lastYear;
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT MAX(academic_year_start)
+        FROM Registrations
+        WHERE student_id = @studentId", con))
+            {
+                cmd.Parameters.AddWithValue("@studentId", studentId);
+                object result = cmd.ExecuteScalar();
+                if (result == DBNull.Value) return; // ما عنداش تنزيلات سابقة
+                lastYear = Convert.ToInt32(result);
+            }
+
+            // ثانياً: نخلي course_classroom_id = NULL للمواد اللي نجح فيها
+            using (SqlCommand cmd = new SqlCommand(@"
+        UPDATE r
+        SET r.course_classroom_id = NULL
+        FROM Registrations r
+        INNER JOIN Grades g ON g.student_id = r.student_id AND g.course_id = r.course_id
+        WHERE r.student_id = @studentId
+          AND r.academic_year_start = @lastYear
+          AND g.success_status = N'نجاح'", con)) // استبدل 'نجاح' بالقيمة اللي تستعملها عندك
+            {
+                cmd.Parameters.AddWithValue("@studentId", studentId);
+                cmd.Parameters.AddWithValue("@lastYear",lastYear);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+
+        // ---------------------- الدوال المساعدة ----------------------
+
+        // 1️⃣ مكتمل: ترقية السنة + تنزيل مواد السنة الثانية
+        private void PromoteCompleteStudent(SqlConnection con, int studentId, int deptId, int academicYear)
+        {
+            int newYear;
+
+            // ترقية الطالب لسنة أعلى
+            using (SqlCommand cmd = new SqlCommand(
+                "UPDATE Students SET current_year = current_year + 1 OUTPUT INSERTED.current_year WHERE student_id = @studentId", con))
+            {
+                cmd.Parameters.AddWithValue("@studentId", studentId);
+                newYear = (int)cmd.ExecuteScalar(); // هنا تجيب القيمة الجديدة مباشرة
+            }
+            ClearPassedCoursesClassrooms(con, studentId);
+            // تنزيل المواد للسنة الجديدة (ديناميكية)
+            DownloadCoursesForStudent(con, studentId, newYear, deptId, academicYear);
+        }
+
+
+        // 2️⃣ مرحل: تحديث المواد الراسبة، تصفير الدرجات، ترقية للسنة الثانية + تنزيل مواد جديدة
+        private void PromoteRepeaterStudent(SqlConnection con, int studentId, int deptId, int academicYear)
+        {
+            // جلب المواد الراسبة في السنة الأولى
+            string failQuery = @"
+        SELECT r.course_id
+        FROM Registrations r
+        JOIN Grades g ON r.course_id = g.course_id AND r.student_id = g.student_id
+        WHERE r.student_id = @studentId AND g.success_status = N'راسب'";
+            DataTable dtFail = new DataTable();
+            using (SqlCommand cmd = new SqlCommand(failQuery, con))
+            {
+                cmd.Parameters.AddWithValue("@studentId", studentId);
+                new SqlDataAdapter(cmd).Fill(dtFail);
+            }
+            ClearPassedCoursesClassrooms(con,studentId);
+            // تحديث المواد الراسبة: تصفير الدرجات وتحديث السنة الجامعية والمجموعات
+            foreach (DataRow fail in dtFail.Rows)
+            {
+                int courseId = Convert.ToInt32(fail["course_id"]);
+                int groupId = GetOrCreateGroup(con, courseId, academicYear);
+
+                using (SqlCommand cmdUpdate = new SqlCommand(@"
+            UPDATE Registrations 
+            SET academic_year_start = @academicYear, course_classroom_id = @groupId
+            WHERE student_id = @studentId AND course_id = @courseId;
+
+            UPDATE Grades
+            SET final_grade = NULL, work_grade = NULL, total_grade = NULL, success_status = NULL
+            WHERE student_id = @studentId AND course_id = @courseId;", con))
+                {
+                    cmdUpdate.Parameters.AddWithValue("@studentId", studentId);
+                    cmdUpdate.Parameters.AddWithValue("@courseId", courseId);
+                    cmdUpdate.Parameters.AddWithValue("@academicYear", academicYear);
+                    cmdUpdate.Parameters.AddWithValue("@groupId", groupId);
+                    cmdUpdate.ExecuteNonQuery();
+                }
+            }
+
+            int newYear;
+            // ترقية الطالب لسنة أعلى
+            using (SqlCommand cmd = new SqlCommand(
+                "UPDATE Students SET current_year = current_year + 1 OUTPUT INSERTED.current_year WHERE student_id = @studentId", con))
+            {
+                cmd.Parameters.AddWithValue("@studentId", studentId);
+                newYear = (int)cmd.ExecuteScalar(); // هنا تجيب القيمة الجديدة مباشرة
+            }
+            // تنزيل المواد للسنة الجديدة (ديناميكية)
+            DownloadCoursesForStudent(con, studentId, newYear, deptId, academicYear);
+        }
+
+
+
+        // 3️⃣ إعادة سنة: تحديث المواد الراسبة فقط، لا ترقية، تغيير القسم إلى العام
+        private void RepeatStudent(SqlConnection con, int studentId, int academicYear)
+        {
+            // جلب المواد الراسبة
+            string failQuery = @"
+        SELECT r.course_id
+        FROM Registrations r
+        JOIN Grades g ON r.course_id = g.course_id AND r.student_id = g.student_id
+        WHERE r.student_id = @studentId AND g.success_status = N'راسب'";
+            DataTable dtFail = new DataTable();
+            using (SqlCommand cmd = new SqlCommand(failQuery, con))
+            {
+                cmd.Parameters.AddWithValue("@studentId", studentId);
+                new SqlDataAdapter(cmd).Fill(dtFail);
+            }
+            ClearPassedCoursesClassrooms(con, studentId);
+            foreach (DataRow fail in dtFail.Rows)
+            {
+                int courseId = Convert.ToInt32(fail["course_id"]);
+                int groupId = GetOrCreateGroup(con, courseId, academicYear);
+
+                using (SqlCommand cmdUpdate = new SqlCommand(@"
+            UPDATE Registrations 
+            SET academic_year_start = @academicYear, course_classroom_id = @groupId
+            WHERE student_id = @studentId AND course_id = @courseId;
+
+            UPDATE Grades
+            SET final_grade = NULL, work_grade = NULL, total_grade = NULL, success_status = NULL
+            WHERE student_id = @studentId AND course_id = @courseId;", con))
+                {
+                    cmdUpdate.Parameters.AddWithValue("@studentId", studentId);
+                    cmdUpdate.Parameters.AddWithValue("@courseId", courseId);
+                    cmdUpdate.Parameters.AddWithValue("@academicYear", academicYear);
+                    cmdUpdate.Parameters.AddWithValue("@groupId", groupId);
+                    cmdUpdate.ExecuteNonQuery();
+                }
+            }
+
+            // تغيير قسم الطالب إلى العام
+            using (SqlCommand cmd = new SqlCommand(
+                "UPDATE Students SET department_id = @generalDept WHERE student_id = @studentId", con))
+            {
+                cmd.Parameters.AddWithValue("@generalDept", GENERAL_DEPARTMENT_ID);
+                cmd.Parameters.AddWithValue("@studentId", studentId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        // ---------------------- دوال مساعدة ----------------------
+        // دالة تجيب أول دكتور مرتبط بالمادة
+        private int GetFirstInstructorForCourse(SqlConnection con, int courseId)
+        {
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT TOP 1 instructor_id 
+        FROM Course_Instructor 
+        WHERE course_id = @courseId 
+        ORDER BY instructor_id", con))
+            {
+                cmd.Parameters.AddWithValue("@courseId", courseId);
+                object result = cmd.ExecuteScalar();
+                if (result != null)
+                    return Convert.ToInt32(result);
+                else
+                    throw new Exception($"لا يوجد دكتور مرتبط بالمادة {courseId}");
+            }
+        }
+
+        // دالة تجيب أول قاعة موجودة
+        private int GetFirstClassroom(SqlConnection con)
+        {
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT TOP 1 classroom_id 
+        FROM Classrooms 
+        ORDER BY classroom_id", con))
+            {
+                object result = cmd.ExecuteScalar();
+                if (result != null)
+                    return Convert.ToInt32(result);
+                else
+                    throw new Exception("لا توجد قاعات متاحة في جدول Classrooms");
+            }
+        }
+
+
+        private int GetOrCreateGroup(SqlConnection con, int courseId, int? academicYearStart)
+        {
+            int groupId = 0;
+
+            // ✅ جلب كل المجموعات المرتبطة بالمادة
+            SqlCommand getGroupsCmd = new SqlCommand(@"
+        SELECT cc.id, cc.capacity, cc.group_number
+        FROM Course_Classroom cc
+        WHERE cc.course_id = @courseId
+        ORDER BY cc.group_number;", con);
+            getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+
+            DataTable groups = new DataTable();
+            new SqlDataAdapter(getGroupsCmd).Fill(groups);
+
+            foreach (DataRow group in groups.Rows)
+            {
+                int isgroupId = Convert.ToInt32(group["id"]);
+                int capacity = Convert.ToInt32(group["capacity"]);
+
+                SqlCommand countCmd = new SqlCommand(@"
+            SELECT COUNT(*) 
+            FROM Registrations 
+            WHERE course_classroom_id = @groupId 
+              AND academic_year_start = @academicYearStart", con);
+
+                countCmd.Parameters.AddWithValue("@groupId", isgroupId);
+                countCmd.Parameters.AddWithValue("@academicYearStart",
+                    academicYearStart.HasValue ? (object)academicYearStart.Value : DBNull.Value);
+
+                int currentCount = (int)countCmd.ExecuteScalar();
+
+                if (currentCount < capacity)
+                {
+                    groupId = isgroupId;
+                    break;
+                }
+            }
+
+            if (groupId == 0)
+            {
+                // جلب أول دكتور مرتبط بالمادة
+                int instructorId = GetFirstInstructorForCourse(con, courseId);
+
+                // جلب أول قاعة متاحة
+                int classroomId = GetFirstClassroom(con);
+
+                // إنشاء مجموعة جديدة برقم أكبر من آخر مجموعة
+                int nextGroupNumber = 1;
+                if (groups.Rows.Count > 0)
+                    nextGroupNumber = Convert.ToInt32(groups.Rows[groups.Rows.Count - 1]["group_number"]) + 1;
+
+                using (SqlCommand cmd = new SqlCommand(@"
+            INSERT INTO Course_Classroom
+            (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day, instructor_id)
+            OUTPUT INSERTED.id 
+            VALUES (@courseId, @classroomId, @groupNumber, 80, '09:00:00', '12:00:00',6, @instructorId)", con))
+                {
+                    cmd.Parameters.AddWithValue("@courseId", courseId);
+                    cmd.Parameters.AddWithValue("@classroomId", classroomId);
+                    cmd.Parameters.AddWithValue("@groupNumber", nextGroupNumber);
+                    cmd.Parameters.AddWithValue("@instructorId", instructorId);
+
+                    groupId = (int)cmd.ExecuteScalar();
+                }
+            }
+
+            return groupId;
+        }
+
+        // تنزيل مواد الطالب لسنة معينة
+        private void DownloadCoursesForStudent(SqlConnection con, int studentId, int year, int deptId, int academicYear)
+        {
+            // جلب المواد للسنة والقسم
+            DataTable courses = new DataTable();
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT c.course_id, c.course_name
+        FROM Courses c
+        JOIN Course_Department cd ON cd.course_id = c.course_id
+        WHERE c.year_number = @year AND cd.department_id = @dept", con))
+            {
+                cmd.Parameters.AddWithValue("@year", year);
+                cmd.Parameters.AddWithValue("@dept", deptId);
+                new SqlDataAdapter(cmd).Fill(courses);
+            }
+
+            foreach (DataRow row in courses.Rows)
+            {
+                int courseId = Convert.ToInt32(row["course_id"]);
+                int groupId = GetOrCreateGroup(con, courseId,academicYear);
+
+                using (SqlCommand cmd = new SqlCommand(@"
+            IF NOT EXISTS (SELECT 1 FROM Registrations WHERE student_id=@studentId AND course_id=@courseId)
+            INSERT INTO Registrations (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
+            VALUES (@studentId, @courseId, @year, N'مسجل', @groupId, @academicYear)", con))
+                {
+                    cmd.Parameters.AddWithValue("@studentId", studentId);
+                    cmd.Parameters.AddWithValue("@courseId", courseId);
+                    cmd.Parameters.AddWithValue("@year", year);
+                    cmd.Parameters.AddWithValue("@groupId", groupId);
+                    cmd.Parameters.AddWithValue("@academicYear", academicYear);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        //تحقق من الطلبة اللذين لم يتم إدخال درجاتهم
+        private int GetGeneralDepartmentId(SqlConnection con)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT department_id FROM Departments WHERE dep_name = N'عام'", con);
+            return Convert.ToInt32(cmd.ExecuteScalar());
+        }
+
+        //تحقق من الطلبة اللذين لم يتم إدخال درجاتهم
+        private bool HasUnfinishedStudents(SqlConnection con, int year)
+        {
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT COUNT(*) 
+        FROM Students 
+        WHERE current_year = @year
+          AND (exam_round = N'دور أول' OR exam_round = N'دور ثاني')", con))
+            {
+                cmd.Parameters.AddWithValue("@year", year);
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
+            }
+        }
+
+        private bool HasPromotableStudents(SqlConnection con, int year)
+        {
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT COUNT(*) 
+        FROM Students 
+        WHERE current_year = @year
+          AND (exam_round = N'مكتمل' OR exam_round = N'مرحّل' OR exam_round = N'إعادة سنة')", con))
+            {
+                cmd.Parameters.AddWithValue("@year", year);
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                return count > 0;
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int year = 1;
+                conn.DatabaseConnection dbchekfirst = new conn.DatabaseConnection();
+                using (SqlConnection con = dbchekfirst.OpenConnection()) // فتح الاتصال
+                {
+                    // تحقق من الطلبة الذين لم تُدخل درجاتهم بعد
+                    if (HasUnfinishedStudents(con, year))
+                    {
+                        MessageBox.Show($"⚠ هناك طلبة لم يتم إدخال درجاتهم بعد في السنة {year}، لا يمكن الترقية.");
+                        return;
+                    }
+
+                    // تحقق من وجود طلبة قابلين للترقية
+                    if (!HasPromotableStudents(con, year))
+                    {
+                        MessageBox.Show($"⚠ ليس هناك طلاب في هذه السنة {year} للترقية.");
+                        return;
+                    }
+                }
+
+                // استدعاء دالة الترقية الخاصة بالطلاب
+                PromoteFirstYearStudents();
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Error : " + ex.Message);
+            }
+        }
+
+
     }
 }
