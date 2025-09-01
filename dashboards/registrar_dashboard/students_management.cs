@@ -312,9 +312,6 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         }
 
 
-
-
-
         //اضافة طالب جديد الى القاعدة في التاب الأول
         private void button7_Click(object sender, EventArgs e)
         {
