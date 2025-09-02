@@ -103,6 +103,9 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             return !hasError; // إذا لا يوجد خطأ -> true
         }
 
+
+
+
         public void DownloadCoursesForStudent(int studentId, int selectedYear, int departmentId)
         {
             try
@@ -383,10 +386,9 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                     label1.ForeColor = Color.Green;
                     label1.Text = "تمت إضافة الطالب بنجاح";
-                    SetFieldsEmpty();
-
                     // تنزيل المواد مباشرة
                     DownloadCoursesForStudent(studentId, selectedYear, departmentId);
+                    SetFieldsEmpty();
                 }
                 catch (Exception ex)
                 {

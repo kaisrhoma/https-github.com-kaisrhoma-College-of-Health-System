@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
+﻿using college_of_health_sciences.system_forms;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Office.Word;
 using Microsoft.VisualBasic;
@@ -149,16 +150,21 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
                 using (SqlConnection con = db.OpenConnection())
                 {
-                    // جلب أكبر سنة جامعية موجودة في جدول Registrations
-                    SqlCommand cmd = new SqlCommand(@"
-                SELECT ISNULL(MAX(academic_year_start), YEAR(GETDATE())) 
-                FROM Registrations", con);
+                    int month3;
 
-                    int maxAcademicYear = Convert.ToInt32(cmd.ExecuteScalar());
+                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
+                    {
+                        month3 = Convert.ToInt32(cmddate.ExecuteScalar());
+                    }
+
+                    int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+                    numericUpDown1.Value = academicYearStart;
 
                     // ضبط القيمة الافتراضية للـ numericUpDown
-                    numericUpDown1.Value = maxAcademicYear;
-                    numericUpDown2.Value = maxAcademicYear + 1;
+                    numericUpDown1.Value = academicYearStart - 1;
+                    numericUpDown2.Value = academicYearStart;
+                    numericUpDown3.Value = academicYearStart;
+                    numericUpDown4.Value = academicYearStart - 1;
                 }
             }
             catch (Exception ex)
@@ -1023,6 +1029,7 @@ WHERE student_id = @studentId", con);
         // 1️⃣ مكتمل: ترقية السنة + تنزيل مواد السنة الثانية
         private void PromoteCompleteStudent(SqlConnection con, int studentId, int deptId, int academicYear)
         {
+            ClearPassedCoursesClassrooms(con, studentId);
             //تحقق من سنة رابعة يعيد السنة
             int newYear;
             using (SqlCommand cmd = new SqlCommand(@"
@@ -1033,7 +1040,6 @@ WHERE student_id = @studentId", con);
                 cmd.Parameters.AddWithValue("@studentid", studentId);
                 newYear = Convert.ToInt32(cmd.ExecuteScalar());
             }
-            ClearPassedCoursesClassrooms(con, studentId);
             if (newYear == 4)
             {
                 using (SqlCommand cmd = new SqlCommand("UPDATE Students SET status_id = @statusid  WHERE student_id = @studentId", con))
@@ -1391,6 +1397,19 @@ WHERE student_id = @studentId", con);
 
         private void button10_Click(object sender, EventArgs e)
         {
+            if (!CheckConstrains())
+                return;
+            int academicYearStart = (int)numericUpDown2.Value;
+            DialogResult dr = MessageBox.Show(
+            "AcademicYearStart = " + academicYearStart + "\n\nهل تريد الاستمرار في الترقية؟",
+            "تأكيد الترقية",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question);
+
+            if (dr == DialogResult.No)
+            {
+                return ; // يوقف العملية إذا اخترت لا
+            }
             try
             {
                 int year = 1;
@@ -1479,45 +1498,113 @@ WHERE student_id = @studentId", con);
                     }
                 }
 
-                MessageBox.Show("تمت ترقية طلاب السنة الأولى بنجاح.");
+                MessageBox.Show("تمت ترقية الطلاب بنجاح.");
             }
         }
+
+        public bool CheckConstrains()
+        {
+            try
+            {
+                conn.DatabaseConnection dbCheck = new conn.DatabaseConnection();
+                using (SqlConnection con = dbCheck.OpenConnection())
+                {
+                    int monthStart = 0;
+                    bool isApproved = false;
+
+                    using (SqlCommand cmdMonth = new SqlCommand(
+                        "SELECT month_number, is_approved FROM Months WHERE month_id = @id", con))
+                    {
+                        cmdMonth.Parameters.AddWithValue("@id", 1);
+                        DataTable dt = new DataTable();
+                        new SqlDataAdapter(cmdMonth).Fill(dt);
+                        isApproved = Convert.ToBoolean(dt.Rows[0]["is_approved"]);
+                        monthStart = Convert.ToInt32(dt.Rows[0]["month_number"]);
+                    }
+
+                    // التحقق من الاعتماد
+                    if (!isApproved)
+                    {
+                        MessageBox.Show("لم يتم اعتماد الدرجات بعد.");
+                        return false;
+                    }
+
+                    // التحقق من بداية السنة
+                    if (DateTime.Now.Month < monthStart)
+                    {
+                        MessageBox.Show("لا يمكن الترقية قبل بداية السنة الدراسية الجديدة.");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ: " + ex.Message);
+                return false;
+            }
+
+            // إدخال رمز التحقق
+            string input = Interaction.InputBox("تأكيد الترقية", "ادخل الرمز للتأكيد", "");
+            string confirmCode = "2025";
+
+            if (input != confirmCode)
+            {
+                MessageBox.Show("رمز خاطئ، يرجى إعادة المحاولة.");
+                return false;
+            }
+
+            return true;
+        }
+
+
 
 
         private void button11_Click(object sender, EventArgs e)
         {
-            //try
-            //{
-            //    conn.DatabaseConnection dbchekfirst = new conn.DatabaseConnection();
-            //    using (SqlConnection con = dbchekfirst.OpenConnection()) // فتح الاتصال
-            //    {
-            //        for (int year = 2; year <= 4; year++)
-            //        {
-            //            // تحقق من الطلبة الذين لم تُدخل درجاتهم بعد
-            //            if (year != 2)
-            //            {
-            //                if (HasUnfinishedStudents(con, year))
-            //                {
-            //                    MessageBox.Show($"⚠ هناك طلبة لم يتم إدخال درجاتهم بعد في السنة {year}، لا يمكن الترقية.");
-            //                    return;
-            //                }
-            //            }
+            if (!CheckConstrains())
+                return;
+            int academicYearStart = (int)numericUpDown3.Value;
+            DialogResult dr = MessageBox.Show(
+            "AcademicYearStart = " + academicYearStart + "\n\nهل تريد الاستمرار في الترقية؟",
+            "تأكيد الترقية",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question);
 
-            //            // تحقق من وجود طلبة قابلين للترقية
-            //            if (!HasPromotableStudents(con, year))
-            //            {
-            //                MessageBox.Show($"⚠ ليس هناك طلاب في هذه السنة {year} للترقية.");
-            //                return;
-            //            }
-            //        }
-            //    }
-            //    // استدعاء دالة الترقية الخاصة بالطلاب
-            //    
-            //}
-            //catch (SqlException ex)
-            //{
-            //    MessageBox.Show("Error : " + ex.Message);
-            //}
+            if (dr == DialogResult.No)
+            {
+                return ; // يوقف العملية إذا اخترت لا
+            }
+            try
+            {
+                conn.DatabaseConnection dbchekfirst = new conn.DatabaseConnection();
+                using (SqlConnection con = dbchekfirst.OpenConnection()) // فتح الاتصال
+                {
+                    for (int year = 2; year <= 4; year++)
+                    {
+                        // تحقق من الطلبة الذين لم تُدخل درجاتهم بعد
+                        if (year != 2)
+                        {
+                            if (HasUnfinishedStudents(con, year))
+                            {
+                                MessageBox.Show($"⚠ هناك طلبة لم يتم إدخال درجاتهم بعد في السنة {year}، لا يمكن الترقية.");
+                                return;
+                            }
+                        }
+                        // تحقق من وجود طلبة قابلين للترقية
+                        if (!HasPromotableStudents(con, year))
+                        {
+                            MessageBox.Show($"⚠ ليس هناك طلاب في هذه السنة {year} للترقية.");
+                            return;
+                        }
+                    }
+                }
+                // استدعاء دالة الترقية الخاصة بالطلاب
+
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Error : " + ex.Message);
+            }
             PromoteFirstSecondThiredYearStudents();
         }
         public void getStudentsYearOneTowThree()
@@ -1551,7 +1638,7 @@ WHERE student_id = @studentId", con);
                     if (dt.Rows.Count == 0)
                     {
                         dataGridView3.DataSource = null;
-                        MessageBox.Show("لا يوجد طلاب سنة أولى مستمرين في القسم العام .او لم يتم إدخال درجاتهم بعد.");
+                        MessageBox.Show("لا يوجد طلاب سنة للترقية .او لم يتم إدخال درجاتهم بعد.");
                     }
                     else
                     {
@@ -1571,6 +1658,78 @@ WHERE student_id = @studentId", con);
         private void button13_Click(object sender, EventArgs e)
         {
             getStudentsYearOneTowThree();
+        }
+
+        private void LoadTransferredStudents()
+        {
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    string q = @"
+                SELECT s.student_id, s.full_name,s.current_year, d.dep_name, st.description
+                FROM Students s
+                JOIN Departments d ON d.department_id = s.department_id
+                JOIN Status st ON st.status_id = s.status_id
+                WHERE st.description = N'محول'";
+
+                    SqlDataAdapter da = new SqlDataAdapter(q, con);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    dataGridView4.DataSource = dt;
+                    
+                    // إضافة زر فتح فورم equation
+                    if (!dataGridView4.Columns.Contains("OpenEquation"))
+                    {
+                        DataGridViewButtonColumn btn = new DataGridViewButtonColumn();
+                        btn.Name = "OpenEquation";
+                        btn.HeaderText = "أنقر";
+                        btn.Text = "معادلة";
+                        btn.FlatStyle = FlatStyle.Flat;
+                        btn.Width = 100;
+                        btn.UseColumnTextForButtonValue = true;
+
+                        // ضبط الألوان
+                        btn.DefaultCellStyle.BackColor = Color.FromArgb(0, 109, 148);   // لون الخلفية
+                        btn.DefaultCellStyle.ForeColor = Color.White;                   // لون النص
+                        btn.DefaultCellStyle.SelectionBackColor = Color.FromArgb(0, 90, 120); // عند التحديد
+                        btn.DefaultCellStyle.SelectionForeColor = Color.White;
+
+                        dataGridView4.Columns.Insert(0, btn);
+                        datagridviewstyle(dataGridView4);
+                        dataGridView4.Columns["OpenEquation"].Width = 100;
+                        dataGridView4.Columns["student_id"].Visible = false;
+                        dataGridView4.Columns["full_name"].HeaderText = "الإسم";
+                        dataGridView4.Columns["current_year"].HeaderText = "السنة";
+                        dataGridView4.Columns["dep_name"].HeaderText = "القسم";
+                        dataGridView4.Columns["description"].HeaderText = "الحالة";
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ: " + ex.Message);
+            }
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            LoadTransferredStudents();
+        }
+
+        private void dataGridView4_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView4.Columns[e.ColumnIndex].Name == "OpenEquation" && e.RowIndex >= 0)
+            {
+                int studentId = Convert.ToInt32(dataGridView4.Rows[e.RowIndex].Cells["student_id"].Value);
+                string fullName = dataGridView4.Rows[e.RowIndex].Cells["full_name"].Value.ToString();
+
+                equation eqForm = new equation(studentId, fullName);
+                eqForm.ShowDialog();
+            }
         }
     }
 }

@@ -185,6 +185,12 @@
     <Compile Include="system_forms\admin_form.Designer.cs">
       <DependentUpon>admin_form.cs</DependentUpon>
     </Compile>
+    <Compile Include="system_forms\equation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="system_forms\equation.Designer.cs">
+      <DependentUpon>equation.cs</DependentUpon>
+    </Compile>
     <Compile Include="system_forms\exams_form.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -250,6 +256,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="system_forms\admin_form.resx">
       <DependentUpon>admin_form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="system_forms\equation.resx">
+      <DependentUpon>equation.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="system_forms\exams_form.resx">
       <DependentUpon>exams_form.cs</DependentUpon>
