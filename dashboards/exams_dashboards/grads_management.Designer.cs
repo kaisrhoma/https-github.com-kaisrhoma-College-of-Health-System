@@ -76,6 +76,7 @@
             this.button11 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).BeginInit();
@@ -110,6 +111,7 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.White;
+            this.tabPage1.Controls.Add(this.checkBox1);
             this.tabPage1.Controls.Add(this.button9);
             this.tabPage1.Controls.Add(this.label11);
             this.tabPage1.Controls.Add(this.label10);
@@ -164,7 +166,7 @@
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label10.AutoSize = true;
             this.label10.ForeColor = System.Drawing.Color.Black;
-            this.label10.Location = new System.Drawing.Point(293, 91);
+            this.label10.Location = new System.Drawing.Point(375, 57);
             this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(38, 19);
@@ -175,10 +177,10 @@
             // 
             this.comboYear4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboYear4.FormattingEnabled = true;
-            this.comboYear4.Location = new System.Drawing.Point(167, 86);
+            this.comboYear4.Location = new System.Drawing.Point(203, 52);
             this.comboYear4.Margin = new System.Windows.Forms.Padding(2);
             this.comboYear4.Name = "comboYear4";
-            this.comboYear4.Size = new System.Drawing.Size(122, 27);
+            this.comboYear4.Size = new System.Drawing.Size(168, 27);
             this.comboYear4.TabIndex = 10;
             this.comboYear4.SelectedIndexChanged += new System.EventHandler(this.comboYear4_SelectedIndexChanged);
             // 
@@ -187,7 +189,7 @@
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
             this.label8.ForeColor = System.Drawing.Color.Black;
-            this.label8.Location = new System.Drawing.Point(128, 89);
+            this.label8.Location = new System.Drawing.Point(371, 90);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(36, 19);
@@ -198,10 +200,10 @@
             // 
             this.comboExamRound.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboExamRound.FormattingEnabled = true;
-            this.comboExamRound.Location = new System.Drawing.Point(6, 85);
+            this.comboExamRound.Location = new System.Drawing.Point(203, 86);
             this.comboExamRound.Margin = new System.Windows.Forms.Padding(2);
             this.comboExamRound.Name = "comboExamRound";
-            this.comboExamRound.Size = new System.Drawing.Size(122, 27);
+            this.comboExamRound.Size = new System.Drawing.Size(168, 27);
             this.comboExamRound.TabIndex = 8;
             this.comboExamRound.SelectedIndexChanged += new System.EventHandler(this.comboExamRound_SelectedIndexChanged);
             // 
@@ -211,10 +213,10 @@
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button8.ForeColor = System.Drawing.Color.White;
             this.button8.Image = global::college_of_health_sciences.Properties.Resources.Carlosjj_Microsoft_Office_2013_Excel_48;
-            this.button8.Location = new System.Drawing.Point(2, 22);
+            this.button8.Location = new System.Drawing.Point(6, 52);
             this.button8.Margin = new System.Windows.Forms.Padding(2);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(131, 59);
+            this.button8.Size = new System.Drawing.Size(65, 64);
             this.button8.TabIndex = 7;
             this.button8.UseVisualStyleBackColor = false;
             this.button8.Click += new System.EventHandler(this.button8_Click);
@@ -225,7 +227,7 @@
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label3.Location = new System.Drawing.Point(254, 22);
+            this.label3.Location = new System.Drawing.Point(254, 9);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(189, 26);
@@ -269,7 +271,7 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(458, 90);
+            this.label2.Location = new System.Drawing.Point(627, 90);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(38, 19);
@@ -280,10 +282,10 @@
             // 
             this.comboCourse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboCourse.FormattingEnabled = true;
-            this.comboCourse.Location = new System.Drawing.Point(335, 86);
+            this.comboCourse.Location = new System.Drawing.Point(455, 86);
             this.comboCourse.Margin = new System.Windows.Forms.Padding(2);
             this.comboCourse.Name = "comboCourse";
-            this.comboCourse.Size = new System.Drawing.Size(122, 27);
+            this.comboCourse.Size = new System.Drawing.Size(171, 27);
             this.comboCourse.TabIndex = 2;
             this.comboCourse.SelectedIndexChanged += new System.EventHandler(this.comboBoxCourse_SelectedIndexChanged);
             this.comboCourse.CursorChanged += new System.EventHandler(this.comboCourse_CursorChanged);
@@ -292,7 +294,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(628, 90);
+            this.label1.Location = new System.Drawing.Point(628, 55);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 19);
@@ -303,10 +305,10 @@
             // 
             this.comboDepartment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboDepartment.FormattingEnabled = true;
-            this.comboDepartment.Location = new System.Drawing.Point(504, 87);
+            this.comboDepartment.Location = new System.Drawing.Point(455, 52);
             this.comboDepartment.Margin = new System.Windows.Forms.Padding(2);
             this.comboDepartment.Name = "comboDepartment";
-            this.comboDepartment.Size = new System.Drawing.Size(119, 27);
+            this.comboDepartment.Size = new System.Drawing.Size(168, 27);
             this.comboDepartment.TabIndex = 0;
             this.comboDepartment.SelectedIndexChanged += new System.EventHandler(this.comboBoxDepartments_SelectedIndexChanged);
             // 
@@ -724,6 +726,20 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox1.Location = new System.Drawing.Point(130, 90);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(61, 23);
+            this.checkBox1.TabIndex = 14;
+            this.checkBox1.Text = "اعتماد";
+            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // grads_management
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -800,5 +816,6 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.NumericUpDown numericUpDownYear1;
         private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

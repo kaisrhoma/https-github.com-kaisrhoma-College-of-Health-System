@@ -39,7 +39,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         private List<DataTable> pages = new List<DataTable>();
         private List<string> pageSummaries = new List<string>();
         private string studentNam = "", universityNumber = "";
-
+        private string d = "";
 
         public void datagridviewstyle(DataGridView datagrid)
         {
@@ -104,13 +104,15 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         private void button2_Click(object sender, EventArgs e)
         {
             string uniNumber = txtUniversityNumber3.Text.Trim();
+
             if (string.IsNullOrEmpty(uniNumber))
             {
                 MessageBox.Show("يرجى إدخال الرقم الجامعي.");
                 return;
             }
-
-            string query = @"
+            if (checkBox3.Checked)
+            {
+                string query = @"
     SELECT 
     s.full_name AS اسم_الطالب,
     s.university_number AS الرقم_الجامعي,
@@ -125,26 +127,83 @@ INNER JOIN Courses c ON g.course_id = c.course_id
 WHERE s.university_number = @university_number
 ORDER BY c.year_number, c.course_name;";
 
-            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@university_number", uniNumber);
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                reportData = new DataTable();
-                da.Fill(reportData);
+                using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@university_number", uniNumber);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    reportData = new DataTable();
+                    da.Fill(reportData);
+                }
+
+                if (reportData.Rows.Count == 0)
+                {
+                    MessageBox.Show("لا توجد بيانات لهذا الرقم الجامعي.");
+                    return;
+                }
+
+                dataGridView2.DataSource = reportData;
+                dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                // حساب المعدلات
+                CalculateAndDisplayAverages3(reportData);
             }
-
-            if (reportData.Rows.Count == 0)
+            else
             {
-                MessageBox.Show("لا توجد بيانات لهذا الرقم الجامعي.");
-                return;
+                string query = @"
+SELECT 
+    s.full_name AS اسم_الطالب,
+    s.university_number AS الرقم_الجامعي,
+    c.year_number AS السنة,
+    c.course_code AS رمز_المادة,
+    c.course_name AS المادة,
+    c.units AS الوحدات,
+   d.dep_name AS القسم,
+    g.total_grade AS الدرجة
+FROM Grades g
+INNER JOIN Students s ON g.student_id = s.student_id
+INNER JOIN Courses c ON g.course_id = c.course_id
+INNER JOIN Course_Department cd ON c.course_id = cd.course_id
+INNER JOIN Departments d ON cd.department_id = d.department_id
+WHERE s.university_number = @university_number
+  AND cd.department_id = (
+      SELECT department_id FROM Students WHERE university_number = @university_number
+  )
+ORDER BY c.year_number, c.course_name;
+
+";
+
+                using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@university_number", uniNumber);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    reportData = new DataTable();
+                    da.Fill(reportData);
+                    // 🔹 تحقق من وجود بيانات أولًا
+                    if (reportData.Rows.Count == 0)
+                    {
+                        MessageBox.Show("لا توجد بيانات لهذا الرقم الجامعي.");
+                        return;
+                    }
+                    d = reportData.Rows[0]["القسم"].ToString();
+
+
+                }
+
+                if (reportData.Rows.Count == 0)
+                {
+                    MessageBox.Show("لا توجد بيانات لهذا الرقم الجامعي.");
+                    return;
+                }
+
+                dataGridView2.DataSource = reportData;
+                dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                // حساب المعدلات
+                CalculateAndDisplayAverages3(reportData);
+
             }
-
-            dataGridView2.DataSource = reportData;
-            dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            // حساب المعدلات
-            CalculateAndDisplayAverages3(reportData);
         }
 
         private void CalculateAndDisplayAverages3(DataTable dt)
@@ -1358,14 +1417,16 @@ ORDER BY c.year_number, c.course_name;";
                 LineAlignment = StringAlignment.Center,
                 FormatFlags = StringFormatFlags.DirectionRightToLeft
             };
-
             // عنوان الكلية والتقرير
             e.Graphics.DrawString("جامعة غريان", headerFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
             y += 35;
             e.Graphics.DrawString("كلية العلوم الصحية", headerFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
-            y += 35;
-            e.Graphics.DrawString("كشف درجات", subHeaderFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
             y += 50;
+            e.Graphics.DrawString($"القسم: {d}", headerFont, brush,
+         e.MarginBounds.Left + e.MarginBounds.Width / 2, y, centerFormat);
+            y += 10;
+            e.Graphics.DrawString("كشف درجات", subHeaderFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
+            y += 25;
 
             // جدول معلومات الطالب
             string[] infoHeaders = { "اسم الطالب", "رقم القيد", "تاريخ الطباعة" };

@@ -1912,6 +1912,7 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;
         {
 int selectedYear = (int)numericUpDownYear1.Value;
             string universityNumber = textBox1.Text.Trim();
+            string a = comboBox2.Text;
 
             try
             {
@@ -1931,19 +1932,23 @@ SELECT
     g.work_grade AS [أعمال السنة],
     g.final_grade AS [الامتحان النهائي],
     g.total_grade AS [المجموع],
-    g.success_status AS [الحالة]
+    g.success_status AS [الحالة],
+    s.exam_round AS [الدور]
 FROM Students s
 JOIN Registrations r ON s.student_id = r.student_id
 JOIN Courses c ON r.course_id = c.course_id
 LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
 WHERE r.academic_year_start = @year
 AND s.university_number LIKE '%' + @uniNumber + '%'
-ORDER BY s.student_id";
-
+AND s.exam_round = @examRound
+ORDER BY s.student_id;
+";
+                  
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@year", selectedYear);
                         cmd.Parameters.AddWithValue("@uniNumber", universityNumber);
+                        cmd.Parameters.AddWithValue("@examRound", a);
 
                         DataTable dt = new DataTable();
                         SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -1951,6 +1956,11 @@ ORDER BY s.student_id";
 
                         dataGridView1.DataSource = dt;
                         dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                        if (dataGridView1.Columns.Contains("student_id"))
+                        {
+                            dataGridView1.Columns["student_id"].Visible = false;
+                        }
+
                     }
                 }
             }
@@ -2311,6 +2321,21 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
 
             // حذف حساب الحالة من DataGridView
             row.Cells["الحالة"].Value = "";
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            bool isApproved = checkBox1.Checked; // true لو معتمد، false لو مش معتمد
+
+            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand("UPDATE Months SET is_approved = @isApproved WHERE month_id = 1", conn))
+                {
+                    cmd.Parameters.AddWithValue("@isApproved", isApproved);
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 
