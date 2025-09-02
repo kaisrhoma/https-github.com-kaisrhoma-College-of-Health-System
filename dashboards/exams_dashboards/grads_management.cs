@@ -1694,13 +1694,6 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
 
 
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-
-
-
-        }
-
         private void tabPage3_Click(object sender, EventArgs e)
         {
 
@@ -1721,29 +1714,101 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
         private bool isHandlingCellValueChanged = false;
         private void dataGridViewGrades_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            //    if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
 
-            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+            //    if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
 
+            //    if (isHandlingCellValueChanged) return;  // لمنع التكرار المتداخل
+            //    string exr = comboExamRound.Text;
+            //    if (exr == "دور أول")
+            //    {
+            //        try
+            //        {
+            //            isHandlingCellValueChanged = true;
+
+            //            var row = dataGridViewGrades.Rows[e.RowIndex];
+
+            //            int workGrade = 0, finalGrade = 0;
+
+            //            if (int.TryParse(row.Cells["درجة الأعمال"].Value?.ToString(), out int wg))
+            //                workGrade = wg;
+
+            //            if (int.TryParse(row.Cells["درجة الامتحان النهائي"].Value?.ToString(), out int fg))
+            //                finalGrade = fg;
+
+            //            int total = workGrade + finalGrade;
+
+            //            row.Cells["المجموع الكلي"].Value = total;
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            MessageBox.Show("حدث خطأ: " + ex.Message);
+            //        }
+            //        finally
+            //        {
+            //            isHandlingCellValueChanged = false;
+            //        }
+            //    }
+            //    else if (exr == "دور ثاني")
+            //    {
+            //        try
+            //        {
+            //            isHandlingCellValueChanged = true;
+            //            var row = dataGridViewGrades.Rows[e.RowIndex];
+            //            int finalGrade = 0;
+            //            if (int.TryParse(row.Cells["درجة الامتحان النهائي"].Value?.ToString(), out int fg))
+            //                finalGrade = fg;
+            //            row.Cells["المجموع الكلي"].Value = finalGrade;
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            MessageBox.Show("حدث خطأ: " + ex.Message);
+            //        }
+            //        finally
+            //        {
+            //            isHandlingCellValueChanged = false;
+            //        }
+            //    }
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
             if (isHandlingCellValueChanged) return;  // لمنع التكرار المتداخل
+
+            string exr = comboExamRound.Text;
 
             try
             {
                 isHandlingCellValueChanged = true;
-
                 var row = dataGridViewGrades.Rows[e.RowIndex];
 
-                int workGrade = 0, finalGrade = 0;
+                if (exr == "دور أول")
+                {
+                    // الدور الأول كما كان سابقًا
+                    int workGrade = 0, finalGrade = 0;
 
-                if (int.TryParse(row.Cells["درجة الأعمال"].Value?.ToString(), out int wg))
-                    workGrade = wg;
+                    if (int.TryParse(row.Cells["درجة الأعمال"].Value?.ToString(), out int wg))
+                        workGrade = wg;
 
-                if (int.TryParse(row.Cells["درجة الامتحان النهائي"].Value?.ToString(), out int fg))
-                    finalGrade = fg;
+                    if (int.TryParse(row.Cells["درجة الامتحان النهائي"].Value?.ToString(), out int fg))
+                        finalGrade = fg;
 
-                int total = workGrade + finalGrade;
+                    int total = workGrade + finalGrade;
+                    row.Cells["المجموع الكلي"].Value = total;
+                }
+                else if (exr == "دور ثاني")
+                {
+                    // الدور الثاني: إذا تم تعديل "المجموع الكلي"، احسب الدرجات الفرعية تلقائيًا
+                    if (e.ColumnIndex == row.Cells["المجموع الكلي"].ColumnIndex)
+                    {
+                        if (int.TryParse(row.Cells["المجموع الكلي"].Value?.ToString(), out int total))
+                        {
+                            // 40% أعمال السنة و60% امتحان نهائي
+                            int finalGrade = (int)Math.Round(total * 0.6);
+                            int workGrade = total - finalGrade; // لضمان أن المجموع يبقى صحيحًا
 
-                row.Cells["المجموع الكلي"].Value = total;
+                            row.Cells["درجة الامتحان النهائي"].Value = finalGrade;
+                            row.Cells["درجة الأعمال"].Value = workGrade;
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -1829,20 +1894,6 @@ INNER JOIN (
       AND s.exam_round = N'دور أول'
     GROUP BY s.student_id
 ) AS fc ON s.student_id = fc.student_id;
-
--- تصفير درجات المواد الراسبة إذا تم تحويل الطالب لدور ثاني
-UPDATE g
-SET g.work_grade = NULL,
-    g.final_grade = NULL,
-    g.total_grade = NULL,
-    g.success_status = NULL
-FROM Grades g
-INNER JOIN Students s ON s.student_id = g.student_id
-INNER JOIN Registrations r ON r.student_id = s.student_id AND r.course_id = g.course_id
-WHERE s.exam_round = N'دور ثاني'
-  AND s.student_id = @studentId
-  AND r.academic_year_start = @academicYearStart
-  AND g.total_grade < 60;
 ";
 
                                 using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
@@ -1910,12 +1961,66 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;
 
         private void button10_Click(object sender, EventArgs e)
         {
-int selectedYear = (int)numericUpDownYear1.Value;
+            int selectedYear = (int)numericUpDownYear1.Value;
             string universityNumber = textBox1.Text.Trim();
             string a = comboBox2.Text;
 
             try
             {
+                //                if (a == "دور أول")
+                //                {
+                //                    using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+                //                    {
+                //                        conn.Open();
+
+                //                        string query = @"
+                //SELECT             
+                //    ROW_NUMBER() OVER (ORDER BY s.student_id) AS رقم,
+                //    s.student_id,
+                //    s.university_number AS [رقم القيد],
+                //    s.full_name AS [اسم الطالب],
+                //    c.course_name AS [اسم المادة],
+                //    c.year_number AS [السنة الدراسية للمادة],
+                //    CONCAT(r.academic_year_start,'-',r.academic_year_start + 1) AS [العام الجامعي],
+                //    g.work_grade AS [أعمال السنة],
+                //    g.final_grade AS [الامتحان النهائي],
+                //    g.total_grade AS [المجموع],
+                //    g.success_status AS [الحالة],
+                //    s.exam_round AS [الدور]
+                //FROM Students s
+                //JOIN Registrations r ON s.student_id = r.student_id
+                //JOIN Courses c ON r.course_id = c.course_id
+                //LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
+                //WHERE r.academic_year_start = @year
+                //AND s.university_number LIKE '%' + @uniNumber + '%'
+                //AND s.exam_round = @examRound
+                //ORDER BY s.student_id;
+                //";
+
+                //                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                //                        {
+                //                            cmd.Parameters.AddWithValue("@year", selectedYear);
+                //                            cmd.Parameters.AddWithValue("@uniNumber", universityNumber);
+                //                            cmd.Parameters.AddWithValue("@examRound", a);
+
+                //                            DataTable dt = new DataTable();
+                //                            SqlDataAdapter da = new SqlDataAdapter(cmd);
+                //                            da.Fill(dt);
+
+                //                            dataGridView1.DataSource = dt;
+                //                            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                //                            if (dataGridView1.Columns.Contains("student_id"))
+                //                            {
+                //                                dataGridView1.Columns["student_id"].Visible = false;
+                //                            }
+
+                //                        }
+                //                    }
+                //                }
+                //                else if (a == "دور ثاني")
+                //                {
+
+                //                }
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                 {
                     conn.Open();
@@ -1941,9 +2046,16 @@ LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
 WHERE r.academic_year_start = @year
 AND s.university_number LIKE '%' + @uniNumber + '%'
 AND s.exam_round = @examRound
-ORDER BY s.student_id;
 ";
-                  
+
+                    // إضافة شرط فقط للدور الثاني لإظهار المواد الراسبة
+                    if (a == "دور ثاني")
+                    {
+                        query += " AND g.total_grade < 60";
+                    }
+
+                    query += " ORDER BY s.student_id;";
+
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@year", selectedYear);
@@ -1956,18 +2068,21 @@ ORDER BY s.student_id;
 
                         dataGridView1.DataSource = dt;
                         dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
                         if (dataGridView1.Columns.Contains("student_id"))
                         {
                             dataGridView1.Columns["student_id"].Visible = false;
                         }
-
                     }
+
                 }
             }
+
             catch (Exception ex)
             {
                 MessageBox.Show("خطأ أثناء البحث: " + ex.Message);
-            }
+            } 
+
         }
 
         private void button11_Click(object sender, EventArgs e)
@@ -2297,30 +2412,73 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
+            //var row = dataGridView1.Rows[e.RowIndex];
+            //if (row.IsNewRow) return;
+
+            //string workStr = row.Cells["أعمال السنة"].Value?.ToString();
+            //string finalStr = row.Cells["الامتحان النهائي"].Value?.ToString();
+
+            //bool workEmpty = string.IsNullOrEmpty(workStr);
+            //bool finalEmpty = string.IsNullOrEmpty(finalStr);
+
+            //if (workEmpty && finalEmpty)
+            //{
+            //    row.Cells["المجموع"].Value = DBNull.Value;
+            //    return;
+            //}
+
+            //int work = 0, finalGrade = 0;
+            //if (!workEmpty && int.TryParse(workStr, out int wg)) work = wg;
+            //if (!finalEmpty && int.TryParse(finalStr, out int fg)) finalGrade = fg;
+
+            //int total = work + finalGrade;
+            //row.Cells["المجموع"].Value = total;
+
+            //// حذف حساب الحالة من DataGridView
+            //row.Cells["الحالة"].Value = "";
             var row = dataGridView1.Rows[e.RowIndex];
             if (row.IsNewRow) return;
 
-            string workStr = row.Cells["أعمال السنة"].Value?.ToString();
-            string finalStr = row.Cells["الامتحان النهائي"].Value?.ToString();
+            string exr = comboBox2.Text;
 
-            bool workEmpty = string.IsNullOrEmpty(workStr);
-            bool finalEmpty = string.IsNullOrEmpty(finalStr);
-
-            if (workEmpty && finalEmpty)
+            if (exr == "دور أول")
             {
-                row.Cells["المجموع"].Value = DBNull.Value;
-                return;
+                // حساب المجموع من أعمال السنة + الامتحان النهائي
+                string workStr = row.Cells["أعمال السنة"].Value?.ToString();
+                string finalStr = row.Cells["الامتحان النهائي"].Value?.ToString();
+
+                bool workEmpty = string.IsNullOrEmpty(workStr);
+                bool finalEmpty = string.IsNullOrEmpty(finalStr);
+
+                if (workEmpty && finalEmpty)
+                {
+                    row.Cells["المجموع"].Value = DBNull.Value;
+                    return;
+                }
+
+                int work = 0, finalGrade = 0;
+                if (!workEmpty && int.TryParse(workStr, out int wg)) work = wg;
+                if (!finalEmpty && int.TryParse(finalStr, out int fg)) finalGrade = fg;
+
+                row.Cells["المجموع"].Value = work + finalGrade;
+            }
+            else if (exr == "دور ثاني")
+            {
+                // إذا تم تعديل المجموع فقط، احسب الأعمال والنهائي تلقائيًا
+                string totalStr = row.Cells["المجموع"].Value?.ToString();
+                if (int.TryParse(totalStr, out int total))
+                {
+                    int finalGrade = (int)Math.Round(total * 0.6);  // 60% امتحان نهائي
+                    int work = total - finalGrade;                 // 40% أعمال السنة
+
+                    row.Cells["الامتحان النهائي"].Value = finalGrade;
+                    row.Cells["أعمال السنة"].Value = work;
+                }
             }
 
-            int work = 0, finalGrade = 0;
-            if (!workEmpty && int.TryParse(workStr, out int wg)) work = wg;
-            if (!finalEmpty && int.TryParse(finalStr, out int fg)) finalGrade = fg;
-
-            int total = work + finalGrade;
-            row.Cells["المجموع"].Value = total;
-
-            // حذف حساب الحالة من DataGridView
+            // اترك عمود الحالة فارغ
             row.Cells["الحالة"].Value = "";
+
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)

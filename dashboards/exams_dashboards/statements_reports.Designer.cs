@@ -57,13 +57,13 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.label7 = new System.Windows.Forms.Label();
             this.comboBox_Year = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.button3 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.txtUniversityNumber3 = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownYear)).BeginInit();
@@ -441,6 +441,19 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "كشف درجات الطالب";
             // 
+            // checkBox1
+            // 
+            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox1.Location = new System.Drawing.Point(186, 49);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(49, 23);
+            this.checkBox1.TabIndex = 30;
+            this.checkBox1.Text = "الكل";
+            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // dataGridView1
             // 
             this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -518,19 +531,6 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.label5.Size = new System.Drawing.Size(117, 26);
             this.label5.TabIndex = 29;
             this.label5.Text = "تقارير النتائج";
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox1.Location = new System.Drawing.Point(174, 49);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(61, 23);
-            this.checkBox1.TabIndex = 30;
-            this.checkBox1.Text = "اعتماد";
-            this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // statements_reports
             // 
