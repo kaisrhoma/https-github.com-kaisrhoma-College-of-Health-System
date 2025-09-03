@@ -69,12 +69,13 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         private void button3_Click(object sender, EventArgs e)
         {
             string deptName = txtDeptName.Text.Trim();
+            string deptCode = textBox1.Text.Trim();
             int headId = Convert.ToInt32(comboBoxHead.SelectedValue);
 
             if (string.IsNullOrEmpty(deptName))
             {
                 lblMessage.Text = "الرجاء إدخال اسم القسم";
-                lblMessage.ForeColor = System.Drawing.Color.Red;
+                lblMessage.ForeColor = Color.Red;
                 return;
             }
 
@@ -83,33 +84,37 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 con.Open();
 
                 // التحقق إذا القسم موجود مسبقًا
-                SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Departments WHERE dep_name = @name", con);
-                checkCmd.Parameters.AddWithValue("@name", deptName);
-
-                int count = (int)checkCmd.ExecuteScalar();
-
-                if (count > 0)
+                using (SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Departments WHERE dep_name = @name", con))
                 {
-                    lblMessage.Text = "القسم موجود مسبقًا!";
-                    lblMessage.ForeColor = System.Drawing.Color.Red;
+                    checkCmd.Parameters.AddWithValue("@name", deptName);
+                    int count = (int)checkCmd.ExecuteScalar();
+
+                    if (count > 0)
+                    {
+                        lblMessage.Text = "القسم موجود مسبقًا!";
+                        lblMessage.ForeColor = Color.Red;
+                        return;
+                    }
                 }
-                else
+
+                // الحفظ
+                using (SqlCommand insertCmd = new SqlCommand(
+                    "INSERT INTO Departments (dep_name, head_id, department_code) VALUES (@name, @head, @d)", con))
                 {
-                    // الحفظ
-                    SqlCommand insertCmd = new SqlCommand("INSERT INTO Departments (dep_name, head_id) VALUES (@name, @head)", con);
                     insertCmd.Parameters.AddWithValue("@name", deptName);
                     insertCmd.Parameters.AddWithValue("@head", headId);
+                    insertCmd.Parameters.AddWithValue("@d", deptCode);
 
                     insertCmd.ExecuteNonQuery();
-
-                    lblMessage.Text = "تم الحفظ بنجاح";
-                    lblMessage.ForeColor = System.Drawing.Color.Green;
                 }
+
+                lblMessage.Text = "تم الحفظ بنجاح";
+                lblMessage.ForeColor = Color.Green;
             }
             catch (Exception ex)
             {
                 lblMessage.Text = "خطأ: " + ex.Message;
-                lblMessage.ForeColor = System.Drawing.Color.Red;
+                lblMessage.ForeColor = Color.Red;
             }
             finally
             {
@@ -1388,12 +1393,19 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     con.Open();
 
                 SqlCommand cmd = new SqlCommand(@"
-            SELECT c.course_id, c.course_name AS [اسم المادة], c.course_code AS [رمز المادة]
-            FROM Courses c
-            WHERE c.year_number = @year
-            AND NOT EXISTS (
-                SELECT 1 FROM Course_Department cd WHERE cd.course_id = c.course_id
-            )", con);
+           SELECT c.course_id, c.course_name AS [اسم المادة], c.course_code AS [رمز المادة]
+   FROM Courses c
+   WHERE c.year_number = @year
+   AND (
+       c.type = N'مشتركة'
+       OR (
+           c.type = N'غير مشتركة'
+           AND NOT EXISTS (
+               SELECT 1 FROM Course_Department cd WHERE cd.course_id = c.course_id
+           )
+       )
+   )
+", con);
                 cmd.Parameters.AddWithValue("@year", comboBoxYear4.SelectedItem);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -1445,7 +1457,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 int deptId = Convert.ToInt32(comboBoxDepartment.SelectedValue);
 
                 SqlCommand cmd = new SqlCommand(@"
-            SELECT c.course_id, c.course_name AS [اسم المادة], c.course_code AS [رمز المادة]
+            SELECT c.course_id, c.course_name AS [اسم المادة],cd.course_dep_code AS [رمز المادة]
             FROM Courses c
             INNER JOIN Course_Department cd ON cd.course_id = c.course_id
             WHERE cd.department_id = @deptId", con);
@@ -2497,10 +2509,15 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                 int instructorId = Convert.ToInt32(comboBox4.SelectedValue);
 
                 SqlCommand cmd = new SqlCommand(@"
-            SELECT c.course_id, c.course_name AS [اسم المادة], c.course_code AS [رمز المادة]
-            FROM Courses c
-            INNER JOIN Course_Instructor ci ON ci.course_id = c.course_id
-            WHERE ci.instructor_id = @id", con);
+            SELECT 
+    c.course_id, 
+    c.course_name AS [اسم المادة], 
+    cd.course_dep_code AS [رمزالمادة]
+FROM Courses c
+INNER JOIN Course_Department cd ON cd.course_id = c.course_id
+INNER JOIN Course_Instructor ci ON ci.course_id = c.course_id
+WHERE ci.instructor_id = @id
+", con);
                 cmd.Parameters.AddWithValue("@id", instructorId);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -2581,9 +2598,14 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                     con.Open();
 
                 SqlCommand cmd = new SqlCommand(@"
-            SELECT c.course_id, c.course_name AS [اسم المادة], c.course_code AS [رمز المادة]
-            FROM Courses c
-            WHERE c.year_number = @year", con);
+          SELECT 
+    c.course_id, 
+    c.course_name AS [اسم المادة], 
+    cd.course_dep_code AS [رمزالمادة]
+FROM Courses c
+LEFT JOIN Course_Department cd ON cd.course_id = c.course_id
+WHERE c.year_number = @year
+", con);
                 cmd.Parameters.AddWithValue("@year", comboBox5.SelectedItem);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);

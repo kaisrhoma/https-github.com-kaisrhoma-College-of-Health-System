@@ -83,5 +83,22 @@ namespace college_of_health_sciences.system_forms
             trdp.Dock = DockStyle.Fill;
             panel4.Controls.Add(trdp);
         }
+
+        private void exams_form_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                var gm = panel4.Controls.OfType<grads_management>().FirstOrDefault();
+                if (gm != null)
+                {
+                    gm.ResetMonthApproval();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ عند إعادة حالة الشهر: " + ex.Message,
+                                "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

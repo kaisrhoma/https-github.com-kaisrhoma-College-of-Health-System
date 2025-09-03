@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 
@@ -70,7 +71,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             comboBox2.Items.Add("دور أول");
             comboBox2.Items.Add("دور ثاني");
             comboBox2.SelectedIndex = 0;
-       
+            LoadMonthApprovalStatus();
         }
 
         private void LoadDepartments()
@@ -738,6 +739,60 @@ WHERE 1=1
             }
 
         }
+        // ✅ تعديل دالة CheckMissingGrades بحيث تأخذ transaction
+        private bool CheckMissingGrades(SqlConnection conn, SqlTransaction transaction, int academicYear)
+        {
+            string query = @"
+SELECT 
+ COUNT(CASE WHEN g.total_grade IS NULL THEN 1 END) AS [عدد المواد الناقصة],
+  s.current_year AS [السنة الدراسية],
+    s.university_number AS [رقم القيد],
+    s.full_name AS [اسم الطالب]
+FROM Students s
+INNER JOIN Registrations r ON s.student_id = r.student_id
+LEFT JOIN Grades g ON g.student_id = r.student_id AND g.course_id = r.course_id
+WHERE r.academic_year_start = @academicYear
+  AND r.status = N'مسجل'
+GROUP BY s.university_number, s.full_name, s.current_year
+HAVING COUNT(CASE WHEN g.total_grade IS NULL THEN 1 END) > 0
+ORDER BY s.current_year, s.university_number";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+            {
+                cmd.Parameters.AddWithValue("@academicYear", academicYear);
+
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        // 🛑 عرض النتائج في نافذة خاصة
+                        Form form = new Form();
+                        form.Text = "الطلاب الذين يحتاجون إدخال درجات";
+                        form.Size = new Size(700, 400);
+
+                        DataGridView dgv = new DataGridView
+                        {
+                            DataSource = dt,
+                            Dock = DockStyle.Fill,
+                            ReadOnly = true,
+                            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                        };
+
+                        form.Controls.Add(dgv);
+                        form.ShowDialog();
+
+                        return true; // ❌ يوجد درجات ناقصة
+                    }
+                }
+            }
+
+            return false; // ✅ لا يوجد درجات ناقصة
+        }
+
+
         private void button9_Click(object sender, EventArgs e)
         {
             if (comboExamRound.SelectedItem == null)
@@ -761,13 +816,22 @@ WHERE 1=1
                     {
                         try
                         {
-                            // جلب آخر سنة أكاديمية من القاعدة
+                            // 🔹 جلب آخر سنة أكاديمية
                             int currentAcademicYear;
-                            using (SqlCommand cmdYear = new SqlCommand("SELECT MAX(academic_year_start) FROM Registrations", conn, transaction))
+                            using (SqlCommand cmdYear = new SqlCommand(
+                                "SELECT MAX(academic_year_start) FROM Registrations", conn, transaction))
                             {
                                 currentAcademicYear = Convert.ToInt32(cmdYear.ExecuteScalar());
                             }
 
+                            // 🔹 التحقق من الدرجات الناقصة
+                            if (CheckMissingGrades(conn, transaction, currentAcademicYear))
+                            {
+                                transaction.Rollback();
+                                return; // ❌ وقف العملية إذا فيه درجات ناقصة
+                            }
+
+                            // 🔹 تحديث الطلاب حسب الدور
                             if (selectedRound == "دور أول")
                             {
                                 string query = @"
@@ -792,7 +856,6 @@ INNER JOIN (
     GROUP BY s.student_id
 ) AS fc ON s.student_id = fc.student_id;
 ";
-
                                 using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
                                 {
                                     cmd.Parameters.AddWithValue("@academicYearStart", currentAcademicYear);
@@ -834,12 +897,13 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;";
                                 }
                             }
 
-                            transaction.Commit(); // ✅ نجاح كل العمليات
-                            MessageBox.Show("تم تحديث حالة الطلاب بنجاح.");
+                            // 🔹 حفظ التغييرات
+                            transaction.Commit();
+                            MessageBox.Show("✅ تم تحديث حالة الطلاب بنجاح.");
                         }
                         catch (Exception exInner)
                         {
-                            transaction.Rollback(); // ❌ التراجع عند الخطأ
+                            transaction.Rollback();
                             MessageBox.Show("حدث خطأ، تم التراجع عن جميع العمليات:\n" + exInner.Message);
                         }
                     }
@@ -849,6 +913,121 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;";
             {
                 MessageBox.Show("حدث خطأ أثناء الاتصال:\n" + exOuter.Message);
             }
+            //            if (comboExamRound.SelectedItem == null)
+            //            {
+            //                MessageBox.Show("الرجاء اختيار الدور قبل التحديث.");
+            //                return;
+            //            }
+
+            //            string selectedRound = comboExamRound.SelectedItem.ToString();
+
+            //            if (MessageBox.Show("هل أنت متأكد ؟", "تأكيد",
+            //                                  MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            //                return;
+
+            //            try
+            //            {
+            //                using (SqlConnection conn = new SqlConnection(connectionString))
+            //                {
+            //                    conn.Open();
+            //                    using (SqlTransaction transaction = conn.BeginTransaction())
+            //                    {
+            //                        try
+            //                        {
+            //                            // جلب آخر سنة أكاديمية من القاعدة
+            //                            int currentAcademicYear;
+            //                            using (SqlCommand cmdYear = new SqlCommand("SELECT MAX(academic_year_start) FROM Registrations", conn, transaction))
+            //                            {
+            //                                currentAcademicYear = Convert.ToInt32(cmdYear.ExecuteScalar());
+            //                            }
+
+            //                            // 2️⃣ التحقق من الدرجات الناقصة
+            //                            if (CheckMissingGrades(conn, currentAcademicYear))
+            //                            {
+            //                                return; // ❌ وقف العملية إذا فيه درجات ناقصة
+            //                            }
+
+            //                            if (selectedRound == "دور أول")
+            //                            {
+            //                                string query = @"
+            //UPDATE s
+            //SET exam_round = CASE 
+            //    WHEN fc.fail_count = 0 THEN N'مكتمل'
+            //    WHEN fc.fail_count >= 1 THEN N'دور ثاني'
+            //    ELSE s.exam_round
+            //END
+            //FROM Students s
+            //INNER JOIN (
+            //    SELECT 
+            //        s.student_id,
+            //        COUNT(CASE WHEN g.total_grade < 60 THEN 1 END) AS fail_count
+            //    FROM Students s
+            //    INNER JOIN Registrations r ON s.student_id = r.student_id
+            //    INNER JOIN Courses c ON r.course_id = c.course_id
+            //    LEFT JOIN Grades g ON g.student_id = s.student_id AND g.course_id = r.course_id
+            //    WHERE r.status = N'مسجل'
+            //      AND r.academic_year_start = @academicYearStart
+            //      AND s.exam_round = N'دور أول'
+            //    GROUP BY s.student_id
+            //) AS fc ON s.student_id = fc.student_id;
+            //";
+
+            //                                using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+            //                                {
+            //                                    cmd.Parameters.AddWithValue("@academicYearStart", currentAcademicYear);
+            //                                    cmd.ExecuteNonQuery();
+            //                                }
+            //                            }
+            //                            else if (selectedRound == "دور ثاني")
+            //                            {
+            //                                string query = @"
+            //WITH CurrentYearFails AS (
+            //    SELECT 
+            //        s.student_id,
+            //        s.current_year,
+            //        COUNT(CASE WHEN g.total_grade < 60 THEN 1 END) AS current_year_fails
+            //    FROM Students s
+            //    INNER JOIN Registrations r ON s.student_id = r.student_id
+            //    INNER JOIN Courses c ON r.course_id = c.course_id
+            //    LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
+            //    WHERE r.status = N'مسجل'
+            //      AND r.academic_year_start = @academicYearStart
+            //      AND s.exam_round = N'دور ثاني'
+            //    GROUP BY s.student_id, s.current_year
+            //)
+            //UPDATE s
+            //SET exam_round = CASE
+            //    WHEN cf.current_year = 4 AND cf.current_year_fails >= 1 THEN N'إعادة سنة'
+            //    WHEN cf.current_year_fails = 0 THEN N'مكتمل'
+            //    WHEN cf.current_year_fails BETWEEN 1 AND 2 THEN N'مرحل'
+            //    WHEN cf.current_year_fails >= 3 THEN N'إعادة سنة'
+            //    ELSE s.exam_round
+            //END
+            //FROM Students s
+            //INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;";
+
+            //                                using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+            //                                {
+            //                                    cmd.Parameters.AddWithValue("@academicYearStart", currentAcademicYear);
+            //                                    cmd.ExecuteNonQuery();
+            //                                }
+            //                            }
+
+            //                            transaction.Commit(); // ✅ نجاح كل العمليات
+            //                            MessageBox.Show("تم تحديث حالة الطلاب بنجاح.");
+            //                        }
+            //                        catch (Exception exInner)
+            //                        {
+            //                            transaction.Rollback(); // ❌ التراجع عند الخطأ
+            //                            MessageBox.Show("حدث خطأ، تم التراجع عن جميع العمليات:\n" + exInner.Message);
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //            catch (Exception exOuter)
+            //            {
+            //                MessageBox.Show("حدث خطأ أثناء الاتصال:\n" + exOuter.Message);
+            //            }
         }
 
 
@@ -1077,6 +1256,118 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;";
                 LoadStudents(courseId, examRound);
             }
         }
+        public bool ShowStudentsMissingGradesOrStatusForm(SqlConnection conn)
+        {
+            string query = @"
+SELECT 
+    s.university_number AS [رقم القيد],
+    s.full_name AS [اسم الطالب],
+    s.current_year AS [السنة الدراسية],
+    COUNT(*) AS [عدد المواد الناقصة]
+FROM Students s
+INNER JOIN Registrations r ON s.student_id = r.student_id
+INNER JOIN Grades g ON g.student_id = s.student_id AND g.course_id = r.course_id
+WHERE r.academic_year_start = (SELECT MAX(academic_year_start) FROM Registrations)
+  AND r.status = N'مسجل'
+  AND (g.total_grade IS NULL OR g.success_status IS NULL)
+GROUP BY s.university_number, s.full_name, s.current_year
+ORDER BY s.current_year, s.university_number;
+";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        // 🛑 عرض النتائج في فورم منفصلة
+                        Form form = new Form();
+                        form.Text = "الطلاب الذين لم يتم إدخال درجاتهم أو حالة النجاح لهم";
+                        form.Size = new Size(700, 400);
+
+                        DataGridView dgv = new DataGridView
+                        {
+                            DataSource = dt,
+                            Dock = DockStyle.Fill,
+                            ReadOnly = true,
+                            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+                        };
+
+                        form.Controls.Add(dgv);
+                        form.ShowDialog();
+
+                        return true; // يوجد طلاب ناقصين
+                    }
+                }
+            }
+
+            return false; // لا يوجد طلاب ناقصين
+        }
+
+
+        private bool isProgrammaticChange1 = false;
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isProgrammaticChange1)
+                return; // تجاهل التغيير البرمجي
+
+            bool isApproved = checkBox1.Checked;
+
+            if (MessageBox.Show("هل أنت متأكد ؟", "تأكيد",
+                                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            {
+                isProgrammaticChange1 = true;
+                checkBox1.Checked = !isApproved; // استرجاع القيمة القديمة بدون إعادة تفعيل الحدث
+                isProgrammaticChange1 = false;
+                return;
+            }
+
+            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            {
+                conn.Open();
+
+                if (isApproved && ShowStudentsMissingGradesOrStatusForm(conn))
+                {
+                    // ❌ يوجد طلاب ناقصين → إيقاف التحديث
+                    isProgrammaticChange1 = true;
+                    checkBox1.Checked = false; // اجعلها غير محددة برمجيًا
+                    isProgrammaticChange1 = false;
+                    return;
+                }
+
+                using (SqlCommand cmd = new SqlCommand("UPDATE Months SET is_approved = @isApproved WHERE month_id = 1", conn))
+                {
+                    cmd.Parameters.AddWithValue("@isApproved", isApproved);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void LoadMonthApprovalStatus()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand("SELECT is_approved FROM Months WHERE month_id = 1", conn))
+                {
+                    var res = cmd.ExecuteScalar();
+                    if (res != null && res != DBNull.Value)
+                    {
+                        checkBox2.Checked = Convert.ToBoolean(res);
+                    }
+                    else
+                    {
+                        checkBox2.Checked = false; // افتراضيًا غير معتمد
+                    }
+                }
+            }
+        }
+
+
         //-------------------------------------------------------------------------------------------------2
 
 
@@ -1824,6 +2115,42 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
 
 
         //--------------------4----------------------------------------------------------------------------------------------------------------------
+        private bool ShowMissingGradesForStudent(SqlConnection conn, SqlTransaction transaction, int studentId, int academicYearStart)
+        {
+            string query = @"
+SELECT c.course_name
+FROM Registrations r
+INNER JOIN Courses c ON r.course_id = c.course_id
+INNER JOIN Grades g ON g.student_id = r.student_id AND g.course_id = r.course_id
+WHERE r.academic_year_start = @academicYearStart
+  AND r.student_id = @studentId
+  AND r.status = N'مسجل'
+  AND (g.total_grade IS NULL OR g.success_status IS NULL);
+";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+            {
+                cmd.Parameters.AddWithValue("@academicYearStart", academicYearStart);
+                cmd.Parameters.AddWithValue("@studentId", studentId);
+
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        string courses = string.Join("\n", dt.AsEnumerable().Select(row => row.Field<string>("course_name")));
+                        MessageBox.Show($"⚠ الطالب لديه مواد ناقصة:\n{courses}", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
         private void button6_Click_1(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBox1.Text))
@@ -1851,6 +2178,9 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
+                    // التحقق من المواد الناقصة قبل أي تحديث
+                 
+
                     using (SqlTransaction transaction = conn.BeginTransaction())
                     {
                         try
@@ -1869,6 +2199,13 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
                                 }
                                 studentId = Convert.ToInt32(res);
                             }
+                            // التحقق من المواد الناقصة داخل نفس الـ transaction
+                            if (ShowMissingGradesForStudent(conn, transaction, studentId, academicYearStart))
+                            {
+                                transaction.Rollback();
+                                return;
+                            }
+
 
                             if (selectedRound == "دور أول")
                             {
@@ -2412,30 +2749,7 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            //var row = dataGridView1.Rows[e.RowIndex];
-            //if (row.IsNewRow) return;
-
-            //string workStr = row.Cells["أعمال السنة"].Value?.ToString();
-            //string finalStr = row.Cells["الامتحان النهائي"].Value?.ToString();
-
-            //bool workEmpty = string.IsNullOrEmpty(workStr);
-            //bool finalEmpty = string.IsNullOrEmpty(finalStr);
-
-            //if (workEmpty && finalEmpty)
-            //{
-            //    row.Cells["المجموع"].Value = DBNull.Value;
-            //    return;
-            //}
-
-            //int work = 0, finalGrade = 0;
-            //if (!workEmpty && int.TryParse(workStr, out int wg)) work = wg;
-            //if (!finalEmpty && int.TryParse(finalStr, out int fg)) finalGrade = fg;
-
-            //int total = work + finalGrade;
-            //row.Cells["المجموع"].Value = total;
-
-            //// حذف حساب الحالة من DataGridView
-            //row.Cells["الحالة"].Value = "";
+         
             var row = dataGridView1.Rows[e.RowIndex];
             if (row.IsNewRow) return;
 
@@ -2481,16 +2795,102 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
 
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            bool isApproved = checkBox1.Checked; // true لو معتمد، false لو مش معتمد
+        private bool isProgrammaticChange = false;
 
-            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isProgrammaticChange)
+                return; // تجاهل التغيير البرمجي
+
+            if (string.IsNullOrEmpty(textBox1.Text))
+            {
+                isProgrammaticChange = true;
+                checkBox2.Checked = false;
+                isProgrammaticChange = false;
+
+                MessageBox.Show("الرجاء إدخال رقم القيد للطالب.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int academicYearStart = Convert.ToInt32(numericUpDownYear1.Value);
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
+
+                int studentId;
+                using (SqlCommand cmdStudent = new SqlCommand("SELECT student_id FROM Students WHERE university_number=@uniNumber", conn))
+                {
+                    cmdStudent.Parameters.AddWithValue("@uniNumber", textBox1.Text.Trim());
+                    var res = cmdStudent.ExecuteScalar();
+                    if (res == null)
+                    {
+                        isProgrammaticChange = true;
+                        checkBox2.Checked = false;
+                        isProgrammaticChange = false;
+
+                        MessageBox.Show("⚠ رقم القيد غير موجود.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                    studentId = Convert.ToInt32(res);
+                }
+
+                if (!CanApproveMonthForStudent(conn, studentId, academicYearStart))
+                {
+                    isProgrammaticChange = true;
+                    checkBox2.Checked = false;
+                    isProgrammaticChange = false;
+                    return;
+                }
+
                 using (SqlCommand cmd = new SqlCommand("UPDATE Months SET is_approved = @isApproved WHERE month_id = 1", conn))
                 {
-                    cmd.Parameters.AddWithValue("@isApproved", isApproved);
+                    cmd.Parameters.AddWithValue("@isApproved", checkBox2.Checked);
+                    cmd.ExecuteNonQuery();
+                }
+
+                if (checkBox2.Checked)
+                    MessageBox.Show("تم اعتماد بنجاح.", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else
+                    MessageBox.Show("تم إلغاء الاعتماد بنجاح.", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private bool CanApproveMonthForStudent(SqlConnection conn, int studentId, int academicYearStart)
+        {
+            string query = @"
+SELECT COUNT(*) 
+FROM Registrations r
+LEFT JOIN Grades g ON g.student_id = r.student_id AND g.course_id = r.course_id
+WHERE r.student_id = @studentId
+  AND r.academic_year_start = @academicYearStart
+  AND r.status = N'مسجل'
+  AND (g.total_grade IS NULL OR g.success_status IS NULL);
+";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@studentId", studentId);
+                cmd.Parameters.AddWithValue("@academicYearStart", academicYearStart);
+
+                int missingCount = Convert.ToInt32(cmd.ExecuteScalar());
+                if (missingCount > 0)
+                {
+                    MessageBox.Show("⚠ لا يمكن اعتماد الشهر، هناك درجات ناقصة أو حالة غير مكتملة لهذا الطالب.",
+                                    "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false; // لا يمكن الاعتماد
+                }
+            }
+
+            return true; // يمكن الاعتماد
+        }
+        public void ResetMonthApproval()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand("UPDATE Months SET is_approved=0 WHERE month_id=1", conn))
+                {
                     cmd.ExecuteNonQuery();
                 }
             }
