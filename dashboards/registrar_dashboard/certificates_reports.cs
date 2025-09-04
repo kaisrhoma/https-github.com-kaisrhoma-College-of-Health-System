@@ -259,10 +259,30 @@ ORDER BY c.year_number, c.course_name;
 
         }
 
-        private bool isload = false;
         private void certificates_reports_Load(object sender, EventArgs e)
         {
-            //isload = true;
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    int month3;
+
+                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
+                    {
+                        month3 = Convert.ToInt32(cmddate.ExecuteScalar());
+                    }
+
+                    int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+                    numericUpDown1.Value = academicYearStart;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("There is an Error : " + ex.Message);
+            }
+
+
             comboBox1.SelectedIndexChanged -= comboBox1_SelectedIndexChanged;
             comboBox2.SelectedIndexChanged -= comboBox2_SelectedIndexChanged;
 
@@ -371,6 +391,21 @@ ORDER BY c.year_number, c.course_name;
             // printDocument3.Print();
         }
 
+        private int GetStatusId(SqlConnection con, string statusDescription)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT status_id FROM Status WHERE description = @desc", con);
+            cmd.Parameters.AddWithValue("@desc", statusDescription);
+            return Convert.ToInt32(cmd.ExecuteScalar());
+        }
+
+        private int GetMaxAcademicYear(SqlConnection con)
+        {
+            using (SqlCommand cmd = new SqlCommand("SELECT ISNULL(MAX(academic_year_start), 1) FROM Registrations ", con))
+            {
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
+
         private void button6_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(textBox1.Text))
@@ -385,16 +420,7 @@ ORDER BY c.year_number, c.course_name;
                 using (SqlConnection con = db.OpenConnection())
                 {
 
-                    int month;   // تم تعريف المتغير هنا
-
-                    using (SqlCommand checkCmd = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
-                    {
-                        month = Convert.ToInt32(checkCmd.ExecuteScalar());
-                    }
-
-                    int ac_year = DateTime.Now.Month >= month ? DateTime.Now.Year : DateTime.Now.Year - 1;
-                    ac_year = checkBox2.Checked ? (ac_year - 1) : ac_year;
-
+                    int ac_year = GetMaxAcademicYear(con);
                     string q = @"
                                SELECT
                                    s.full_name AS الإسم,
@@ -403,7 +429,7 @@ ORDER BY c.year_number, c.course_name;
                                    s.current_year AS السنة,
                                    d.dep_name AS القسم,
                                    
-                                   c.course_id AS رقم_المادة,
+                                   cd.course_dep_code AS رمز_المادة,
                                    c.course_name AS اسم_المادة,
                                    c.units AS الوحدات,
 
@@ -428,21 +454,26 @@ ORDER BY c.year_number, c.course_name;
                                JOIN Departments d ON s.department_id = d.department_id
                                JOIN Registrations r ON s.student_id = r.student_id
                                JOIN Courses c ON r.course_id = c.course_id
+                               JOIN Course_Department cd ON c.course_id = cd.course_id
                                JOIN Course_Classroom cc ON r.course_classroom_id = cc.id
                                JOIN Classrooms cl ON cc.classroom_id = cl.classroom_id
                                JOIN Course_Instructor ci ON c.course_id = ci.course_id
                                JOIN Instructors i ON ci.instructor_id = i.instructor_id
                                
                                WHERE s.university_number = @university_number 
-                               AND s.status_id = '1'
+                               AND s.status_id = @stid
                                AND r.academic_year_start = @academic_year_start
+                               AND r.status = N'مسجل'
+                               AND cd.department_id = s.department_id
                                ";
 
 
                     using (SqlCommand cmd = new SqlCommand(q, con))
                     {
+                        int stid = GetStatusId(con,"مستمر");
                         cmd.Parameters.AddWithValue("@university_number", textBox1.Text.Trim());
                         cmd.Parameters.AddWithValue("@academic_year_start", ac_year);
+                        cmd.Parameters.AddWithValue("@stid", stid);
                         SqlDataAdapter da = new SqlDataAdapter(cmd);
                         DataTable dt = new DataTable();
                         da.Fill(dt);
@@ -464,7 +495,7 @@ ORDER BY c.year_number, c.course_name;
 
 
                         dataGridView1.Columns["اسم_المادة"].ReadOnly = true;
-                        dataGridView1.Columns["رقم_المادة"].ReadOnly = true;
+                        dataGridView1.Columns["رمز_المادة"].ReadOnly = true;
                         dataGridView1.Columns["الوحدات"].ReadOnly = true;
                         dataGridView1.Columns["المجموعة"].ReadOnly = true;
                         dataGridView1.Columns["القاعة"].ReadOnly = true;
@@ -527,7 +558,8 @@ ORDER BY c.year_number, c.course_name;
             int colmnw = pagew / 5;
             int colmnh = 30;
             string[] colheaders = { "العام الجامعي", "القسم", "السنة", "الإسم", "الرقم_الجامعي" };
-            string[] colvalues = { cuyear, stdep, styear, studentName, stno };
+            string newYe = (Convert.ToInt32(cuyear) + 1).ToString();
+            string[] colvalues = { newYe + "/" + cuyear, stdep, styear, studentName, stno };
 
 
             for (int i = 0; i < 5; i++)
@@ -546,7 +578,7 @@ ORDER BY c.year_number, c.course_name;
 
             int dheaderw = pagew / 6;
             int dheaderh = 30;
-            string[] cheaders = { "قاعة", "يوم", "م", "وحدة", "المادة", "رقم المادة" };
+            string[] cheaders = { "قاعة", "يوم", "م", "وحدة", "المادة", "رمز المادة" };
             for (int i = 0; i < cheaders.Length; i++)
             {
                 Rectangle recth = new Rectangle(x + i * dheaderw, y, dheaderw, dheaderh);
@@ -555,7 +587,7 @@ ORDER BY c.year_number, c.course_name;
                 e.Graphics.DrawString(cheaders[i], textfont, brush, recth, format);
             }
 
-            string[] davalues = { "القاعة", "يوم", "المجموعة", "الوحدات", "اسم_المادة", "رقم_المادة" };
+            string[] davalues = { "القاعة", "يوم", "المجموعة", "الوحدات", "اسم_المادة", "رمز_المادة" };
             y += colmnh;
             StringFormat newformat = new StringFormat();
             newformat.Alignment = StringAlignment.Center;
@@ -589,27 +621,6 @@ ORDER BY c.year_number, c.course_name;
                 y += dheaderh + 30;
             }
 
-        }
-
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton2.Checked)
-            {
-                panel2.Visible = false;
-
-                panel3.Visible = true;
-                dataGridView5.DataSource = null;
-            }
-        }
-
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButton1.Checked)
-            {
-                panel2.Visible = true;
-                panel3.Visible = false;
-                dataGridView5.DataSource = null;
-            }
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -703,7 +714,7 @@ ORDER BY c.year_number, c.course_name;
                 using (SqlConnection con = db.OpenConnection())
                 {
                     string q = "SELECT " +
-                        "c.course_id AS رمز_المادة" +
+                        "cd.course_dep_code AS رمز_المادة" +
                         " , c.course_name AS اسم_المادة" +
                         " FROM Courses c " +
                         "JOIN Course_Department cd ON cd.course_id = c.course_id " +
@@ -849,12 +860,183 @@ ORDER BY c.year_number, c.course_name;
 
         private void button7_Click(object sender, EventArgs e)
         {
-            if (radioButton1.Checked)
                 downloadForOneStudents();
-            else
-                downloadForMultiStudents();
 
         }
+
+        // دالة تجيب أول دكتور مرتبط بالمادة
+        private int GetFirstInstructorForCourse(SqlConnection con, int courseId)
+        {
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT TOP 1 instructor_id 
+        FROM Course_Instructor 
+        WHERE course_id = @courseId 
+        ORDER BY instructor_id", con))
+            {
+                cmd.Parameters.AddWithValue("@courseId", courseId);
+                object result = cmd.ExecuteScalar();
+                if (result != null)
+                    return Convert.ToInt32(result);
+                else
+                    throw new Exception($"لا يوجد دكتور مرتبط بالمادة {courseId}");
+            }
+        }
+
+        // دالة تجيب أول قاعة موجودة
+        private int GetFirstClassroom(SqlConnection con)
+        {
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT TOP 1 classroom_id 
+        FROM Classrooms 
+        ORDER BY classroom_id", con))
+            {
+                object result = cmd.ExecuteScalar();
+                if (result != null)
+                    return Convert.ToInt32(result);
+                else
+                    throw new Exception("لا توجد قاعات متاحة في جدول Classrooms");
+            }
+        }
+
+
+        private int GetOrCreateGroup(SqlConnection con, int courseId, int? academicYearStart, int departmentid)
+        {
+            int groupId = 0;
+
+            // ✅ جلب كل المجموعات المرتبطة بالمادة
+            SqlCommand getGroupsCmd = new SqlCommand(@"
+        SELECT cc.id, cc.capacity, cc.group_number
+        FROM Course_Classroom cc
+        WHERE cc.course_id = @courseId AND cc.department_id = @departmentid
+        ORDER BY cc.group_number;", con);
+            getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+            getGroupsCmd.Parameters.AddWithValue("@departmentid", departmentid);
+
+            DataTable groups = new DataTable();
+            new SqlDataAdapter(getGroupsCmd).Fill(groups);
+
+            foreach (DataRow group in groups.Rows)
+            {
+                int isgroupId = Convert.ToInt32(group["id"]);
+                int capacity = Convert.ToInt32(group["capacity"]);
+
+                SqlCommand countCmd = new SqlCommand(@"
+            SELECT COUNT(*) 
+            FROM Registrations 
+            WHERE course_classroom_id = @groupId 
+              AND academic_year_start = @academicYearStart", con);
+
+                countCmd.Parameters.AddWithValue("@groupId", isgroupId);
+                countCmd.Parameters.AddWithValue("@academicYearStart",
+                    academicYearStart.HasValue ? (object)academicYearStart.Value : DBNull.Value);
+
+                int currentCount = (int)countCmd.ExecuteScalar();
+
+                if (currentCount < capacity)
+                {
+                    groupId = isgroupId;
+                    break;
+                }
+            }
+
+            if (groupId == 0)
+            {
+                // جلب أول دكتور مرتبط بالمادة
+                int instructorId = GetFirstInstructorForCourse(con, courseId);
+
+                // جلب أول قاعة متاحة
+                int classroomId = GetFirstClassroom(con);
+
+                // إنشاء مجموعة جديدة برقم أكبر من آخر مجموعة
+                int nextGroupNumber = 1;
+                if (groups.Rows.Count > 0)
+                    nextGroupNumber = Convert.ToInt32(groups.Rows[groups.Rows.Count - 1]["group_number"]) + 1;
+
+                using (SqlCommand cmd = new SqlCommand(@"
+            INSERT INTO Course_Classroom
+            (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day, instructor_id, department_id)
+            OUTPUT INSERTED.id 
+            VALUES (@courseId, @classroomId, @groupNumber, 80, '09:00:00', '12:00:00',6, @instructorId, @departmentid)", con))
+                {
+                    cmd.Parameters.AddWithValue("@courseId", courseId);
+                    cmd.Parameters.AddWithValue("@classroomId", classroomId);
+                    cmd.Parameters.AddWithValue("@groupNumber", nextGroupNumber);
+                    cmd.Parameters.AddWithValue("@instructorId", instructorId);
+                    cmd.Parameters.AddWithValue("@departmentid", departmentid);
+
+                    groupId = (int)cmd.ExecuteScalar();
+                }
+            }
+
+            return groupId;
+        }
+
+        private void DownloadCoursesForStudent(SqlConnection con, int studentId, int newYear, int deptId, int academicYear)
+        {
+            int count = 0;
+
+            // جلب المواد للسنة والقسم
+            DataTable courses = new DataTable();
+            int rowC = 0;
+            using (SqlCommand cmd = new SqlCommand(@"
+        SELECT c.course_id, c.course_name
+        FROM Courses c
+        JOIN Course_Department cd ON cd.course_id = c.course_id
+        WHERE c.year_number = @year AND cd.department_id = @dept", con))
+            {
+                cmd.Parameters.AddWithValue("@year", newYear);
+                cmd.Parameters.AddWithValue("@dept", deptId);
+                rowC = new SqlDataAdapter(cmd).Fill(courses);
+            }
+
+            foreach (DataRow row in courses.Rows)
+            {
+                int courseId = Convert.ToInt32(row["course_id"]);
+                int groupId = GetOrCreateGroup(con, courseId, academicYear, deptId);
+
+                using (SqlCommand cmd = new SqlCommand(@"
+            IF NOT EXISTS (
+                SELECT 1 FROM Registrations 
+                WHERE student_id=@studentId AND course_id=@courseId
+            )
+            INSERT INTO Registrations 
+                (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
+            VALUES 
+                (@studentId, @courseId, @year, N'مسجل', @groupId, @academicYear)", con))
+                {
+                    cmd.Parameters.AddWithValue("@studentId", studentId);
+                    cmd.Parameters.AddWithValue("@courseId", courseId);
+                    cmd.Parameters.AddWithValue("@year", newYear);
+                    cmd.Parameters.AddWithValue("@groupId", groupId);
+                    cmd.Parameters.AddWithValue("@academicYear", academicYear);
+
+                    count += cmd.ExecuteNonQuery(); // يزيد فقط لو تم إدخال مادة جديدة
+                }
+            }
+            count *= -1;
+            count = rowC - count;
+            // المقارنة بين عدد المواد الكلي وعدد المواد الجديدة
+            if (rowC == 0)
+            {
+                MessageBox.Show("لا توجد مواد لتنزيلها لهذه السنة/القسم.");
+            }
+            else if (count == 0)
+            {
+                MessageBox.Show("لم يتم تنزيل أي مادة، الطالب مسجل بكل المواد مسبقًا.");
+            }
+            else if (count < rowC)
+            {
+                int alreadyRegistered = rowC - count;
+                MessageBox.Show($"تم تنزيل {count} مادة من أصل {rowC} (الباقي {alreadyRegistered} كان مسجل من قبل).");
+            }
+            else // count == rowC
+            {
+                MessageBox.Show("تم تنزيل جميع المواد بنجاح.");
+            }
+
+
+        }
+
         public void downloadForOneStudents()
         {
 
@@ -900,15 +1082,7 @@ ORDER BY c.year_number, c.course_name;
                         return;
                     }
 
-                    int month2;
-
-                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
-                    {
-                        month2 = Convert.ToInt32(cmddate.ExecuteScalar());
-                    }
-
-                    int academicYearStart = DateTime.Now.Month >= month2 ? DateTime.Now.Year : DateTime.Now.Year - 1;
-                    academicYearStart = checkBox1.Checked ? (academicYearStart - 1) : academicYearStart;
+                    int academicYearStart = (int)numericUpDown1.Value;
                     DialogResult dr = MessageBox.Show(
                     "AcademicYearStart = " + academicYearStart + "\n\nهل تريد الاستمرار في الترقية؟",
                     "تأكيد الترقية",
@@ -920,113 +1094,7 @@ ORDER BY c.year_number, c.course_name;
                         return; // يوقف العملية إذا اخترت لا
                     }
 
-                    // ✅ جلب المواد الخاصة بالسنة والقسم
-                    SqlCommand coursesCmd = new SqlCommand(@"
-                                                        SELECT c.course_id, c.course_name
-                                                        FROM Courses c
-                                                        JOIN Course_Department cd ON cd.course_id = c.course_id
-                                                        WHERE c.year_number = @year AND cd.department_id = @dept", con);
-
-                    coursesCmd.Parameters.AddWithValue("@year", year);
-                    coursesCmd.Parameters.AddWithValue("@dept", dept);
-
-                    SqlDataAdapter adapter = new SqlDataAdapter(coursesCmd);
-                    DataTable courses = new DataTable();
-                    adapter.Fill(courses);
-
-                    List<string> موادممتلئة = new List<string>();
-                    int عددالموادالمسجلة = 0;
-
-
-
-                    foreach (DataRow row in courses.Rows)
-                    {
-                        int courseId = Convert.ToInt32(row["course_id"]);
-                        string courseName = row["course_name"].ToString();
-
-                        // ✅ جلب كل المجموعات المرتبطة بالمادة
-                        SqlCommand getGroupsCmd = new SqlCommand(@"
-                                                                SELECT cc.id,
-                                                                cc.capacity,       
-                                                                cc.group_number
-                                                                FROM Course_Classroom cc
-                                                                WHERE cc.course_id = @courseId
-                                                                ORDER BY cc.group_number;
-                                                                ", con); // أو حسب cc.id إن أردت
-
-                        getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
-
-                        SqlDataAdapter groupAdapter = new SqlDataAdapter(getGroupsCmd);
-                        DataTable groups = new DataTable();
-                        groupAdapter.Fill(groups);
-
-                        bool تمت_الإضافة = false;
-
-                        foreach (DataRow group in groups.Rows)
-                        {
-                            int groupId = Convert.ToInt32(group["id"]);
-                            int capacity = Convert.ToInt32(group["capacity"]);
-
-                            SqlCommand countCmd = new SqlCommand(@"
-                                                              SELECT COUNT(*) 
-                                                              FROM Registrations 
-                                                              WHERE course_classroom_id = @groupId", con);
-                            countCmd.Parameters.AddWithValue("@groupId", groupId);
-
-                            int currentCount = (int)countCmd.ExecuteScalar();
-
-                            if (currentCount < capacity)
-                            {
-                                
-
-                                SqlCommand insertCmd = new SqlCommand(@"
-                                IF NOT EXISTS (
-                                    SELECT 1 FROM Registrations 
-                                    WHERE student_id = @studentId AND course_id = @courseId
-                                )
-                                INSERT INTO Registrations 
-                                (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
-                                VALUES 
-                                (@studentId, @courseId, @year, N'مسجل', @groupId, @academicYearStart)", con);
-
-                                insertCmd.Parameters.AddWithValue("@studentId", studentId);
-                                insertCmd.Parameters.AddWithValue("@courseId", courseId);
-                                insertCmd.Parameters.AddWithValue("@year", year);
-                                insertCmd.Parameters.AddWithValue("@groupId", groupId);
-                                insertCmd.Parameters.AddWithValue("@academicYearStart", academicYearStart);
-
-
-                                int affected = insertCmd.ExecuteNonQuery();
-                                if (affected > 0)
-                                {
-                                    عددالموادالمسجلة++;
-                                    تمت_الإضافة = true;
-                                }
-
-                                break; // سجل الطالب، لا داعي لتجربة بقية المجموعات
-                            }
-                        }
-
-                        if (!تمت_الإضافة)
-                        {
-                            موادممتلئة.Add(courseName);
-                        }
-                    }
-
-                    // ✅ عرض النتيجة النهائية
-                    if (عددالموادالمسجلة == 0)
-                    {
-                        MessageBox.Show("لم يتم تسجيل أي مادة. الطالب قد يكون مسجلاً مسبقًا أو لا توجد مقاعد متاحة.");
-                    }
-                    else if (موادممتلئة.Count > 0)
-                    {
-                        MessageBox.Show("تم تسجيل الطالب، باستثناء المواد التالية التي لم يتوفر بها مقاعد:\n" +
-                                        string.Join("\n", موادممتلئة));
-                    }
-                    else
-                    {
-                        MessageBox.Show("تم تسجيل جميع المواد بنجاح.");
-                    }
+                    DownloadCoursesForStudent(con,studentId,year,dept,academicYearStart);
                 }
             }
             catch (Exception ex)
@@ -1037,207 +1105,7 @@ ORDER BY c.year_number, c.course_name;
 
 
 
-        public void downloadForMultiStudents()
-        {
-            if (dataGridView5 == null || dataGridView5.Rows.Count == 0)
-            {
-                MessageBox.Show("لا يوجد بيانات لتخزينها.");
-                return;
-            }
-
-            try
-            {
-                conn.DatabaseConnection db = new conn.DatabaseConnection();
-                using (SqlConnection con = db.OpenConnection())
-                {
-                    int year = Convert.ToInt32(comboBox1.SelectedValue);
-                    int dept = Convert.ToInt32(comboBox2.SelectedValue);
-
-
-
-                    // ✅ جلب المواد الخاصة بالسنة والقسم
-                    SqlCommand coursesCmd = new SqlCommand(@"
-                                                           SELECT c.course_id, c.course_name
-                                                           FROM Courses c
-                                                           JOIN Course_Department cd ON cd.course_id = c.course_id
-                                                           WHERE c.year_number = @year AND cd.department_id = @dept", con);
-
-                    coursesCmd.Parameters.AddWithValue("@year", year);
-                    coursesCmd.Parameters.AddWithValue("@dept", dept);
-
-                    SqlDataAdapter adapter = new SqlDataAdapter(coursesCmd);
-                    DataTable courses = new DataTable();
-                    adapter.Fill(courses);
-                    Dictionary<string, List<string>> downlodedcourses = new Dictionary<string, List<string>>();
-                    Dictionary<string, List<string>> fullcourses = new Dictionary<string, List<string>>();
-                    int countfullcourses = 0;
-
-                    int month3;
-
-                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
-                    {
-                        month3 = Convert.ToInt32(cmddate.ExecuteScalar());
-                    }
-
-                    int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
-                    academicYearStart = checkBox1.Checked ? (academicYearStart - 1) : academicYearStart;
-                    DialogResult dr = MessageBox.Show(
-                    "AcademicYearStart = " + academicYearStart + "\n\nهل تريد الاستمرار في الترقية؟",
-                    "تأكيد الترقية",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                    if (dr == DialogResult.No)
-                    {
-                        return; // يوقف العملية إذا اخترت لا
-                    }
-
-                    foreach (DataRow row in courses.Rows)
-                    {
-                        int counRegisteredCourses = 0;
-                        int courseId = Convert.ToInt32(row["course_id"]);
-                        string courseName = row["course_name"].ToString();
-
-                        // ✅ جلب كل المجموعات المرتبطة بالمادة
-                        SqlCommand getGroupsCmd = new SqlCommand(@"
-                                                                SELECT cc.id,
-                                                                cc.capacity,       
-                                                                cc.group_number
-                                                                FROM Course_Classroom cc
-                                                                WHERE cc.course_id = @courseId
-                                                                ORDER BY cc.group_number;", con);
-
-                        getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
-
-                        SqlDataAdapter groupAdapter = new SqlDataAdapter(getGroupsCmd);
-                        DataTable groups = new DataTable();
-                        groupAdapter.Fill(groups);
-
-                        bool addcourse = true;
-                        foreach (DataGridViewRow strow in dataGridView5.Rows)
-                        {
-                            if (!addcourse)
-                            {
-                                break;
-                            }
-                            addcourse = false;
-                            if (strow.IsNewRow) continue;
-                            if (strow.Cells["student_id"].Value.ToString() == null) continue;
-                            int studentId = Convert.ToInt32(strow.Cells["student_id"].Value);
-
-                            foreach (DataRow group in groups.Rows)
-                            {
-                                int groupId = Convert.ToInt32(group["id"]);
-                                int capacity = Convert.ToInt32(group["capacity"]);
-
-                                SqlCommand countCmd = new SqlCommand(@"
-                                                              SELECT COUNT(*) 
-                                                              FROM Registrations 
-                                                              WHERE course_classroom_id = @groupId", con);
-                                countCmd.Parameters.AddWithValue("@groupId", groupId);
-
-                                int currentCount = (int)countCmd.ExecuteScalar();
-
-
-
-                                if (currentCount < capacity)
-                                {
-                                    SqlCommand insertCmd = new SqlCommand(@"
-                                    IF NOT EXISTS (
-                                        SELECT 1 FROM Registrations 
-                                        WHERE student_id = @studentId AND course_id = @courseId
-                                    )
-                                    INSERT INTO Registrations 
-                                    (student_id, course_id, year_number, status, course_classroom_id, academic_year_start)
-                                    VALUES 
-                                    (@studentId, @courseId, @year, N'مسجل', @groupId, @academicYearStart)", con);
-
-                                    insertCmd.Parameters.AddWithValue("@studentId", studentId);
-                                    insertCmd.Parameters.AddWithValue("@courseId", courseId);
-                                    insertCmd.Parameters.AddWithValue("@year", year);
-                                    insertCmd.Parameters.AddWithValue("@groupId", groupId);
-                                    insertCmd.Parameters.AddWithValue("@academicYearStart", academicYearStart);
-
-                                    int affected = insertCmd.ExecuteNonQuery();
-                                    if (affected > 0)
-                                    {
-                                        counRegisteredCourses++;
-                                        // أول مرة
-                                        if (!downlodedcourses.ContainsKey(courseName))
-                                            downlodedcourses[courseName] = new List<string>();
-                                        downlodedcourses[courseName].Add(strow.Cells["الإسم"]?.Value.ToString() ?? "");
-
-                                        addcourse = true;
-                                    }
-
-                                    break; // سجل الطالب، لا داعي لتجربة بقية المجموعات
-                                }
-                            }
-                        }
-
-                        if (counRegisteredCourses < dataGridView5.Rows.Count)
-                        {
-                            for (int i = counRegisteredCourses; i < dataGridView5.Rows.Count; i++)
-                            {
-                                if (dataGridView5.Rows[i].IsNewRow) continue;
-                                if (dataGridView5.Rows[i].Cells["الإسم"].Value.ToString() == null) continue;
-                                if (!fullcourses.ContainsKey(courseName))
-                                    fullcourses[courseName] = new List<string>();
-                                fullcourses[courseName].Add(dataGridView5.Rows[i].Cells["الإسم"].Value.ToString());
-                            }
-                            countfullcourses++;
-                        }
-
-                    }
-
-                    // ✅ عرض النتيجة النهائية
-                    if (downlodedcourses.Count == 0)
-                    {
-                        MessageBox.Show("لم يتم تسجيل أي مادة للطلاب. لا توجد مقاعد متاحة.");
-                    }
-                    else if (downlodedcourses.Count > 0 && fullcourses.Count > 0)
-                    {
-                        string result = "";
-
-                        foreach (var prcourse in downlodedcourses)
-                        {
-                            result += $"Course: {prcourse.Key}\n";
-
-                            foreach (var student in prcourse.Value)
-                            {
-                                result += $"- {student}\n";
-                            }
-
-                            result += "------------------------\n";
-                        }
-                        string rt = "";
-
-                        foreach (var fucourse in fullcourses)
-                        {
-                            rt += $"Course: {fucourse.Key}\n";
-
-                            foreach (var fstudent in fucourse.Value)
-                            {
-                                rt += $"- {fstudent}\n";
-                            }
-
-                            rt += "------------------------\n";
-                        }
-
-                        MessageBox.Show("تم تنزيل الموالد الاتية لكل من : \n" + result + "\n لم يتم تنزيل المواد الاتية لكل من : \n" + rt);
-
-                    }
-                    else
-                    {
-                        MessageBox.Show("تم تسجيل جميع المواد لكل الطلبة بنجاح.");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("حدث خطأ: " + ex.Message);
-            }
-        }
+        
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {

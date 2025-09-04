@@ -24,7 +24,7 @@ namespace college_of_health_sciences.system_forms
             this.Text = "معادلة مواد - " + fullName;
             label2.Text = fullName;
             FillDepartmentsAndYears(studentId);
-            LoadStudentCourses();
+            LoadStudentCourses("مسجل");
         }
 
         int GENERAL_DEPARTMENT_ID;
@@ -119,7 +119,7 @@ namespace college_of_health_sciences.system_forms
             return true;
         }
 
-        private void LoadStudentCourses()
+        private void LoadStudentCourses(string status)
         {
             try
             {
@@ -136,11 +136,15 @@ namespace college_of_health_sciences.system_forms
                 LEFT JOIN Grades g ON g.course_id = r.course_id AND g.student_id = r.student_id
                 JOIN Students s ON s.student_id = r.student_id
                 JOIN Status st ON st.status_id = s.status_id
-                WHERE r.student_id = @studentId";
+                WHERE r.student_id = @studentId 
+                AND r.status = @st
+
+";
 
 
                     SqlCommand cmd = new SqlCommand(q, con);
                     cmd.Parameters.AddWithValue("@studentId", _studentId);
+                    cmd.Parameters.AddWithValue("@st", status);
 
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
@@ -253,7 +257,7 @@ WHERE student_id = @studentId", con))
                 }
             }
 
-            LoadStudentCourses();
+            LoadStudentCourses("مسجل");
         }
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -325,7 +329,7 @@ WHERE student_id = @studentId", con))
                         row.Cells["total_grade"].Value = total;
 
                         // تحديد النجاح أو الرسوب
-                        string status = total >= 60 ? "ناجح" : "راسب";
+                        string status = total >= 60 ? "نجاح" : "راسب";
                         row.Cells["success_status"].Value = status;
 
                         // قراءة قيمة العام الجامعي (قد تكون null)
@@ -795,7 +799,25 @@ WHERE student_id = @studentId", con))
                 return; // يوقف العملية إذا اخترت لا
             }
             PromoteStudent();
-            LoadStudentCourses();
+            LoadStudentCourses("مسجل");
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string status = comboBox3.SelectedItem.ToString();
+            LoadStudentCourses(status); 
+        }
+
+        private void equation_Load(object sender, EventArgs e)
+        {
+            comboBox3.SelectedIndexChanged -= comboBox3_SelectedIndexChanged;
+            comboBox3.Items.Clear(); // تنظيف أي عناصر موجودة
+            comboBox3.Items.Add("مسجل");
+            comboBox3.Items.Add("سابق");
+
+            // تعيين القيمة الافتراضية (اختياري)
+            comboBox3.SelectedIndex = 0;
+            comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
         }
     }
 }

@@ -1179,7 +1179,8 @@ WHERE g.student_id = @studentId
         SELECT r.course_id
         FROM Registrations r
         JOIN Grades g ON r.course_id = g.course_id AND r.student_id = g.student_id
-        WHERE r.student_id = @studentId AND g.success_status = N'راسب'";
+        WHERE r.student_id = @studentId AND g.success_status = N'راسب'
+";
             DataTable dtFail = new DataTable();
             using (SqlCommand cmd = new SqlCommand(failQuery, con))
             {
