@@ -97,6 +97,28 @@ namespace college_of_health_sciences.system_forms
             }
         }
 
+        private bool checkNulls(SqlConnection con)
+        {
+            string query = @"
+        SELECT COUNT(*) 
+        FROM Grades 
+        WHERE student_id = @studentId AND success_status IS NULL";
+
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                cmd.Parameters.AddWithValue("@studentId", _studentId);
+                int failedCount = Convert.ToInt32(cmd.ExecuteScalar());
+
+                if (failedCount > 0)
+                {
+                    MessageBox.Show("⚠ هناك درجات لم يتم إدخالها بعد !");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private void LoadStudentCourses()
         {
             try
@@ -104,6 +126,7 @@ namespace college_of_health_sciences.system_forms
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
                 using (SqlConnection con = db.OpenConnection())
                 {
+                    
                     string q = @"
                 SELECT r.registration_id,r.academic_year_start,c.course_id, c.course_name, c.course_code,c.year_number,
                        g.work_grade, g.final_grade, g.total_grade, g.success_status,
@@ -409,7 +432,7 @@ WHERE student_id = @studentId", con))
 
 
 
-        private int GetOrCreateGroup(SqlConnection con, int courseId, int? academicYearStart)
+        private int GetOrCreateGroup(SqlConnection con, int courseId, int? academicYearStart, int departmentid)
         {
             int groupId = 0;
 
@@ -417,9 +440,10 @@ WHERE student_id = @studentId", con))
             SqlCommand getGroupsCmd = new SqlCommand(@"
         SELECT cc.id, cc.capacity, cc.group_number
         FROM Course_Classroom cc
-        WHERE cc.course_id = @courseId
+        WHERE cc.course_id = @courseId AND cc.department_id = @departmentid
         ORDER BY cc.group_number;", con);
             getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+            getGroupsCmd.Parameters.AddWithValue("@departmentid", departmentid);
 
             DataTable groups = new DataTable();
             new SqlDataAdapter(getGroupsCmd).Fill(groups);
@@ -463,14 +487,15 @@ WHERE student_id = @studentId", con))
 
                 using (SqlCommand cmd = new SqlCommand(@"
             INSERT INTO Course_Classroom
-            (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day, instructor_id)
+            (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day, instructor_id, department_id)
             OUTPUT INSERTED.id 
-            VALUES (@courseId, @classroomId, @groupNumber, 80, '09:00:00', '12:00:00',6, @instructorId)", con))
+            VALUES (@courseId, @classroomId, @groupNumber, 80, '09:00:00', '12:00:00',6, @instructorId, @departmentid)", con))
                 {
                     cmd.Parameters.AddWithValue("@courseId", courseId);
                     cmd.Parameters.AddWithValue("@classroomId", classroomId);
                     cmd.Parameters.AddWithValue("@groupNumber", nextGroupNumber);
                     cmd.Parameters.AddWithValue("@instructorId", instructorId);
+                    cmd.Parameters.AddWithValue("@departmentid", departmentid);
 
                     groupId = (int)cmd.ExecuteScalar();
                 }
@@ -498,7 +523,7 @@ WHERE student_id = @studentId", con))
             foreach (DataRow row in courses.Rows)
             {
                 int courseId = Convert.ToInt32(row["course_id"]);
-                int groupId = GetOrCreateGroup(con, courseId, academicYear);
+                int groupId = GetOrCreateGroup(con, courseId, academicYear,deptId);
 
                 using (SqlCommand cmd = new SqlCommand(@"
             IF NOT EXISTS (SELECT 1 FROM Registrations WHERE student_id=@studentId AND course_id=@courseId)
@@ -570,7 +595,7 @@ WHERE student_id = @studentId", con))
             foreach (DataRow fail in dtFail.Rows)
             {
                 int courseId = Convert.ToInt32(fail["course_id"]);
-                int groupId = GetOrCreateGroup(con, courseId, academicYear);
+                int groupId = GetOrCreateGroup(con, courseId, academicYear, deptId);
 
                 using (SqlCommand cmdUpdate = new SqlCommand(@"
             UPDATE Registrations 
@@ -592,7 +617,7 @@ WHERE student_id = @studentId", con))
         }
 
 
-        private void RepeatStudent(SqlConnection con, int studentId, int academicYear,int cuYear)
+        private void RepeatStudent(SqlConnection con, int studentId, int academicYear,int cuYear,int depId)
         {
             // جلب المواد الراسبة
             string failQuery = @"
@@ -609,7 +634,7 @@ WHERE student_id = @studentId", con))
             foreach (DataRow fail in dtFail.Rows)
             {
                 int courseId = Convert.ToInt32(fail["course_id"]);
-                int groupId = GetOrCreateGroup(con, courseId, academicYear);
+                int groupId = GetOrCreateGroup(con, courseId, academicYear,depId);
 
                 using (SqlCommand cmdUpdate = new SqlCommand(@"
             UPDATE Registrations 
@@ -652,10 +677,13 @@ WHERE student_id = @studentId", con))
 
         private void PromoteStudent()
         {
+
             int academicYear = (int)numericUpDown3.Value;
 
             using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
             {
+                if (!checkNulls(con))
+                    return;
                 GENERAL_DEPARTMENT_ID = GetGeneralDepartmentId(con);
 
                 string q = @"SELECT department_id, current_year 
@@ -688,7 +716,7 @@ WHERE student_id = @studentId", con))
                                     break;
 
                                 case "إعادة سنة":
-                                    RepeatStudent(con, _studentId, academicYear,currentYear);
+                                    RepeatStudent(con, _studentId, academicYear,currentYear,deptId);
                                     break;
                             }
              

@@ -159,7 +159,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                     int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
                     numericUpDown1.Value = academicYearStart;
-
+                    numericUpDown5.Value = academicYearStart;
                     // ضبط القيمة الافتراضية للـ numericUpDown
                     numericUpDown1.Value = academicYearStart - 1;
                     numericUpDown2.Value = academicYearStart;
@@ -226,95 +226,174 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
         }
 
+
+
         private void button3_Click(object sender, EventArgs e)
         {
             if (dataGridView1.Rows.Count == 0 || dataGridView1.Rows[0].IsNewRow)
             {
-                MessageBox.Show("يرجى البحث عن الطالب اولا");
+                MessageBox.Show("يرجى البحث عن الطالب أولا");
                 return;
             }
-            int stu_id = Convert.ToInt32(dataGridView1.Rows[0].Cells["student_id"].Value.ToString());
+
+            int studentId = Convert.ToInt32(dataGridView1.Rows[0].Cells["student_id"].Value.ToString());
+            int newDeptId = Convert.ToInt32(comboBox2.SelectedValue);
+            int newYear = 2; // إعادة الطالب للسنة الثانية
+            int academicYear = (int)numericUpDown5.Value; // العام الجامعي
+            int generalDeptId;
+
             try
             {
                 conn.DatabaseConnection db = new conn.DatabaseConnection();
                 using (SqlConnection con = db.OpenConnection())
                 {
-                    if (!isStudentHaveRegistrations(stu_id))
+                    generalDeptId = GetGeneralDepartmentId(con);
+                    if (newDeptId == generalDeptId)
                     {
+                        MessageBox.Show("⚠ لا يمكن تحويل الطالب إلى القسم العام مباشرة.");
+                        return;
+                    }
+
+                    // التحقق من وجود تسجيلات
+                    if (!isStudentHaveRegistrations(studentId))
+                    {
+                        // تحديث القسم والسنة مباشرة
                         string updateQuery = @"
-                    UPDATE Students SET
-                    department_id = @department_id 
+                    UPDATE Students
+                    SET department_id = @department_id,
+                        current_year = @newYear
                     WHERE student_id = @student_id";
-                        using (SqlCommand cmdnoreg = new SqlCommand(updateQuery, con))
+
+                        using (SqlCommand cmd = new SqlCommand(updateQuery, con))
                         {
-                            cmdnoreg.Parameters.AddWithValue("@student_id", stu_id);
-                            cmdnoreg.Parameters.AddWithValue("@department_id", comboBox2.SelectedValue);
-                            int rowsAffected = cmdnoreg.ExecuteNonQuery();
-                            MessageBox.Show(rowsAffected > 0 ? "تم تغيير القسم بنجاح." : "لم يتم تغيير القسم.");
-                            button5_Click(null, null);
+                            cmd.Parameters.AddWithValue("@student_id", studentId);
+                            cmd.Parameters.AddWithValue("@department_id", newDeptId);
+                            cmd.Parameters.AddWithValue("@newYear", newYear);
+                            cmd.ExecuteNonQuery();
                         }
+
+                        // تنزيل مواد السنة الجديدة
+                       DownloadCoursesForStudent(con, studentId, newYear, newDeptId, academicYear);
+
+                        MessageBox.Show("تم تغيير القسم بنجاح.");
+                        button5_Click(null, null);
+                        return;
                     }
-                    else
+
+                    // إذا يوجد تسجيلات للطالب
+                    DialogResult answer = MessageBox.Show(
+                        "هل انت متأكد من تبديل القسم للطالب؟\nسيتم التعامل مع المواد كالآتي:\n" +
+                        "- المواد المشتركة (الناجحة) ستبقى.\n" +
+                        "- المواد غير المشتركة مع النجاح → تتحول إلى 'سابق' إذا ليست سنة أولى أو القسم عام.\n" +
+                        "- المواد غير المشتركة (راسب/NULL) → سيتم حذفها إذا ليست سنة أولى أو القسم عام.\n\n" +
+                        "للتأكيد اضغط: نعم\nللتراجع اضغط: لا",
+                        "تأكيد التحويل",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Exclamation,
+                        MessageBoxDefaultButton.Button2,
+                        MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign
+                    );
+
+                    if (answer != DialogResult.Yes) return;
+
+                    DialogResult dr = MessageBox.Show(
+            "AcademicYearStart = " + academicYear + "\n\nهل تريد الاستمرار في الترقية؟",
+            "تأكيد الترقية",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question);
+
+                    if (dr == DialogResult.No)
                     {
-                        DialogResult answer = MessageBox.Show(
-                            "هل انت متأكد من تبدل القسم للطالب ؟\nللعلم سيتم مسح كل المواد في القسم السابق\nوالتي غير موجودة في القسم الحالي\nوبما في ذلك الدرجات\n\nللتأكيد اضغط :\n- نعم\nللتراجع اضغط :\n- لا",
-                            "تأكيد التحويل",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Exclamation,
-                            MessageBoxDefaultButton.Button2,
-                            MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign
-                        );
-
-                        if (answer == DialogResult.Yes)
-                        {
-                            string updateq = @"
-                        -- حذف الدرجات للمواد التي لا تنتمي للقسم الجديد
-                        DELETE g
-                        FROM Grades g
-                        WHERE g.student_id = @studentId
-                        AND g.course_id NOT IN (
-                            SELECT course_id
-                            FROM Course_Department
-                            WHERE department_id = @newDeptId
-                        );
-
-                        -- حذف التسجيلات للمواد التي لا تنتمي للقسم الجديد
-                        DELETE r
-                        FROM Registrations r
-                        WHERE r.student_id = @studentId
-                        AND r.course_id NOT IN (
-                            SELECT course_id
-                            FROM Course_Department
-                            WHERE department_id = @newDeptId
-                        );
-
-                        -- تحديث القسم للطالب
-                        UPDATE Students
-                        SET department_id = @newDeptId
-                        WHERE student_id = @studentId;
-                    ";
-
-                            using (SqlCommand cmdupdate = new SqlCommand(updateq, con))
-                            {
-                                cmdupdate.Parameters.AddWithValue("@studentId", stu_id);
-                                cmdupdate.Parameters.AddWithValue("@newDeptId", comboBox2.SelectedValue);
-                                int rows = cmdupdate.ExecuteNonQuery(); // تنفذ الاستعلامات
-                                MessageBox.Show("تم التحويل بنجاح");
-                                button5_Click(null, null);
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("لم يتم التحويل");
-                        }
+                        return; // يوقف العملية إذا اخترت لا
                     }
+
+                    // 1️⃣ تحويل المواد الناجحة وغير المشتركة إلى 'سابق'
+                    string updateStatusQuery = @"
+UPDATE r
+SET r.status = N'سابق'
+FROM Registrations r
+INNER JOIN Courses c ON r.course_id = c.course_id
+LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
+LEFT JOIN Course_Department cd 
+    ON r.course_id = cd.course_id AND cd.department_id = @newDeptId
+WHERE r.student_id = @studentId
+  AND r.year_number >= 2
+  AND g.success_status = N'ناجح'
+  AND cd.course_id IS NULL; ";
+
+                    using (SqlCommand cmdStatus = new SqlCommand(updateStatusQuery, con))
+                    {
+                        cmdStatus.Parameters.AddWithValue("@studentId", studentId);
+                        cmdStatus.Parameters.AddWithValue("@newDeptId", newDeptId);
+                        cmdStatus.Parameters.AddWithValue("@generalDeptId", generalDeptId);
+                        cmdStatus.ExecuteNonQuery();
+                    }
+
+                    // 2️⃣ حذف المواد غير المشتركة (راسب أو NULL) مع التحقق من السنة والقسم
+ 
+                    string deleteQuery = @"
+DELETE r
+FROM Registrations r
+INNER JOIN Courses c ON r.course_id = c.course_id
+LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
+LEFT JOIN Course_Department cd 
+    ON r.course_id = cd.course_id AND cd.department_id = @newDeptId
+WHERE r.student_id = @studentId
+  AND r.year_number >= 2
+  AND (g.success_status IS NULL OR g.success_status = N'راسب'); 
+
+UPDATE g
+SET g.work_grade = NULL,
+    g.final_grade = NULL,
+    g.total_grade = NULL,
+    g.success_status = NULL
+FROM Grades g
+INNER JOIN Courses c ON g.course_id = c.course_id
+LEFT JOIN Course_Department cd 
+    ON g.course_id = cd.course_id AND cd.department_id = @newDeptId
+WHERE g.student_id = @studentId
+  AND c.year_number >= 2
+  AND (g.success_status IS NULL OR g.success_status = N'راسب')
+
+";
+
+                    using (SqlCommand cmdDelete = new SqlCommand(deleteQuery, con))
+                    {
+                        cmdDelete.Parameters.AddWithValue("@studentId", studentId);
+                        cmdDelete.Parameters.AddWithValue("@newDeptId", newDeptId);
+                        cmdDelete.Parameters.AddWithValue("@generalDeptId", generalDeptId);
+                        cmdDelete.ExecuteNonQuery();
+                    }
+
+                    // 3️⃣ تحديث القسم والسنة للطالب
+                    string updateStudentQuery = @"
+                UPDATE Students
+                SET department_id = @newDeptId,
+                    current_year = @newYear
+                WHERE student_id = @studentId";
+
+                    using (SqlCommand cmdUpdate = new SqlCommand(updateStudentQuery, con))
+                    {
+                        cmdUpdate.Parameters.AddWithValue("@studentId", studentId);
+                        cmdUpdate.Parameters.AddWithValue("@newDeptId", newDeptId);
+                        cmdUpdate.Parameters.AddWithValue("@newYear", newYear);
+                        cmdUpdate.ExecuteNonQuery();
+                    }
+
+                    // 4️⃣ تنزيل مواد السنة الجديدة
+                    DownloadCoursesForStudent(con, studentId, newYear, newDeptId, academicYear);
+
+                    MessageBox.Show("✅ تم تحويل الطالب بنجاح.");
+                    button5_Click(null, null);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("There is an Error : " + ex.Message);
+                MessageBox.Show("خطأ: " + ex.Message);
             }
         }
+
+
 
 
         public bool isStudentHaveRegistrations(int id)
@@ -801,22 +880,48 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 MessageBox.Show("يرجى تحديد القسم الجديد.");
                 return;
             }
-            if (comboBox3.SelectedItem.ToString() == "عام")
+
+            // الطريقة الأسهل
+            if (comboBox3.Text == "عام")
             {
-                MessageBox.Show("لايمكن التحديث للقسم العام");
+                MessageBox.Show("لا يمكن التحديث للقسم العام.");
                 return;
             }
+
+            // أو باستخدام GetItemText
+            //if (comboBox3.GetItemText(comboBox3.SelectedItem) == "عام")
+            //{
+            //    MessageBox.Show("لا يمكن التحديث للقسم العام.");
+            //    return;
+            //}
+
 
             int newDepartmentId = Convert.ToInt32(comboBox3.SelectedValue);
             List<int> selectedStudentIds = new List<int>();
 
-            // اجمع IDs الطلاب المحددين
+            if (!dataGridView2.Columns.Contains("Select"))
+            {
+                MessageBox.Show("عمود التحديد غير موجود في الجدول!");
+                return;
+            }
+
             foreach (DataGridViewRow row in dataGridView2.Rows)
             {
-                bool isSelected = Convert.ToBoolean(row.Cells["Select"].Value);
-                if (isSelected)
+                if (row.IsNewRow) continue;
+
+                // التأكد من وجود قيمة في عمود Select وتحويلها بأمان
+                bool isSelected = false;
+                object selectValue = row.Cells["Select"].Value;
+                if (selectValue != null && selectValue != DBNull.Value)
                 {
-                    selectedStudentIds.Add(Convert.ToInt32(row.Cells["student_id"].Value));
+                    bool.TryParse(selectValue.ToString(), out isSelected);
+                }
+
+                // التأكد من وجود student_id وعدم احتوائها DBNull قبل الإضافة
+                object studentIdObj = row.Cells["student_id"].Value;
+                if (isSelected && studentIdObj != null && studentIdObj != DBNull.Value)
+                {
+                    selectedStudentIds.Add(Convert.ToInt32(studentIdObj));
                 }
             }
 
@@ -833,15 +938,15 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 {
                     foreach (int studentId in selectedStudentIds)
                     {
-                        SqlCommand cmd = new SqlCommand(@"
-UPDATE Students
-SET department_id = @newDept
-WHERE student_id = @studentId", con);
-
-                        cmd.Parameters.AddWithValue("@newDept", newDepartmentId);
-                        cmd.Parameters.AddWithValue("@studentId", studentId);
-
-                        cmd.ExecuteNonQuery();
+                        using (SqlCommand cmd = new SqlCommand(@"
+                    UPDATE Students
+                    SET department_id = @newDept
+                    WHERE student_id = @studentId", con))
+                        {
+                            cmd.Parameters.AddWithValue("@newDept", newDepartmentId);
+                            cmd.Parameters.AddWithValue("@studentId", studentId);
+                            cmd.ExecuteNonQuery();
+                        }
                     }
                 }
 
@@ -852,6 +957,8 @@ WHERE student_id = @studentId", con);
                 MessageBox.Show("حدث خطأ: " + ex.Message);
             }
         }
+
+
 
         public void getStudentsYearOne()
         {
@@ -970,7 +1077,7 @@ WHERE student_id = @studentId", con);
                             break;
 
                         case "إعادة سنة":
-                            RepeatStudent(con, studentId, academicYear);
+                            RepeatStudent(con, studentId, academicYear,deptId);
                             break;
                     }
 
@@ -984,6 +1091,7 @@ WHERE student_id = @studentId", con);
                 }
 
                 MessageBox.Show("تمت ترقية طلاب السنة الأولى بنجاح.");
+                dataGridView2.DataSource = null;
             }
         }
         private void ClearPassedCoursesClassrooms(SqlConnection con, int studentId)
@@ -1083,7 +1191,7 @@ WHERE student_id = @studentId", con);
             foreach (DataRow fail in dtFail.Rows)
             {
                 int courseId = Convert.ToInt32(fail["course_id"]);
-                int groupId = GetOrCreateGroup(con, courseId, academicYear);
+                int groupId = GetOrCreateGroup(con, courseId, academicYear, deptId);
 
                 using (SqlCommand cmdUpdate = new SqlCommand(@"
             UPDATE Registrations 
@@ -1131,7 +1239,7 @@ WHERE student_id = @studentId", con);
 
 
         // 3️⃣ إعادة سنة: تحديث المواد الراسبة فقط، لا ترقية، تغيير القسم إلى العام
-        private void RepeatStudent(SqlConnection con, int studentId, int academicYear)
+        private void RepeatStudent(SqlConnection con, int studentId, int academicYear, int depId)
         {
             // جلب المواد الراسبة
             string failQuery = @"
@@ -1149,7 +1257,7 @@ WHERE student_id = @studentId", con);
             foreach (DataRow fail in dtFail.Rows)
             {
                 int courseId = Convert.ToInt32(fail["course_id"]);
-                int groupId = GetOrCreateGroup(con, courseId, academicYear);
+                int groupId = GetOrCreateGroup(con, courseId, academicYear,depId);
 
                 using (SqlCommand cmdUpdate = new SqlCommand(@"
             UPDATE Registrations 
@@ -1179,7 +1287,7 @@ WHERE student_id = @studentId", con);
         }
 
 
-        private void RepeatStudentTowThreeFour(SqlConnection con, int studentId, int academicYear)
+        private void RepeatStudentTowThreeFour(SqlConnection con, int studentId, int academicYear,int depId)
         {
             // جلب المواد الراسبة
             string failQuery = @"
@@ -1197,7 +1305,7 @@ WHERE student_id = @studentId", con);
             foreach (DataRow fail in dtFail.Rows)
             {
                 int courseId = Convert.ToInt32(fail["course_id"]);
-                int groupId = GetOrCreateGroup(con, courseId, academicYear);
+                int groupId = GetOrCreateGroup(con, courseId, academicYear,depId);
 
                 using (SqlCommand cmdUpdate = new SqlCommand(@"
             UPDATE Registrations 
@@ -1253,7 +1361,7 @@ WHERE student_id = @studentId", con);
         }
 
 
-        private int GetOrCreateGroup(SqlConnection con, int courseId, int? academicYearStart)
+        private int GetOrCreateGroup(SqlConnection con, int courseId, int? academicYearStart, int departmentid)
         {
             int groupId = 0;
 
@@ -1261,9 +1369,10 @@ WHERE student_id = @studentId", con);
             SqlCommand getGroupsCmd = new SqlCommand(@"
         SELECT cc.id, cc.capacity, cc.group_number
         FROM Course_Classroom cc
-        WHERE cc.course_id = @courseId
+        WHERE cc.course_id = @courseId AND cc.department_id = @departmentid
         ORDER BY cc.group_number;", con);
             getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+            getGroupsCmd.Parameters.AddWithValue("@departmentid", departmentid);
 
             DataTable groups = new DataTable();
             new SqlDataAdapter(getGroupsCmd).Fill(groups);
@@ -1307,14 +1416,15 @@ WHERE student_id = @studentId", con);
 
                 using (SqlCommand cmd = new SqlCommand(@"
             INSERT INTO Course_Classroom
-            (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day, instructor_id)
+            (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day, instructor_id, department_id)
             OUTPUT INSERTED.id 
-            VALUES (@courseId, @classroomId, @groupNumber, 80, '09:00:00', '12:00:00',6, @instructorId)", con))
+            VALUES (@courseId, @classroomId, @groupNumber, 80, '09:00:00', '12:00:00',6, @instructorId, @departmentid)", con))
                 {
                     cmd.Parameters.AddWithValue("@courseId", courseId);
                     cmd.Parameters.AddWithValue("@classroomId", classroomId);
                     cmd.Parameters.AddWithValue("@groupNumber", nextGroupNumber);
                     cmd.Parameters.AddWithValue("@instructorId", instructorId);
+                    cmd.Parameters.AddWithValue("@departmentid", departmentid);
 
                     groupId = (int)cmd.ExecuteScalar();
                 }
@@ -1342,7 +1452,7 @@ WHERE student_id = @studentId", con);
             foreach (DataRow row in courses.Rows)
             {
                 int courseId = Convert.ToInt32(row["course_id"]);
-                int groupId = GetOrCreateGroup(con, courseId,academicYear);
+                int groupId = GetOrCreateGroup(con, courseId,academicYear,deptId);
 
                 using (SqlCommand cmd = new SqlCommand(@"
             IF NOT EXISTS (SELECT 1 FROM Registrations WHERE student_id=@studentId AND course_id=@courseId)
@@ -1485,7 +1595,7 @@ WHERE student_id = @studentId", con);
                             break;
 
                         case "إعادة سنة":
-                            RepeatStudentTowThreeFour(con, studentId, academicYear);
+                            RepeatStudentTowThreeFour(con, studentId, academicYear,deptId);
                             break;
                     }
 
@@ -1499,6 +1609,7 @@ WHERE student_id = @studentId", con);
                 }
 
                 MessageBox.Show("تمت ترقية الطلاب بنجاح.");
+                dataGridView3.DataSource = null;
             }
         }
 
@@ -1581,21 +1692,13 @@ WHERE student_id = @studentId", con);
                 {
                     for (int year = 2; year <= 4; year++)
                     {
-                        // تحقق من الطلبة الذين لم تُدخل درجاتهم بعد
-                        if (year != 2)
-                        {
-                            if (HasUnfinishedStudents(con, year))
-                            {
-                                MessageBox.Show($"⚠ هناك طلبة لم يتم إدخال درجاتهم بعد في السنة {year}، لا يمكن الترقية.");
-                                return;
-                            }
-                        }
                         // تحقق من وجود طلبة قابلين للترقية
                         if (!HasPromotableStudents(con, year))
                         {
                             MessageBox.Show($"⚠ ليس هناك طلاب في هذه السنة {year} للترقية.");
                             return;
                         }
+                        break;
                     }
                 }
                 // استدعاء دالة الترقية الخاصة بالطلاب
@@ -1722,14 +1825,22 @@ WHERE student_id = @studentId", con);
 
         private void dataGridView4_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (dataGridView4.Columns[e.ColumnIndex].Name == "OpenEquation" && e.RowIndex >= 0)
+            if (e.RowIndex >= 0 && dataGridView4.Columns[e.ColumnIndex].Name == "OpenEquation")
             {
-                int studentId = Convert.ToInt32(dataGridView4.Rows[e.RowIndex].Cells["student_id"].Value);
-                string fullName = dataGridView4.Rows[e.RowIndex].Cells["full_name"].Value.ToString();
+                DataGridViewRow row = dataGridView4.Rows[e.RowIndex];
 
-                equation eqForm = new equation(studentId, fullName);
-                eqForm.ShowDialog();
+                // ✅ تحقق أن الصف ليس فارغ
+                if (row.Cells["student_id"].Value != null &&
+                    !string.IsNullOrWhiteSpace(row.Cells["student_id"].Value.ToString()))
+                {
+                    int studentId = Convert.ToInt32(row.Cells["student_id"].Value);
+                    string fullName = row.Cells["full_name"].Value?.ToString();
+
+                    equation eqForm = new equation(studentId, fullName);
+                    eqForm.ShowDialog();
+                }
             }
+
         }
     }
 }

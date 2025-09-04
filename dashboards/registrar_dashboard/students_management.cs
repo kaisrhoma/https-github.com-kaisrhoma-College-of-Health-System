@@ -144,6 +144,44 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             }
         }
 
+        public void DownloadCoursesForStudenttransfare(int studentId, int selectedYear, int departmentId)
+        {
+            try
+            {
+                conn.DatabaseConnection db = new conn.DatabaseConnection();
+                using (SqlConnection con = db.OpenConnection())
+                {
+                    int? academicYearStart = (selectedYear == 1 ? (int?)numericUpDown2.Value : null);
+                    int totalRegistered = 0;
+                    List<string> fullCourses = new List<string>();
+
+                    // 1️⃣ تنزيل مواد السنة الأولى دائماً للقسم العام
+                    int generalDepartmentId = GetGeneralDepartmentId(con); // دالة لجلب ID القسم العام
+                    RegisterCoursesForYear(studentId, 1, generalDepartmentId,
+                        selectedYear == 1 ? academicYearStart : null,
+                        con, ref totalRegistered, fullCourses, selectedYear > 1);
+
+                    // 2️⃣ تنزيل المواد لبقية السنوات (من 2 وحتى السنة المختارة -1)
+                    for (int y = 2; y < selectedYear; y++)
+                    {
+                        RegisterCoursesForYear(studentId, y, departmentId, null, con, ref totalRegistered, fullCourses, true);
+                    }
+
+                    // 3️⃣ رسالة النتيجة
+                    if (totalRegistered == 0)
+                        MessageBox.Show("No courses were registered.");
+                    else if (fullCourses.Count > 0)
+                        MessageBox.Show("Student registered except for the following courses:\n" + string.Join("\n", fullCourses));
+                    else
+                        MessageBox.Show("All courses registered successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
         // دالة تجيب أول دكتور مرتبط بالمادة
         private int GetFirstInstructorForCourse(SqlConnection con, int courseId)
         {
@@ -179,7 +217,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         }
 
 
-        private int GetOrCreateGroup(SqlConnection con, int courseId, int? academicYearStart)
+        private int GetOrCreateGroup(SqlConnection con, int courseId, int? academicYearStart,int departmentid)
         {
             int groupId = 0;
 
@@ -187,9 +225,10 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             SqlCommand getGroupsCmd = new SqlCommand(@"
         SELECT cc.id, cc.capacity, cc.group_number
         FROM Course_Classroom cc
-        WHERE cc.course_id = @courseId
+        WHERE cc.course_id = @courseId AND cc.department_id = @departmentid
         ORDER BY cc.group_number;", con);
             getGroupsCmd.Parameters.AddWithValue("@courseId", courseId);
+            getGroupsCmd.Parameters.AddWithValue("@departmentid", departmentid);
 
             DataTable groups = new DataTable();
             new SqlDataAdapter(getGroupsCmd).Fill(groups);
@@ -233,14 +272,15 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                 using (SqlCommand cmd = new SqlCommand(@"
             INSERT INTO Course_Classroom
-            (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day, instructor_id)
+            (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day, instructor_id, department_id)
             OUTPUT INSERTED.id 
-            VALUES (@courseId, @classroomId, @groupNumber, 80, '09:00:00', '12:00:00',6, @instructorId)", con))
+            VALUES (@courseId, @classroomId, @groupNumber, 80, '09:00:00', '12:00:00',6, @instructorId, @departmentid)", con))
                 {
                     cmd.Parameters.AddWithValue("@courseId", courseId);
                     cmd.Parameters.AddWithValue("@classroomId", classroomId);
                     cmd.Parameters.AddWithValue("@groupNumber", nextGroupNumber);
                     cmd.Parameters.AddWithValue("@instructorId", instructorId);
+                    cmd.Parameters.AddWithValue("@departmentid", departmentid);
 
                     groupId = (int)cmd.ExecuteScalar();
                 }
@@ -274,7 +314,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 // إذا السنة الأولى والسنة المختارة = 1 => البحث عن Classroom متاح
                 if (year == 1 && !forceNull)
                 {
-                    classroomId = GetOrCreateGroup(con, courseId, academicYearStart);
+                    classroomId = GetOrCreateGroup(con, courseId, academicYearStart,deptId);
                 }
 
                 SqlCommand insertCmd = new SqlCommand(@"
@@ -314,6 +354,26 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
+        public bool ValidateStudentRegistration(SqlConnection con, int selectedDepartmentId, int selectedYear)
+        {
+            // استدعاء الدالة اللي عندك ترجع ID القسم العام
+            int generalDeptId = GetGeneralDepartmentId(con);
+
+            // الشرط الأول: لو السنة أولى (1) يجب أن يكون القسم = القسم العام
+            if (selectedYear == 1 && selectedDepartmentId != generalDeptId)
+            {
+                return false;
+            }
+
+            // الشرط الثاني: لو السنة أكبر من 1 لا يمكن أن يكون القسم = القسم العام
+            if (selectedYear > 1 && selectedDepartmentId == generalDeptId)
+            {
+                return false;
+            }
+
+            // إذا عدى الشروط معناها صحيح
+            return true;
+        }
 
         //اضافة طالب جديد الى القاعدة في التاب الأول
         private void button7_Click(object sender, EventArgs e)
@@ -345,9 +405,18 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             int selectedYear = Convert.ToInt32(comboBox4.SelectedValue);
             int departmentId = Convert.ToInt32(comboBox3.SelectedValue);
 
+            
+
             conn.DatabaseConnection db = new conn.DatabaseConnection();
             using (SqlConnection con = db.OpenConnection())
             {
+                if (!ValidateStudentRegistration(con,departmentId,selectedYear))
+                {
+                    label1.ForeColor = Color.Red;
+                    label1.Text = "⚠ تعارض القسم مع السنة لا يمكن التسجيل.!";
+                    return;
+                }
+
                 // تحقق من الرقم الجامعي
                 SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Students WHERE university_number = @uni", con);
                 checkCmd.Parameters.Add("@uni", SqlDbType.NVarChar).Value = uni;
@@ -384,11 +453,11 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     getIdCmd.Parameters.Add("@uni", SqlDbType.NVarChar).Value = uni;
                     int studentId = (int)getIdCmd.ExecuteScalar();
 
-                    label1.ForeColor = Color.Green;
-                    label1.Text = "تمت إضافة الطالب بنجاح";
                     // تنزيل المواد مباشرة
                     DownloadCoursesForStudent(studentId, selectedYear, departmentId);
                     SetFieldsEmpty();
+                    label1.ForeColor = Color.Green;
+                    label1.Text = "تمت إضافة الطالب بنجاح";
                 }
                 catch (Exception ex)
                 {
@@ -467,6 +536,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                     int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
                     numericUpDown1.Value = academicYearStart;
+                    numericUpDown2.Value = academicYearStart;
                     string q = "select * from Departments";
                     SqlDataAdapter da = new SqlDataAdapter(q, con);
                     DataTable dt = new DataTable();
@@ -664,6 +734,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     // إخفاء الأعمدة الأصلية
                     dataGridView2.Columns["gender"].Visible = false;
                     dataGridView2.Columns["current_year"].Visible = false;
+                    dataGridView2.Columns["dname"].Visible = false;
 
 
                     // عرض الأعمدة النصية بدلاً منها
@@ -672,7 +743,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     dataGridView2.Columns["yearText"].HeaderText = "السنة";
 
                     setColumnComboBox(dataGridView2, "yearText", "comboyear", "السنة", "yearText", new List<string> { "سنة أولى", "سنة ثانية", "سنة ثالثة", "سنة رابعة" });
-                    setColumnComboBox(dataGridView2, "exam_round", "comboround", "الدور", "exam_round", new List<string> { "دور أول", "دور ثاني", "إعادة سنة" , "مرحل" });
+                    setColumnComboBox(dataGridView2, "exam_round", "comboround", "الدور", "exam_round", new List<string> { "دور أول", "دور ثاني", "إعادة سنة" , "مرحل","مكتمل" });
                     setColumnComboBox(dataGridView2, "GenderText", "combogender", "الجنس", "GenderText", new List<string> { "أنثى", "ذكر" });
                     setColumnComboBoxsyncwithDB(dataGridView2, "department_id", "columndepartment", "القسم", "department_id","select * from Departments", "dep_name", "department_id");
 
@@ -779,29 +850,69 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     // جلب معرف القسم
                     int departmentId = GetIdFromName("Departments", "department_id", "dep_name", depName, con);
 
-                    // جلب القسم الحالي الموجود في قاعدة البيانات
-                    SqlCommand getOldDeptCmd = new SqlCommand(
-                        "SELECT department_id FROM Students WHERE student_id = @student_id", con);
-                    getOldDeptCmd.Parameters.AddWithValue("@student_id", studentidforcheck);
+                    // ✅ داخل UpdateStudentFromGrid
+                    // جلب القسم الحالي والسنة الحالية من قاعدة البيانات
+                    SqlCommand getOldDataCmd = new SqlCommand(
+                        "SELECT department_id, current_year FROM Students WHERE student_id = @student_id", con);
+                    getOldDataCmd.Parameters.AddWithValue("@student_id", studentidforcheck);
 
-                    int oldDeptId = Convert.ToInt32(getOldDeptCmd.ExecuteScalar());
-
-                    // إذا اختلف القسم الجديد عن القديم → تحقق من وجود مواد
-                    if (oldDeptId != departmentId)
+                    int oldDeptId = 0;
+                    int oldYear = 0;
+                    using (SqlDataReader rdr = getOldDataCmd.ExecuteReader())
                     {
-                        SqlCommand regCheckCmd = new SqlCommand(
-                            "SELECT COUNT(*) FROM Registrations WHERE student_id = @student_id", con);
-                        regCheckCmd.Parameters.AddWithValue("@student_id", studentidforcheck);
+                        if (rdr.Read())
+                        {
+                            oldDeptId = rdr.GetInt32(0);
+                            oldYear = rdr.GetInt32(1);
+                        }
+                    }
+
+                    // ✅ تحقق من القسم + السنة
+                    bool departmentChanged = (oldDeptId != departmentId);
+                    bool yearChanged = (oldYear != currentYear);
+
+                    if(!ValidateStudentRegistration(con,departmentId,currentYear))
+                    {
+                        MessageBox.Show("⚠ تعارض القسم مع السنة لا يمكن التحديث.!");
+                        return;
+                    }    
+
+                    if (departmentChanged || yearChanged)
+                    {
+                        SqlCommand regCheckCmd = new SqlCommand(@"
+                        SELECT COUNT(*) 
+                        FROM Grades 
+                        WHERE student_id = @studentId 
+                        AND success_status IS NOT NULL", con);
+                        regCheckCmd.Parameters.AddWithValue("@studentId", studentidforcheck);
 
                         int regCount = (int)regCheckCmd.ExecuteScalar();
 
                         if (regCount > 0)
                         {
-                            MessageBox.Show("غير مسموح بتغيير قسم طالب مسجل بمواد.\nلحذف المواد أو تحويل الطالب، استخدم واجهة التحويل والترحيل.");
+                            MessageBox.Show("⚠ غير مسموح بتغيير قسم أو سنة طالب لديه مواد مدخلة.\nلحذف المواد أو تحويل الطالب، استخدم واجهة التحويل والترحيل.");
                             return;  // منع عملية التحديث
                         }
-                    }
+                        else
+                        {
+                            // ✅ إذا كل الحالات NULL → نحذف التسجيلات والدرجات
+                            using (SqlCommand deleteCmd = new SqlCommand(
+                                "DELETE FROM Registrations WHERE student_id = @studentId", con))
+                            {
+                                deleteCmd.Parameters.AddWithValue("@studentId", studentidforcheck);
+                                deleteCmd.ExecuteNonQuery();
+                            }
 
+                            using (SqlCommand deleteGradesCmd = new SqlCommand(
+                                "DELETE FROM Grades WHERE student_id = @studentId", con))
+                            {
+                                deleteGradesCmd.Parameters.AddWithValue("@studentId", studentidforcheck);
+                                deleteGradesCmd.ExecuteNonQuery();
+                            }
+                            int stid = Convert.ToInt32(studentid);
+                            DownloadCoursesForStudenttransfare(stid, currentYear, departmentId);
+                        }
+                    }
 
                     // جلب معرف الحالة
                     int statusId = GetIdFromName("Status", "status_id", "description", statusDescription, con);
@@ -827,7 +938,8 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         cmd.Parameters.AddWithValue("@student_id", studentid);
                         cmd.Parameters.AddWithValue("@department_id", departmentId);
                         cmd.Parameters.AddWithValue("@current_year", currentYear);
-                        cmd.Parameters.AddWithValue("@status_id", statusId);
+                        int statusnew = (currentYear == 1 ? GetStatusId(con, "مستمر") : GetStatusId(con, "محول"));
+                        cmd.Parameters.AddWithValue("@status_id", statusnew);
                         cmd.Parameters.AddWithValue("@birth_date", birthDate);
                         cmd.Parameters.AddWithValue("@nationality", nationality);
                         cmd.Parameters.AddWithValue("@exam_round", sturound);
@@ -1050,8 +1162,5 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 comboBox3.Enabled = true;
             }
         }
-
-
-
     }
 }
