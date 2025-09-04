@@ -1324,10 +1324,6 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 comboBoxDepartment.DataSource = dt;
                 comboBoxDepartment.DisplayMember = "dep_name";
                 comboBoxDepartment.ValueMember = "department_id";
-                // ComboBox لتحديد القسم الجديد للتحديث
-                comboBox1.DataSource = dt.Copy();
-                comboBox1.DisplayMember = "dep_name";
-                comboBox1.ValueMember = "department_id";
 
 
 
@@ -1505,47 +1501,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             LoadDepartmentCourses();
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            if (dataGridViewDepartment.CurrentRow == null)
-            {
-                label50.Text = "⚠️ الرجاء اختيار مادة لتحديث القسم.";
-                label50.ForeColor = Color.Red;
-                return;
-            }
 
-            if (comboBox1.SelectedValue == null || comboBox1.SelectedValue is DataRowView)
-            {
-                label50.Text = "⚠️ الرجاء اختيار قسم جديد ";
-                label50.ForeColor = Color.Red;
-                return;
-            }
-
-            int courseId = Convert.ToInt32(dataGridViewDepartment.CurrentRow.Cells["course_id"].Value);
-            int newDeptId = Convert.ToInt32(comboBox1.SelectedValue);
-
-            try
-            {
-                if (con.State != ConnectionState.Open)
-                    con.Open();
-
-                SqlCommand cmd = new SqlCommand("UPDATE Course_Department SET department_id = @newDept WHERE course_id = @courseId", con);
-                cmd.Parameters.AddWithValue("@newDept", newDeptId);
-                cmd.Parameters.AddWithValue("@courseId", courseId);
-                cmd.ExecuteNonQuery();
-
-                label50.Text = "✅ تم تغيير القسم للمادة: " + dataGridViewDepartment.CurrentRow.Cells["اسم المادة"].Value.ToString();
-                label50.ForeColor = Color.Green;
-            }
-            finally
-            {
-                if (con.State == ConnectionState.Open)
-                    con.Close();
-            }
-
-            LoadDepartmentCourses();        // تحديث قائمة القسم الحالي
-            comboBoxYear4_SelectedIndexChanged(null, null); // تحديث قائمة المواد غير المرتبطة
-        }
 
         private void button6_Click(object sender, EventArgs e)
         {  // الحصول على الصف الفعلي الذي ضغط عليه المستخدم
@@ -2485,10 +2441,6 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                 comboBox4.DataSource = dt;
                 comboBox4.DisplayMember = "full_name";
                 comboBox4.ValueMember = "instructor_id";
-
-                comboBox3.DataSource = dt.Copy(); // ComboBox للتعديل
-                comboBox3.DisplayMember = "full_name";
-                comboBox3.ValueMember = "instructor_id";
             }
             finally
             {
@@ -2642,73 +2594,7 @@ WHERE c.year_number = @year
             LoadInstructorCourses();
         }
 
-        private void button28_Click(object sender, EventArgs e)
-        {
-            if (dataGridView2.CurrentRow == null)
-            {
-                label55.Text = "⚠️ الرجاء اختيار مادة لتعديل الأستاذ.";
-                label55.ForeColor = Color.Red;
-                return;
-            }
 
-            if (comboBox3.SelectedValue == null || comboBox3.SelectedValue is DataRowView)
-            {
-                label55.Text = "⚠️ الرجاء اختيار أستاذ جديد.";
-                label55.ForeColor = Color.Red;
-                return;
-            }
-
-            int courseId = Convert.ToInt32(dataGridView2.CurrentRow.Cells["course_id"].Value);
-            int newInstId = Convert.ToInt32(comboBox3.SelectedValue);
-            int oldInstId = Convert.ToInt32(comboBox4.SelectedValue);
-
-            // ✅ تحقق إذا نفس الأستاذ
-            if (newInstId == oldInstId)
-            {
-                label55.Text = "⚠️ لا يمكن تحديث المادة بنفس الأستاذ.";
-                label55.ForeColor = Color.Red;
-                return;
-            }
-
-            try
-            {
-                if (con.State != ConnectionState.Open)
-                    con.Open();
-
-                // ✅ تحقق إذا الأستاذ الجديد موجود لنفس المادة مسبقاً
-                SqlCommand checkCmd = new SqlCommand(
-                    "SELECT COUNT(*) FROM Course_Instructor WHERE course_id = @courseId AND instructor_id = @newInst", con);
-                checkCmd.Parameters.AddWithValue("@courseId", courseId);
-                checkCmd.Parameters.AddWithValue("@newInst", newInstId);
-
-                int exists = (int)checkCmd.ExecuteScalar();
-                if (exists > 0)
-                {
-                    label55.Text = "⚠️ هذا الأستاذ مرتبط بالفعل بهذه المادة.";
-                    label55.ForeColor = Color.Red;
-                    return;
-                }
-
-                // 🔹 تنفيذ التحديث
-                SqlCommand cmd = new SqlCommand(
-                    "UPDATE Course_Instructor SET instructor_id = @newInst WHERE course_id = @courseId AND instructor_id = @oldInst", con);
-                cmd.Parameters.AddWithValue("@newInst", newInstId);
-                cmd.Parameters.AddWithValue("@courseId", courseId);
-                cmd.Parameters.AddWithValue("@oldInst", oldInstId);
-                cmd.ExecuteNonQuery();
-
-                label55.Text = "✅ تم تعديل الأستاذ للمادة: " + dataGridView3.CurrentRow.Cells["اسم المادة"].Value.ToString();
-                label55.ForeColor = Color.Green;
-            }
-            finally
-            {
-                if (con.State == ConnectionState.Open)
-                    con.Close();
-            }
-
-            LoadInstructorCourses();
-            comboBox5_SelectedIndexChanged(null, null);
-        }
 
         private void button29_Click(object sender, EventArgs e)
         {

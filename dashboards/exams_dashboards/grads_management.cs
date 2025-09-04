@@ -295,7 +295,7 @@ WHERE 1=1
             }
 
         }
-      
+
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -624,14 +624,14 @@ WHERE 1=1
                                                 int dbWork = reader["work_grade"] == DBNull.Value ? -1 : Convert.ToInt32(reader["work_grade"]);
                                                 int dbFinal = reader["final_grade"] == DBNull.Value ? -1 : Convert.ToInt32(reader["final_grade"]);
 
-                                          
+
                                                 reader.Close();
 
                                                 // الأعمال: لا يمكن تعديلها بعد الإدخال
                                                 if (workGrade.HasValue)
                                                 {
-                                                  
-                                                   if (dbWork == -1)
+
+                                                    if (dbWork == -1)
                                                     {
                                                         dbWork = workGrade.Value;
                                                     }
@@ -640,8 +640,8 @@ WHERE 1=1
                                                 // النهائي: يمكن التعديل فقط إذا كانت القيمة فارغة
                                                 if (finalGrade.HasValue)
                                                 {
-                                                  
-                                                   if (dbFinal == -1)
+
+                                                    if (dbFinal == -1)
                                                     {
                                                         dbFinal = finalGrade.Value;
                                                     }
@@ -913,121 +913,7 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;";
             {
                 MessageBox.Show("حدث خطأ أثناء الاتصال:\n" + exOuter.Message);
             }
-            //            if (comboExamRound.SelectedItem == null)
-            //            {
-            //                MessageBox.Show("الرجاء اختيار الدور قبل التحديث.");
-            //                return;
-            //            }
 
-            //            string selectedRound = comboExamRound.SelectedItem.ToString();
-
-            //            if (MessageBox.Show("هل أنت متأكد ؟", "تأكيد",
-            //                                  MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
-            //                return;
-
-            //            try
-            //            {
-            //                using (SqlConnection conn = new SqlConnection(connectionString))
-            //                {
-            //                    conn.Open();
-            //                    using (SqlTransaction transaction = conn.BeginTransaction())
-            //                    {
-            //                        try
-            //                        {
-            //                            // جلب آخر سنة أكاديمية من القاعدة
-            //                            int currentAcademicYear;
-            //                            using (SqlCommand cmdYear = new SqlCommand("SELECT MAX(academic_year_start) FROM Registrations", conn, transaction))
-            //                            {
-            //                                currentAcademicYear = Convert.ToInt32(cmdYear.ExecuteScalar());
-            //                            }
-
-            //                            // 2️⃣ التحقق من الدرجات الناقصة
-            //                            if (CheckMissingGrades(conn, currentAcademicYear))
-            //                            {
-            //                                return; // ❌ وقف العملية إذا فيه درجات ناقصة
-            //                            }
-
-            //                            if (selectedRound == "دور أول")
-            //                            {
-            //                                string query = @"
-            //UPDATE s
-            //SET exam_round = CASE 
-            //    WHEN fc.fail_count = 0 THEN N'مكتمل'
-            //    WHEN fc.fail_count >= 1 THEN N'دور ثاني'
-            //    ELSE s.exam_round
-            //END
-            //FROM Students s
-            //INNER JOIN (
-            //    SELECT 
-            //        s.student_id,
-            //        COUNT(CASE WHEN g.total_grade < 60 THEN 1 END) AS fail_count
-            //    FROM Students s
-            //    INNER JOIN Registrations r ON s.student_id = r.student_id
-            //    INNER JOIN Courses c ON r.course_id = c.course_id
-            //    LEFT JOIN Grades g ON g.student_id = s.student_id AND g.course_id = r.course_id
-            //    WHERE r.status = N'مسجل'
-            //      AND r.academic_year_start = @academicYearStart
-            //      AND s.exam_round = N'دور أول'
-            //    GROUP BY s.student_id
-            //) AS fc ON s.student_id = fc.student_id;
-            //";
-
-            //                                using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
-            //                                {
-            //                                    cmd.Parameters.AddWithValue("@academicYearStart", currentAcademicYear);
-            //                                    cmd.ExecuteNonQuery();
-            //                                }
-            //                            }
-            //                            else if (selectedRound == "دور ثاني")
-            //                            {
-            //                                string query = @"
-            //WITH CurrentYearFails AS (
-            //    SELECT 
-            //        s.student_id,
-            //        s.current_year,
-            //        COUNT(CASE WHEN g.total_grade < 60 THEN 1 END) AS current_year_fails
-            //    FROM Students s
-            //    INNER JOIN Registrations r ON s.student_id = r.student_id
-            //    INNER JOIN Courses c ON r.course_id = c.course_id
-            //    LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
-            //    WHERE r.status = N'مسجل'
-            //      AND r.academic_year_start = @academicYearStart
-            //      AND s.exam_round = N'دور ثاني'
-            //    GROUP BY s.student_id, s.current_year
-            //)
-            //UPDATE s
-            //SET exam_round = CASE
-            //    WHEN cf.current_year = 4 AND cf.current_year_fails >= 1 THEN N'إعادة سنة'
-            //    WHEN cf.current_year_fails = 0 THEN N'مكتمل'
-            //    WHEN cf.current_year_fails BETWEEN 1 AND 2 THEN N'مرحل'
-            //    WHEN cf.current_year_fails >= 3 THEN N'إعادة سنة'
-            //    ELSE s.exam_round
-            //END
-            //FROM Students s
-            //INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;";
-
-            //                                using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
-            //                                {
-            //                                    cmd.Parameters.AddWithValue("@academicYearStart", currentAcademicYear);
-            //                                    cmd.ExecuteNonQuery();
-            //                                }
-            //                            }
-
-            //                            transaction.Commit(); // ✅ نجاح كل العمليات
-            //                            MessageBox.Show("تم تحديث حالة الطلاب بنجاح.");
-            //                        }
-            //                        catch (Exception exInner)
-            //                        {
-            //                            transaction.Rollback(); // ❌ التراجع عند الخطأ
-            //                            MessageBox.Show("حدث خطأ، تم التراجع عن جميع العمليات:\n" + exInner.Message);
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //            catch (Exception exOuter)
-            //            {
-            //                MessageBox.Show("حدث خطأ أثناء الاتصال:\n" + exOuter.Message);
-            //            }
         }
 
 
@@ -2005,61 +1891,7 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
         private bool isHandlingCellValueChanged = false;
         private void dataGridViewGrades_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            //    if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
 
-            //    if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-
-            //    if (isHandlingCellValueChanged) return;  // لمنع التكرار المتداخل
-            //    string exr = comboExamRound.Text;
-            //    if (exr == "دور أول")
-            //    {
-            //        try
-            //        {
-            //            isHandlingCellValueChanged = true;
-
-            //            var row = dataGridViewGrades.Rows[e.RowIndex];
-
-            //            int workGrade = 0, finalGrade = 0;
-
-            //            if (int.TryParse(row.Cells["درجة الأعمال"].Value?.ToString(), out int wg))
-            //                workGrade = wg;
-
-            //            if (int.TryParse(row.Cells["درجة الامتحان النهائي"].Value?.ToString(), out int fg))
-            //                finalGrade = fg;
-
-            //            int total = workGrade + finalGrade;
-
-            //            row.Cells["المجموع الكلي"].Value = total;
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            MessageBox.Show("حدث خطأ: " + ex.Message);
-            //        }
-            //        finally
-            //        {
-            //            isHandlingCellValueChanged = false;
-            //        }
-            //    }
-            //    else if (exr == "دور ثاني")
-            //    {
-            //        try
-            //        {
-            //            isHandlingCellValueChanged = true;
-            //            var row = dataGridViewGrades.Rows[e.RowIndex];
-            //            int finalGrade = 0;
-            //            if (int.TryParse(row.Cells["درجة الامتحان النهائي"].Value?.ToString(), out int fg))
-            //                finalGrade = fg;
-            //            row.Cells["المجموع الكلي"].Value = finalGrade;
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            MessageBox.Show("حدث خطأ: " + ex.Message);
-            //        }
-            //        finally
-            //        {
-            //            isHandlingCellValueChanged = false;
-            //        }
-            //    }
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
             if (isHandlingCellValueChanged) return;  // لمنع التكرار المتداخل
 
@@ -2179,7 +2011,7 @@ WHERE r.academic_year_start = @academicYearStart
                 {
                     conn.Open();
                     // التحقق من المواد الناقصة قبل أي تحديث
-                 
+
 
                     using (SqlTransaction transaction = conn.BeginTransaction())
                     {
@@ -2301,63 +2133,14 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;
             int selectedYear = (int)numericUpDownYear1.Value;
             string universityNumber = textBox1.Text.Trim();
             string a = comboBox2.Text;
-
+            if (string.IsNullOrWhiteSpace(textBox1.Text))
+            {
+                MessageBox.Show("الرجاء إدخال رقم القيد للطالب.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return; // فقط إذا كان النص فارغاً
+            }
             try
             {
-                //                if (a == "دور أول")
-                //                {
-                //                    using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
-                //                    {
-                //                        conn.Open();
 
-                //                        string query = @"
-                //SELECT             
-                //    ROW_NUMBER() OVER (ORDER BY s.student_id) AS رقم,
-                //    s.student_id,
-                //    s.university_number AS [رقم القيد],
-                //    s.full_name AS [اسم الطالب],
-                //    c.course_name AS [اسم المادة],
-                //    c.year_number AS [السنة الدراسية للمادة],
-                //    CONCAT(r.academic_year_start,'-',r.academic_year_start + 1) AS [العام الجامعي],
-                //    g.work_grade AS [أعمال السنة],
-                //    g.final_grade AS [الامتحان النهائي],
-                //    g.total_grade AS [المجموع],
-                //    g.success_status AS [الحالة],
-                //    s.exam_round AS [الدور]
-                //FROM Students s
-                //JOIN Registrations r ON s.student_id = r.student_id
-                //JOIN Courses c ON r.course_id = c.course_id
-                //LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
-                //WHERE r.academic_year_start = @year
-                //AND s.university_number LIKE '%' + @uniNumber + '%'
-                //AND s.exam_round = @examRound
-                //ORDER BY s.student_id;
-                //";
-
-                //                        using (SqlCommand cmd = new SqlCommand(query, conn))
-                //                        {
-                //                            cmd.Parameters.AddWithValue("@year", selectedYear);
-                //                            cmd.Parameters.AddWithValue("@uniNumber", universityNumber);
-                //                            cmd.Parameters.AddWithValue("@examRound", a);
-
-                //                            DataTable dt = new DataTable();
-                //                            SqlDataAdapter da = new SqlDataAdapter(cmd);
-                //                            da.Fill(dt);
-
-                //                            dataGridView1.DataSource = dt;
-                //                            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                //                            if (dataGridView1.Columns.Contains("student_id"))
-                //                            {
-                //                                dataGridView1.Columns["student_id"].Visible = false;
-                //                            }
-
-                //                        }
-                //                    }
-                //                }
-                //                else if (a == "دور ثاني")
-                //                {
-
-                //                }
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                 {
                     conn.Open();
@@ -2418,7 +2201,7 @@ AND s.exam_round = @examRound
             catch (Exception ex)
             {
                 MessageBox.Show("خطأ أثناء البحث: " + ex.Message);
-            } 
+            }
 
         }
 
@@ -2648,7 +2431,7 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
                                     }
                                 }
 
-                              
+
 
                                 int? workGrade = null;
                                 int? finalGrade = null;
@@ -2749,7 +2532,7 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-         
+
             var row = dataGridView1.Rows[e.RowIndex];
             if (row.IsNewRow) return;
 
