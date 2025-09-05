@@ -2277,7 +2277,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
     WHERE cc.classroom_id = @classroom_id
       AND cc.lecture_day = @lecture_day";
 
-                // إذا كان ignoreCCId > 0 أضف الشرط لتجاهل الصف الحالي
+                // إذا كان ignoreCCId > 0 الشرط لتجاهل الصف الحالي
                 if (ignoreCCId > 0)
                     q += " AND cc.id <> @cc_id";
 
@@ -2324,12 +2324,8 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
             string timeText = cb.Items[e.Index].ToString();
             TimeSpan itemTime = TimeSpan.Parse(timeText);
 
-            int lectureDurationHours = 0;
-            if (comboBox8.SelectedValue != null)
-            {
-                lectureDurationHours = (int)numericUpDown2.Value;
-            }
-
+            int lectureDurationHours = (int)numericUpDown2.Value;
+            
             // حساب وقت النهاية مع دوران 24 ساعة
             TimeSpan duration = TimeSpan.FromHours(lectureDurationHours);
             TimeSpan endTime = TimeSpan.FromHours((itemTime.TotalHours + duration.TotalHours) % 24);

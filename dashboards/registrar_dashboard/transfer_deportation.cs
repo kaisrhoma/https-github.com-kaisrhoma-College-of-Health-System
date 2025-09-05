@@ -253,30 +253,29 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                         MessageBox.Show("⚠ لا يمكن تحويل الطالب إلى القسم العام مباشرة.");
                         return;
                     }
+                    string oldst = dataGridView1.Rows[0].Cells["الحالة"].Value.ToString();
+                    if(oldst != "مستمر")
+                    {
+                        MessageBox.Show("⚠ لايمكن تحويل طالب غير مستمر من قسم لقسم");
+                        return;
+                    }
+                    string depold = dataGridView1.Rows[0].Cells["القسم"].Value.ToString();
+                    int depoldid = 1;
+                    using (SqlCommand cmd = new SqlCommand("SELECT department_id FROM Departments WHERE dep_name = @od ", con))
+                    {
+                        cmd.Parameters.AddWithValue("@od", depold);
+                        depoldid = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                        if (depoldid == newDeptId)
+                        {
+                            MessageBox.Show("⚠ لايمكن تحويل الطالب لنفس القسم الموجود به حاليا");
+                            return;
+                        }
 
                     // التحقق من وجود تسجيلات
                     if (!isStudentHaveRegistrations(studentId))
                     {
-                        // تحديث القسم والسنة مباشرة
-                        string updateQuery = @"
-                    UPDATE Students
-                    SET department_id = @department_id,
-                        current_year = @newYear
-                    WHERE student_id = @student_id";
-
-                        using (SqlCommand cmd = new SqlCommand(updateQuery, con))
-                        {
-                            cmd.Parameters.AddWithValue("@student_id", studentId);
-                            cmd.Parameters.AddWithValue("@department_id", newDeptId);
-                            cmd.Parameters.AddWithValue("@newYear", newYear);
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        // تنزيل مواد السنة الجديدة
-                       DownloadCoursesForStudent(con, studentId, newYear, newDeptId, academicYear);
-
-                        MessageBox.Show("تم تغيير القسم بنجاح.");
-                        button5_Click(null, null);
+                        MessageBox.Show("لايملك الطالب تسجيلات يرجى تحويل الطالب الى حالة محول \nثم فتحه في نافذة المعادة للمزيد من التفاصيل");
                         return;
                     }
 
@@ -309,62 +308,137 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
 
                     // 1️⃣ تحويل المواد الناجحة وغير المشتركة إلى 'سابق'
                     string updateStatusQuery = @"
+-- 1. المواد التي نجح فيها الطالب من السنة الثانية فما فوق
+SELECT g.student_id, g.course_id
+INTO #PassedSubjects   -- # تعني جدول مؤقت
+FROM Grades g
+JOIN Courses c ON g.course_id = c.course_id
+WHERE g.success_status = N'نجاح'
+  AND c.year_number >= 2
+  AND g.student_id = @StudentID;
+
+-- 2. مواد القسم الجديد من السنة الثانية فما فوق
+SELECT cd.course_id
+INTO #NewDeptSubjects   -- برضه مؤقت
+FROM Course_Department cd
+JOIN Courses c ON cd.course_id = c.course_id
+WHERE cd.department_id = @NewDeptID
+  AND c.year_number >= 2;
+
+
+---- 3. تحديث المواد المشتركة بين القسمين إلى مسجل
 UPDATE r
-SET r.status = N'سابق'
+SET r.status = N'مسجل'
 FROM Registrations r
-INNER JOIN Courses c ON r.course_id = c.course_id
-LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
-LEFT JOIN Course_Department cd 
-    ON r.course_id = cd.course_id AND cd.department_id = @newDeptId
-WHERE r.student_id = @studentId
-  AND r.year_number >= 2
-  AND g.success_status = N'ناجح'
-  AND cd.course_id IS NULL; ";
+JOIN #PassedSubjects p ON r.student_id = p.student_id AND r.course_id = p.course_id
+JOIN #NewDeptSubjects n ON p.course_id = n.course_id
+WHERE r.student_id = @StudentID;
+";
 
                     using (SqlCommand cmdStatus = new SqlCommand(updateStatusQuery, con))
                     {
-                        cmdStatus.Parameters.AddWithValue("@studentId", studentId);
-                        cmdStatus.Parameters.AddWithValue("@newDeptId", newDeptId);
-                        cmdStatus.Parameters.AddWithValue("@generalDeptId", generalDeptId);
+                        cmdStatus.Parameters.AddWithValue("@StudentID", studentId);
+                        cmdStatus.Parameters.AddWithValue("@NewDeptID", newDeptId);
                         cmdStatus.ExecuteNonQuery();
                     }
 
-                    // 2️⃣ حذف المواد غير المشتركة (راسب أو NULL) مع التحقق من السنة والقسم
- 
-                    string deleteQuery = @"
-DELETE r
-FROM Registrations r
-INNER JOIN Courses c ON r.course_id = c.course_id
-LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
-LEFT JOIN Course_Department cd 
-    ON r.course_id = cd.course_id AND cd.department_id = @newDeptId
-WHERE r.student_id = @studentId
-  AND r.year_number >= 2
-  AND (g.success_status IS NULL OR g.success_status = N'راسب'); 
 
-UPDATE g
-SET g.work_grade = NULL,
-    g.final_grade = NULL,
-    g.total_grade = NULL,
-    g.success_status = NULL
+                    string qPrev = @"
+-- 1. المواد التي نجح فيها الطالب من السنة الثانية فما فوق
+SELECT g.student_id, g.course_id
+INTO #PassedSubjects   -- # تعني جدول مؤقت
 FROM Grades g
-INNER JOIN Courses c ON g.course_id = c.course_id
-LEFT JOIN Course_Department cd 
-    ON g.course_id = cd.course_id AND cd.department_id = @newDeptId
-WHERE g.student_id = @studentId
+JOIN Courses c ON g.course_id = c.course_id
+WHERE g.success_status = N'نجاح'
   AND c.year_number >= 2
-  AND (g.success_status IS NULL OR g.success_status = N'راسب')
+  AND g.student_id = @StudentID;
 
+-- 2. مواد القسم الجديد من السنة الثانية فما فوق
+SELECT cd.course_id
+INTO #NewDeptSubjects   -- برضه مؤقت
+FROM Course_Department cd
+JOIN Courses c ON cd.course_id = c.course_id
+WHERE cd.department_id = @NewDeptID
+  AND c.year_number >= 2;
+
+-- 4. تحديث المواد الناجح فيها الطالب بس مش موجودة في القسم الجديد إلى سابق
+UPDATE r
+SET r.status = N'سابق'
+FROM Registrations r
+JOIN #PassedSubjects p ON r.student_id = p.student_id AND r.course_id = p.course_id
+WHERE r.student_id = @StudentID
+  AND NOT EXISTS (
+      SELECT 1 FROM #NewDeptSubjects n WHERE n.course_id = r.course_id
+  );
 ";
-
-                    using (SqlCommand cmdDelete = new SqlCommand(deleteQuery, con))
+                    using (SqlCommand cmdStatus = new SqlCommand(qPrev, con))
                     {
-                        cmdDelete.Parameters.AddWithValue("@studentId", studentId);
-                        cmdDelete.Parameters.AddWithValue("@newDeptId", newDeptId);
-                        cmdDelete.Parameters.AddWithValue("@generalDeptId", generalDeptId);
-                        cmdDelete.ExecuteNonQuery();
+                        cmdStatus.Parameters.AddWithValue("@StudentID", studentId);
+                        cmdStatus.Parameters.AddWithValue("@NewDeptID", newDeptId);
+                        cmdStatus.ExecuteNonQuery();
                     }
 
+
+                    string qRegDelete = @"
+-- 1. المواد التي نجح فيها الطالب من السنة الثانية فما فوق
+SELECT g.student_id, g.course_id
+INTO #PassedSubjects   -- # تعني جدول مؤقت
+FROM Grades g
+JOIN Courses c ON g.course_id = c.course_id
+WHERE g.success_status = N'نجاح'
+  AND c.year_number >= 2
+  AND g.student_id = @StudentID;
+
+
+-- 5. حذف أي مادة راسب أو NULL (سواء في القسم القديم أو الجديد)
+DELETE r
+FROM Registrations r
+LEFT JOIN Grades g 
+    ON g.course_id = r.course_id 
+   AND g.student_id = r.student_id
+WHERE r.student_id = @StudentID
+  AND NOT EXISTS (
+      SELECT 1 
+      FROM #PassedSubjects p 
+      WHERE p.course_id = r.course_id
+  )
+  AND (g.success_status = N'راسب' OR g.success_status IS NULL)
+  AND r.year_number >= 2 ;
+";
+                    using (SqlCommand cmdStatus = new SqlCommand(qRegDelete, con))
+                    {
+                        cmdStatus.Parameters.AddWithValue("@StudentID", studentId);
+                        cmdStatus.ExecuteNonQuery();
+                    }
+
+
+                    string qGradDelete = @"
+-- 1. المواد التي نجح فيها الطالب من السنة الثانية فما فوق
+SELECT g.student_id, g.course_id
+INTO #PassedSubjects   -- # تعني جدول مؤقت
+FROM Grades g
+JOIN Courses c ON g.course_id = c.course_id
+WHERE g.success_status = N'نجاح'
+  AND c.year_number >= 2
+  AND g.student_id = @StudentID;
+
+-- حذف الدرجات من جدول الدرجات اللتي تكون اما null او راسب
+
+DELETE g
+FROM Grades g
+WHERE g.student_id = @StudentID
+  AND NOT EXISTS (
+      SELECT 1 
+      FROM #PassedSubjects p
+      WHERE p.course_id = g.course_id
+  )
+  AND (g.success_status = N'راسب' OR g.success_status IS NULL);
+";
+                    using (SqlCommand cmdStatus = new SqlCommand(qGradDelete, con))
+                    {
+                        cmdStatus.Parameters.AddWithValue("@StudentID", studentId);
+                        cmdStatus.ExecuteNonQuery();
+                    }
                     // 3️⃣ تحديث القسم والسنة للطالب
                     string updateStudentQuery = @"
                 UPDATE Students
