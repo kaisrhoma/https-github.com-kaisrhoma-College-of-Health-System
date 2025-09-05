@@ -2327,17 +2327,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
             int lectureDurationHours = 0;
             if (comboBox8.SelectedValue != null)
             {
-                int courseId = Convert.ToInt32(comboBox8.SelectedValue);
-                using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
-                {
-                    string qUnits = "SELECT units FROM Courses WHERE course_id = @course_id";
-                    using (SqlCommand cmd = new SqlCommand(qUnits, con))
-                    {
-                        cmd.Parameters.AddWithValue("@course_id", courseId);
-                        object result = cmd.ExecuteScalar();
-                        if (result != null) lectureDurationHours = Convert.ToInt32(result);
-                    }
-                }
+                lectureDurationHours = (int)numericUpDown2.Value;
             }
 
             // حساب وقت النهاية مع دوران 24 ساعة

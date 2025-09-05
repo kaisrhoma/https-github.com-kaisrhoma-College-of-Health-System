@@ -1498,7 +1498,7 @@ WHERE g.student_id = @studentId
         SELECT COUNT(*) 
         FROM Students 
         WHERE current_year = @year
-          AND (exam_round = N'مكتمل' OR exam_round = N'مرحّل' OR exam_round = N'إعادة سنة')", con))
+          AND (exam_round = N'مكتمل' OR exam_round = N'مرحل' OR exam_round = N'إعادة سنة')", con))
             {
                 cmd.Parameters.AddWithValue("@year", year);
                 int count = Convert.ToInt32(cmd.ExecuteScalar());
@@ -1533,6 +1533,7 @@ WHERE g.student_id = @studentId
                         MessageBox.Show($"⚠ هناك طلبة لم يتم إدخال درجاتهم بعد في السنة {year}، لا يمكن الترقية.");
                         return;
                     }
+
 
                     // تحقق من وجود طلبة قابلين للترقية
                     if (!HasPromotableStudents(con, year))
@@ -1686,29 +1687,35 @@ WHERE g.student_id = @studentId
             {
                 return ; // يوقف العملية إذا اخترت لا
             }
+
+
             try
             {
                 conn.DatabaseConnection dbchekfirst = new conn.DatabaseConnection();
                 using (SqlConnection con = dbchekfirst.OpenConnection()) // فتح الاتصال
                 {
-                    for (int year = 2; year <= 4; year++)
+                    string q = @"
+            SELECT COUNT(*)
+            FROM Students
+            WHERE current_year NOT IN (1) AND exam_round NOT IN (N'دور أول', N'دور ثاني')";
+
+
+                    using (SqlCommand cmd = new SqlCommand(q, con))
                     {
-                        // تحقق من وجود طلبة قابلين للترقية
-                        if (!HasPromotableStudents(con, year))
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+                        if(count > 0)
                         {
-                            MessageBox.Show($"⚠ ليس هناك طلاب في هذه السنة {year} للترقية.");
-                            return;
+                            MessageBox.Show("⚠ ليس هناك طلاب للترقية ربما لم يتم ادخال درجاتهم او ان لم يتم احتسابها");
+                            return ;
                         }
-                        break;
                     }
                 }
-                // استدعاء دالة الترقية الخاصة بالطلاب
-
             }
             catch (SqlException ex)
             {
                 MessageBox.Show("Error : " + ex.Message);
             }
+
             PromoteFirstSecondThiredYearStudents();
         }
         public void getStudentsYearOneTowThree()
@@ -1742,7 +1749,7 @@ WHERE g.student_id = @studentId
                     if (dt.Rows.Count == 0)
                     {
                         dataGridView3.DataSource = null;
-                        MessageBox.Show("لا يوجد طلاب سنة للترقية .او لم يتم إدخال درجاتهم بعد.");
+                        MessageBox.Show("لا يوجد طلاب للترقية .او لم يتم إدخال درجاتهم بعد.");
                     }
                     else
                     {
