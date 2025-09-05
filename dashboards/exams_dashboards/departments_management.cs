@@ -1302,11 +1302,22 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void LoadYears()
         {
-            comboBoxYear4.Items.Clear();
-            for (int i = 1; i <= 4; i++) // حسب عدد سنوات الكلية
-                comboBoxYear4.Items.Add(i);
-            if (comboBoxYear4.Items.Count > 0)
-                comboBoxYear4.SelectedIndex = 0; // السنة الأولى افتراضي
+
+            if (comboBoxDepartment.Text == "عام") {
+                comboBoxYear4.Items.Clear();
+                for (int i = 1; i <= 1; i++) // حسب عدد سنوات الكلية
+                    comboBoxYear4.Items.Add(i);
+                if (comboBoxYear4.Items.Count > 0)
+                { comboBoxYear4.SelectedIndex = 0; }// السنة الأولى افتراضي
+            }
+            else
+            {
+                comboBoxYear4.Items.Clear();
+                for (int i = 2; i <= 4; i++) // حسب عدد سنوات الكلية
+                    comboBoxYear4.Items.Add(i);
+                if (comboBoxYear4.Items.Count > 0)
+                { comboBoxYear4.SelectedIndex = 0; }// السنة الأولى افتراضي
+            }
         }
         // تحميل الأقسام في الكمبو الثاني
 
@@ -1498,6 +1509,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void comboBoxDepartment_SelectedIndexChanged(object sender, EventArgs e)
         {
+            LoadYears();
             LoadDepartmentCourses();
         }
 
@@ -1505,6 +1517,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void button6_Click(object sender, EventArgs e)
         {  // الحصول على الصف الفعلي الذي ضغط عليه المستخدم
+          
             if (dataGridViewDepartment.SelectedRows.Count == 0)
             {
                 label50.Text = "⚠️ الرجاء اختيار مادة صحيحة للحذف.";
@@ -1674,19 +1687,28 @@ WHERE ci.course_id = @course_id
             }
         }
 
+ 
         public void dyears()
         {
-            var years = new Dictionary<int, string>()
+            Dictionary<int, string> years;
+
+            if (comboBox6.Text == "عام")
             {
-                {1, "1"},
-                {2, "2"},
-                {3, "3"},
-                {4, "4"}
-            };
+                years = new Dictionary<int, string>() { { 1, "1" } };
+            }
+            else
+            {
+                years = new Dictionary<int, string>()
+        {
+            {2, "2"},
+            {3, "3"},
+            {4, "4"}
+        };
+            }
 
             comboBox7.DataSource = new BindingSource(years, null);
-            comboBox7.DisplayMember = "Value";  // يعرض النص
-            comboBox7.ValueMember = "Key";      // الرقم الفعلي للاستخدام في الاستعلام
+            comboBox7.DisplayMember = "Value";
+            comboBox7.ValueMember = "Key";
             comboBox7.SelectedIndex = 0;
         }
 
@@ -1830,6 +1852,7 @@ WHERE ci.course_id = @course_id
 
         private void comboBox6_SelectedIndexChanged(object sender, EventArgs e)
         {
+            dyears();
             if (isLoading) return;
             LoadCoursesInstractors();
         }

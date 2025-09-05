@@ -33,24 +33,22 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
             }
+            n();
+            comboBox_Year.Items.Clear();
             comboBox_Year.Items.Add("1");
             comboBox_Year.Items.Add("2");
             comboBox_Year.Items.Add("3");
             comboBox_Year.Items.Add("4");
+            comboBox_Year.SelectedIndex = 0;
             printDocument1.PrintPage += printDocument1_PrintPage;
             printDocument1.BeginPrint += BeginPrint_Reset;
-            comboBox_Year.SelectedIndex = 0;
+       
             dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             comboDepartment.SelectedIndexChanged += comboDepartmentOrYearChanged;
             comboYear4.SelectedIndexChanged += comboDepartmentOrYearChanged;
             LoadDepartments();
 
-            comboYear4.Items.Clear();
-            comboYear4.Items.Add(1);
-            comboYear4.Items.Add(2);
-            comboYear4.Items.Add(3);
-            comboYear4.Items.Add(4);
-            comboYear4.SelectedIndex = 0;
+         
 
             dataGridViewGrades.CellValueChanged += dataGridViewGrades_CellValueChanged;
             dataGridViewGrades.CurrentCellDirtyStateChanged += dataGridViewGrades_CurrentCellDirtyStateChanged;
@@ -73,7 +71,28 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             comboBox2.SelectedIndex = 0;
             LoadMonthApprovalStatus();
         }
+        private void n()
+        {
+            if(comboDepartment.Text == "عام")
+            {
+                comboYear4.Items.Clear();
+                comboYear4.Items.Add(1);
+              
+                comboYear4.SelectedIndex = 0;
 
+            }
+            else
+            {
+                comboYear4.Items.Clear();
+                comboYear4.Items.Add(2);
+                comboYear4.Items.Add(3);
+                comboYear4.Items.Add(4);
+                comboYear4.SelectedIndex = 0;
+
+            }
+
+
+        }
         private void LoadDepartments()
         {
             try
@@ -202,20 +221,81 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             }
         }
         private void LoadStudents(int courseId, string examRound)
-        {
-            try
+        {if (comboExamRound.SelectedIndex == 1)
             {
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                try
                 {
-                    conn.Open();
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        conn.Open();
 
-                    string query = @"SELECT 
+                        string query = @"SELECT 
     s.university_number AS [رقم القيد],
     s.full_name AS [اسم الطالب],
     CAST(g.work_grade AS NVARCHAR) AS [درجة الأعمال],
     CAST(g.final_grade AS NVARCHAR) AS [درجة الامتحان النهائي],
     CAST(g.total_grade AS NVARCHAR) AS [المجموع الكلي],
     g.success_status AS [حالة الطالب],
+    s.exam_round AS [الدور]
+FROM Students s
+INNER JOIN Registrations r 
+    ON s.student_id = r.student_id
+    AND r.course_id = @courseId
+    AND r.status = N'مسجل'
+    AND r.academic_year_start = (
+        SELECT MAX(r2.academic_year_start)
+        FROM Registrations r2
+        WHERE r2.course_id = @courseId
+    )
+LEFT JOIN Grades g 
+    ON s.student_id = g.student_id 
+    AND g.course_id = r.course_id
+WHERE 1=1
+  AND g.success_status = N'راسب'  -- فقط المواد التي رسب فيها الطالب
+";
+
+                        if (!string.IsNullOrEmpty(examRound))
+                        {
+                            query += " AND s.exam_round = @examRound ";
+                        }
+
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@courseId", courseId);
+
+                            if (!string.IsNullOrEmpty(examRound))
+                            {
+                                cmd.Parameters.AddWithValue("@examRound", examRound);
+                            }
+
+                            SqlDataAdapter da = new SqlDataAdapter(cmd);
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+
+                            dataGridViewGrades.DataSource = dt;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("حدث خطأ أثناء تحميل الطلاب: " + ex.Message);
+                }
+            }
+            else if (comboExamRound.SelectedIndex == 0)
+            {
+                try
+                {
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        conn.Open();
+
+                        string query = @"SELECT 
+    s.university_number AS [رقم القيد], 
+    s.full_name AS [اسم الطالب], 
+    CAST(g.work_grade AS NVARCHAR) AS [درجة الأعمال], 
+    CAST(g.final_grade AS NVARCHAR) AS [درجة الامتحان النهائي], 
+    CAST(g.total_grade AS NVARCHAR) AS [المجموع الكلي], 
+    g.success_status AS [حالة الطالب], 
     s.exam_round AS [الدور]
 FROM Students s
 INNER JOIN Registrations r 
@@ -232,33 +312,35 @@ LEFT JOIN Grades g
     ON s.student_id = g.student_id 
     AND g.course_id = r.course_id
 WHERE 1=1
+
 ";
-
-                    if (!string.IsNullOrEmpty(examRound))
-                    {
-                        query += " AND s.exam_round = @examRound ";
-                    }
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@courseId", courseId);
 
                         if (!string.IsNullOrEmpty(examRound))
                         {
-                            cmd.Parameters.AddWithValue("@examRound", examRound);
+                            query += " AND s.exam_round = @examRound ";
                         }
 
-                        SqlDataAdapter da = new SqlDataAdapter(cmd);
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@courseId", courseId);
 
-                        dataGridViewGrades.DataSource = dt;
+                            if (!string.IsNullOrEmpty(examRound))
+                            {
+                                cmd.Parameters.AddWithValue("@examRound", examRound);
+                            }
+
+                            SqlDataAdapter da = new SqlDataAdapter(cmd);
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+
+                            dataGridViewGrades.DataSource = dt;
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("حدث خطأ أثناء تحميل الطلاب: " + ex.Message);
+                catch (Exception ex)
+                {
+                    MessageBox.Show("حدث خطأ أثناء تحميل الطلاب: " + ex.Message);
+                }
             }
         }
 
@@ -276,12 +358,13 @@ WHERE 1=1
 
         private void comboBoxDepartments_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            n();
             if (comboDepartment.SelectedValue != null && comboYear4.SelectedItem != null)
             {
                 int deptId = (int)comboDepartment.SelectedValue;
                 int year = Convert.ToInt32(comboYear4.SelectedItem);
                 LoadCourses(deptId, year);
+               
             }
         }
 

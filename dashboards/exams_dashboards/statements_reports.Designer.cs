@@ -311,6 +311,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.comboBox_Department.Name = "comboBox_Department";
             this.comboBox_Department.Size = new System.Drawing.Size(140, 27);
             this.comboBox_Department.TabIndex = 19;
+            this.comboBox_Department.SelectedIndexChanged += new System.EventHandler(this.comboBox_Department_SelectedIndexChanged);
             // 
             // button6
             // 

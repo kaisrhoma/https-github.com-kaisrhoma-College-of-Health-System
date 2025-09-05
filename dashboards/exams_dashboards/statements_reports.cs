@@ -65,7 +65,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             printDocument12.BeginPrint += BeginPrint_Reset;
             printDocument0.BeginPrint += BeginPrint_Reset;
             //3
-            comboBox_Year.Items.AddRange(new object[] { 1, 2, 3, 4 });
+            n();
 
             comboBox_Year.SelectedIndex = 0;
             FillDepartmentComboBox();
@@ -78,11 +78,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             int startYear1 = (int)numericUpDownYear1.Value;
 
             //************
-            comboBox2.Items.Add("1");
-            comboBox2.Items.Add("2");
-            comboBox2.Items.Add("3");
-            comboBox2.Items.Add("4");
-            comboBox2.SelectedIndex = 0;
+            nv();
             LoadDepartments();
 
 
@@ -985,7 +981,7 @@ ORDER BY c.year_number, c.course_name;";
             if (checkBox1.Checked)
             {
                 string query = @"
-  SELECT 
+SELECT 
     s.full_name AS اسم_الطالب,
     s.university_number AS الرقم_الجامعي,
     c.year_number AS السنة,
@@ -994,13 +990,16 @@ ORDER BY c.year_number, c.course_name;";
     c.units AS الوحدات,
     g.total_grade AS الدرجة
 FROM Grades g
-INNER JOIN Students s ON g.student_id = s.student_id
-INNER JOIN Courses c ON g.course_id = c.course_id
+INNER JOIN Students s 
+    ON g.student_id = s.student_id
+INNER JOIN Courses c 
+    ON g.course_id = c.course_id
 INNER JOIN Course_Department cd 
-    ON cd.course_id = c.course_id 
-    AND cd.department_id = s.department_id -- يربط القسم الصحيح للطالب
+    ON cd.course_id = c.course_id
+-- 🔴 شلت الشرط اللي يربط القسم الحالي للطالب
 WHERE s.university_number = @university_number
 ORDER BY c.year_number, c.course_name;
+
 ";
 
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
@@ -1028,25 +1027,30 @@ ORDER BY c.year_number, c.course_name;
             {
                 string query = @"
 SELECT 
-    s.full_name AS اسم_الطالب,
+    s.full_name       AS اسم_الطالب,
     s.university_number AS الرقم_الجامعي,
-    c.year_number AS السنة,
+    c.year_number     AS السنة,
     cd.course_dep_code AS رمز_المادة,
-    c.course_name AS المادة,
-    c.units AS الوحدات,
-    d.dep_name AS القسم,
-    g.total_grade AS الدرجة
-FROM Grades g
-INNER JOIN Students s ON g.student_id = s.student_id
-INNER JOIN Courses c ON g.course_id = c.course_id
+    c.course_name     AS المادة,
+    c.units           AS الوحدات,
+    d.dep_name        AS القسم,
+    g.total_grade     AS الدرجة
+FROM Registrations r
+INNER JOIN Students s 
+    ON r.student_id = s.student_id
+INNER JOIN Courses c 
+    ON r.course_id = c.course_id
 INNER JOIN Course_Department cd 
-    ON c.course_id = cd.course_id 
-    AND cd.department_id = (
-        SELECT department_id FROM Students WHERE university_number = @university_number
-    )
-INNER JOIN Departments d ON cd.department_id = d.department_id
+    ON cd.course_id = c.course_id
+INNER JOIN Departments d 
+    ON cd.department_id = d.department_id
+LEFT JOIN Grades g 
+    ON g.student_id = s.student_id 
+   AND g.course_id = c.course_id
 WHERE s.university_number = @university_number
+  AND r.status = N'مسجل'   -- أو 'استص'
 ORDER BY c.year_number, c.course_name;
+
 ";
 
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
@@ -1480,15 +1484,42 @@ ORDER BY c.year_number, c.course_name;
                 MessageBox.Show("حدث خطأ أثناء تحميل الأقسام: " + ex.Message);
             }
         }
+        private void nv()
+        {
+            if (comboBox3.Text == "عام")
+            {
+                comboBox2.Items.Clear();
+                comboBox2.Items.Add("1");
+                comboBox2.SelectedIndex = 0;
 
+            
+
+            }
+            else
+            {
+                comboBox2.Items.Clear();
+                comboBox2.Items.Add("2");
+                comboBox2.Items.Add("3");
+                comboBox2.Items.Add("4");
+                comboBox2.SelectedIndex = 0;
+
+
+            }
+
+
+        }
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
+            nv();
             if (comboBox3.SelectedValue != null && comboBox2.SelectedItem != null)
             {
                 int deptId = (int)comboBox3.SelectedValue;
                 int year = Convert.ToInt32(comboBox2.SelectedItem);
                 LoadCourses(deptId, year);
+               
+
             }
+        
         }
 
         private void LoadCourses(int departmentId, int year)
@@ -1649,6 +1680,7 @@ WHERE c.course_id = @courseId
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+
             if (comboBox1.SelectedValue != null && comboBox2.SelectedItem != null && comboBox3.SelectedValue != null)
             {
                 int courseId = (int)comboBox1.SelectedValue;
@@ -1662,6 +1694,33 @@ WHERE c.course_id = @courseId
                 MessageBox.Show("يرجى اختيار القسم والسنة والمادة أولاً");
             }
         }
+        //-----------------------------------------------
+        private void n()
+        {
+            if (comboBox_Department.Text == "عام")
+            {
+                comboBox_Year.Items.Clear();
+
+                comboBox_Year.Items.AddRange(new object[] {1});
+                comboBox_Year.SelectedIndex = 0;
+
+            }
+            else
+            {
+                comboBox_Year.Items.Clear();
+                comboBox_Year.Items.AddRange(new object[] {2, 3, 4 });
+                comboBox_Year.SelectedIndex = 0;
+
+            }
+
+
+        }
+        private void comboBox_Department_SelectedIndexChanged(object sender, EventArgs e)
+        {
+     n();
+
+        }
+
         private void printDocument0_PrintPage(object sender, PrintPageEventArgs e)
         {
             if (pages == null || pages.Count == 0 || currentPageIndex >= pages.Count)
