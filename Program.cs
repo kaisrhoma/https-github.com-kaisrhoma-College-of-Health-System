@@ -17,8 +17,13 @@ namespace college_of_health_sciences
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            // عرض الـ SplashScreen أولًا
+            SplashScreen splash = new SplashScreen();
+            splash.ShowDialog(); // <-- ShowDialog يوقف Main حتى يغلق Splash
+
+            // بعد إغلاق الـ Splash، افتح LoginForm
             Application.Run(new login_form());
-            
         }
     }
 }

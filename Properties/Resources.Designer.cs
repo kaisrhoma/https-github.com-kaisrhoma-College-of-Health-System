@@ -73,6 +73,16 @@ namespace college_of_health_sciences.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Application_Loader {
+            get {
+                object obj = ResourceManager.GetObject("Application_Loader", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap cancel_24 {
             get {
                 object obj = ResourceManager.GetObject("cancel.24", resourceCulture);
@@ -123,6 +133,16 @@ namespace college_of_health_sciences.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap load_32 {
+            get {
+                object obj = ResourceManager.GetObject("load-32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap login_backimage {
             get {
                 object obj = ResourceManager.GetObject("login_backimage", resourceCulture);
@@ -133,9 +153,39 @@ namespace college_of_health_sciences.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap logo_colorized2 {
+            get {
+                object obj = ResourceManager.GetObject("logo_colorized2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap password {
             get {
                 object obj = ResourceManager.GetObject("password", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PictureLoading {
+            get {
+                object obj = ResourceManager.GetObject("PictureLoading", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PictureLoading1 {
+            get {
+                object obj = ResourceManager.GetObject("PictureLoading1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

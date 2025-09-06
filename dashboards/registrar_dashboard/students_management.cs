@@ -466,20 +466,17 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                 }
             }
         }
-
-
-
-
-
-
-
-        private void students_management_Load(object sender, EventArgs e)
+        private void LoadComboBoxesAndData()
         {
-            label1.Text = "";
-            textBox2.Focus();
+            // بما أن DataGridView و ComboBox هي عناصر UI يجب استخدام Invoke عند تعديلها
+            this.Invoke(new Action(() =>
+            {
 
-            string[] nationalities = new string[]
-    {
+                label1.Text = "";
+                textBox2.Focus();
+
+                nationalities = new string[]
+        {
         "أفغاني", "ألباني", "جزائري", "أمريكي ساموا", "أندوري", "أنغولي", "أنتيغوا وبربودا",
         "أرجنتيني", "أرميني", "أسترالي", "نمساوي", "أذربيجاني", "باهامي", "بحريني",
         "بنغلاديشي", "باربادوسي", "بيلاروسي", "بلجيكي", "بليزي", "بيني", "بوتاني", "بوليفي",
@@ -504,69 +501,86 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
         "سوريالي", "طاجيكستان", "تنزانيا", "تايلاندي", "توغو", "تونسي", "تركيا", "تركمانستان", "توفالو",
         "أوغندي", "أوكراني", "الإماراتي", "بريطاني", "أمريكي", "أوروغواي", "أوزبكستان", "فانواتو",
         "فنزويلا", "فيتنامي", "اليمني", "زامبي", "زيمبابوي"
-    };
+        };
 
-            // ترتيب أبجدي
-            Array.Sort(nationalities, StringComparer.CurrentCulture);
-            comboBox1.Items.AddRange(nationalities);
+                // ترتيب أبجدي
+                Array.Sort(nationalities, StringComparer.CurrentCulture);
+                comboBox1.Items.AddRange(nationalities);
 
-            // تعيين "ليبي" كافتراضي
-            int index = comboBox1.Items.IndexOf("ليبي");
-            if (index >= 0)
-                comboBox1.SelectedIndex = index;
+                // تعيين "ليبي" كافتراضي
+                int index = comboBox1.Items.IndexOf("ليبي");
+                if (index >= 0)
+                    comboBox1.SelectedIndex = index;
 
-            // تفعيل البحث أثناء الكتابة
-            comboBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            comboBox1.AutoCompleteSource = AutoCompleteSource.ListItems;
+                // تفعيل البحث أثناء الكتابة
+                comboBox1.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                comboBox1.AutoCompleteSource = AutoCompleteSource.ListItems;
 
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDown; // يسمح بالكتابة
-            comboBox1.DropDownHeight = 1; // يجعل القائمة شبه مخفية
-            comboBox1.IntegralHeight = false; // منع تغيير الحجم التلقائي
-            try
-            {
-                conn.DatabaseConnection db = new conn.DatabaseConnection();
-                using (SqlConnection con = db.OpenConnection())
+                comboBox1.DropDownStyle = ComboBoxStyle.DropDown; // يسمح بالكتابة
+                comboBox1.DropDownHeight = 1; // يجعل القائمة شبه مخفية
+                comboBox1.IntegralHeight = false; // منع تغيير الحجم التلقائي
+                try
                 {
-                    int month3;
-
-                    using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
+                    conn.DatabaseConnection db = new conn.DatabaseConnection();
+                    using (SqlConnection con = db.OpenConnection())
                     {
-                        month3 = Convert.ToInt32(cmddate.ExecuteScalar());
+                        int month3;
+
+                        using (SqlCommand cmddate = new SqlCommand("SELECT month_number FROM Months WHERE month_id = 1 ", con))
+                        {
+                            month3 = Convert.ToInt32(cmddate.ExecuteScalar());
+                        }
+
+                        int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+                        numericUpDown1.Value = academicYearStart;
+                        numericUpDown2.Value = academicYearStart;
+                        numericYear.Value = academicYearStart;
+                        string q = "select * from Departments";
+                        SqlDataAdapter da = new SqlDataAdapter(q, con);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        comboBox3.DataSource = dt;
+                        comboBox3.DisplayMember = "dep_name";
+                        comboBox3.ValueMember = "department_id";
                     }
-
-                    int academicYearStart = DateTime.Now.Month >= month3 ? DateTime.Now.Year : DateTime.Now.Year - 1;
-                    numericUpDown1.Value = academicYearStart;
-                    numericUpDown2.Value = academicYearStart;
-                    numericYear.Value = academicYearStart;
-                    string q = "select * from Departments";
-                    SqlDataAdapter da = new SqlDataAdapter(q, con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-
-                    comboBox3.DataSource = dt;
-                    comboBox3.DisplayMember = "dep_name";
-                    comboBox3.ValueMember = "department_id";
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("There is an Error : " + ex.Message);
-            }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("There is an Error : " + ex.Message);
+                }
 
 
-            var study_year = new Dictionary<int, string>()
+                var study_year = new Dictionary<int, string>()
             {
                 {1, "1"},
                 {2, "2"},
                 {3, "3"},
                 {4, "4"}
             };
-            comboBox4.SelectedIndexChanged -= comboBox4_SelectedIndexChanged;
-            comboBox4.DataSource = new BindingSource(study_year, null);
-            comboBox4.DisplayMember = "Value";
-            comboBox4.ValueMember = "Key";
-            comboBox4.SelectedIndex = -1;
-            comboBox4.SelectedIndexChanged += comboBox4_SelectedIndexChanged;
+                comboBox4.SelectedIndexChanged -= comboBox4_SelectedIndexChanged;
+                comboBox4.DataSource = new BindingSource(study_year, null);
+                comboBox4.DisplayMember = "Value";
+                comboBox4.ValueMember = "Key";
+                comboBox4.SelectedIndex = -1;
+                comboBox4.SelectedIndexChanged += comboBox4_SelectedIndexChanged;
+
+            }));
+        }
+
+        string[] nationalities;
+        private async void students_management_Load(object sender, EventArgs e)
+        {
+            panel1.Visible = true; // إظهار دائرة التحميل
+            panel1.BringToFront();
+
+            var loadTask = Task.Run(() => LoadComboBoxesAndData());
+            var delayTask = Task.Delay(2000);
+
+            // انتظر انتهاء كلاهما
+            await Task.WhenAll(loadTask, delayTask);
+
+            panel1.Visible = false; // إخفاء دائرة التحميل بعد انتهاء العملية
         }
 
 
@@ -749,13 +763,42 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     setColumnComboBoxsyncwithDB(dataGridView2, "department_id", "columndepartment", "القسم", "department_id","select * from Departments", "dep_name", "department_id");
 
 
+
+                    // الجنسية: إضافة مرة واحدة فقط
+                    if (!dataGridView2.Columns.Contains("national"))
+                    {
+                        DataGridViewComboBoxColumn nationalityColumn = new DataGridViewComboBoxColumn();
+                        nationalityColumn.HeaderText = "الجنسية";
+                        nationalityColumn.Name = "national";
+                        nationalityColumn.DataSource = nationalities;
+                        dataGridView2.Columns.Add(nationalityColumn);
+                    }
+                    dataGridView2.Columns["national"].DisplayIndex = 3;
+                    // تحديث قيمة العمود بعد تحميل البيانات
+                    if (dataGridView2.Rows.Count > 0 && !dataGridView2.Rows[0].IsNewRow)
+                    {
+                        var cell = dataGridView2.Rows[0].Cells["national"];
+                        string currentValue = dataGridView2.Rows[0].Cells["nationality"].Value?.ToString(); // القيمة من DB
+
+                        if (!string.IsNullOrEmpty(currentValue) && nationalities.Contains(currentValue))
+                            cell.Value = currentValue;
+                        else
+                            cell.Value = nationalities.Contains("ليبي") ? "ليبي" : nationalities[0];
+                    }
+
+                    // الميلاد: استبدال آمن
                     if (dataGridView2.Columns.Contains("birth_date"))
                         dataGridView2.Columns.Remove("birth_date");
-                    CalendarColumn columnDate = new CalendarColumn();
-                    columnDate.HeaderText = "تاريخ الميلاد";
-                    columnDate.Name = "columndate";
-                    columnDate.DataPropertyName = "birth_date";
-                    dataGridView2.Columns.Add(columnDate);
+
+                    if (!dataGridView2.Columns.Contains("columndate"))
+                    {
+                        CalendarColumn columnDate = new CalendarColumn();
+                        columnDate.HeaderText = "تاريخ الميلاد";
+                        columnDate.Name = "columndate";
+                        columnDate.DataPropertyName = "birth_date";
+                        dataGridView2.Columns.Add(columnDate);
+                    }
+
 
                     // باقي التنسيق
                     datagridviewstyle(dataGridView2);
@@ -764,9 +807,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     dataGridView2.Columns["description"].HeaderText = "الحالة";
                     dataGridView2.Columns["description"].ReadOnly = true;
                     dataGridView2.Columns["student_id"].Visible = false;
-                    dataGridView2.Columns["nationality"].HeaderText = "الجنسية";
-
-
+                    dataGridView2.Columns["nationality"].Visible = false;
                 }
                 catch (Exception ex)
                 {
@@ -784,6 +825,21 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             }
         }
 
+        private void dataGridView2_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (dataGridView2.CurrentCell.OwningColumn.Name == "national")
+            {
+                if (e.Control is ComboBox cb)
+                {
+                    cb.DropDownStyle = ComboBoxStyle.DropDown; // يسمح بالكتابة
+                    cb.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    cb.AutoCompleteSource = AutoCompleteSource.ListItems;
+
+                    cb.DropDownHeight = 1;  // يخلي القائمة شبه مخفية
+                    cb.IntegralHeight = false;
+                }
+            }
+        }
 
         // جلب بيانات الطالب حسب رقم القيد و السماح بتعديلها وعرضها في الجدول 
         private void button2_Click(object sender, EventArgs e)
@@ -839,7 +895,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
                     string statusDescription = row.Cells["description"].FormattedValue.ToString();
                     string fullName = row.Cells["full_name"].Value?.ToString() ?? "";
                     string studentid = row.Cells["student_id"].Value?.ToString() ?? "";
-                    string nationality = row.Cells["nationality"].Value?.ToString() ?? "";
+                    string nationality = row.Cells["national"].Value?.ToString() ?? "";
                     DateTime birthDate;
 
                     if (!DateTime.TryParse(row.Cells["columndate"].FormattedValue?.ToString(), out birthDate))

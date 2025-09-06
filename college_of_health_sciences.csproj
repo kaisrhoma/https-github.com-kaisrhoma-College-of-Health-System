@@ -212,6 +212,12 @@
     <Compile Include="system_forms\registerar_form.Designer.cs">
       <DependentUpon>registerar_form.cs</DependentUpon>
     </Compile>
+    <Compile Include="system_forms\SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="system_forms\SplashScreen.Designer.cs">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="dashboards\admin\admin_home.resx">
       <DependentUpon>admin_home.cs</DependentUpon>
     </EmbeddedResource>
@@ -279,6 +285,9 @@
     <EmbeddedResource Include="system_forms\registerar_form.resx">
       <DependentUpon>registerar_form.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="system_forms\SplashScreen.resx">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -299,7 +308,12 @@
   <ItemGroup>
     <Content Include="images\user.png" />
     <Content Include="Resources\240x320-826px-Microsoft_Office_Excel_%282019–present%29.svg.png" />
+    <None Include="Resources\PictureLoading1.gif" />
+    <None Include="Resources\load-32.gif" />
+    <None Include="Resources\logo_colorized2.png" />
+    <None Include="Resources\Application_Loader.gif" />
     <Content Include="Resources\Carlosjj-Microsoft-Office-2013-Excel.48.png" />
+    <None Include="Resources\PictureLoading.gif" />
     <None Include="Resources\Carlosjj-Microsoft-Office-2013-Excel.481.png" />
     <None Include="Resources\adminlogin.png" />
     <None Include="Resources\password.png" />

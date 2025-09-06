@@ -3175,9 +3175,5 @@ WHERE c.year_number = @year
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
-
-    
-
-      
     }
 }
