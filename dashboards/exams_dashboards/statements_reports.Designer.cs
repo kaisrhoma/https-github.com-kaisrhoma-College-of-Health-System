@@ -34,10 +34,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button7 = new System.Windows.Forms.Button();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.label12 = new System.Windows.Forms.Label();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -104,7 +104,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.tabPage4.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage4.Size = new System.Drawing.Size(672, 426);
             this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "تقارير النتائج";
+            this.tabPage4.Text = "كشف طلاب الدارسين في مادة";
             // 
             // groupBox4
             // 
@@ -112,10 +112,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.comboBox3);
             this.groupBox4.Controls.Add(this.label11);
+            this.groupBox4.Controls.Add(this.label12);
+            this.groupBox4.Controls.Add(this.comboBox1);
             this.groupBox4.Controls.Add(this.button7);
             this.groupBox4.Controls.Add(this.dataGridView2);
-            this.groupBox4.Controls.Add(this.comboBox1);
-            this.groupBox4.Controls.Add(this.label12);
             this.groupBox4.Controls.Add(this.comboBox2);
             this.groupBox4.Controls.Add(this.label13);
             this.groupBox4.Location = new System.Drawing.Point(27, 65);
@@ -149,13 +149,35 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.label11.TabIndex = 28;
             this.label11.Text = "القسم";
             // 
+            // label12
+            // 
+            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(200, 42);
+            this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(38, 19);
+            this.label12.TabIndex = 20;
+            this.label12.Text = "المادة";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(56, 36);
+            this.comboBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(140, 27);
+            this.comboBox1.TabIndex = 19;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
             // button7
             // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button7.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button7.BackColor = System.Drawing.Color.LimeGreen;
             this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button7.ForeColor = System.Drawing.Color.White;
-            this.button7.Location = new System.Drawing.Point(266, 314);
+            this.button7.Location = new System.Drawing.Point(265, 314);
             this.button7.Margin = new System.Windows.Forms.Padding(2);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(104, 37);
@@ -178,33 +200,11 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.dataGridView2.Size = new System.Drawing.Size(586, 234);
             this.dataGridView2.TabIndex = 26;
             // 
-            // comboBox1
-            // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(252, 34);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(140, 27);
-            this.comboBox1.TabIndex = 19;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-            // 
-            // label12
-            // 
-            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(392, 36);
-            this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(38, 19);
-            this.label12.TabIndex = 20;
-            this.label12.Text = "المادة";
-            // 
             // comboBox2
             // 
             this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(71, 34);
+            this.comboBox2.Location = new System.Drawing.Point(242, 34);
             this.comboBox2.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(140, 27);
@@ -215,7 +215,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             // 
             this.label13.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(211, 36);
+            this.label13.Location = new System.Drawing.Point(382, 40);
             this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(38, 19);
@@ -228,12 +228,12 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.label15.AutoSize = true;
             this.label15.Font = new System.Drawing.Font("Times New Roman", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
-            this.label15.Location = new System.Drawing.Point(266, 20);
+            this.label15.Location = new System.Drawing.Point(216, 20);
             this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(117, 26);
+            this.label15.Size = new System.Drawing.Size(242, 26);
             this.label15.TabIndex = 29;
-            this.label15.Text = "تقارير النتائج";
+            this.label15.Text = "كشف طلاب الدارسين في مادة";
             // 
             // tabPage3
             // 
@@ -629,7 +629,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             this.button1.BackColor = System.Drawing.Color.LimeGreen;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(275, 366);
+            this.button1.Location = new System.Drawing.Point(257, 349);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(131, 34);

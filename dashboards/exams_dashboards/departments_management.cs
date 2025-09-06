@@ -20,6 +20,9 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         private bool isSelecting = false;
         DataTable dt;
         SqlDataAdapter da;
+        private int selectedCourseIdForRow = 0;   // لتخزين course_id للصف المحدد
+        private int selectedCCId1 = 0;
+
 
         DataTable dtInstructors;
         public departments_management()
@@ -1884,9 +1887,40 @@ WHERE ci.course_id = @course_id
 
                 using (SqlConnection concc = dbshowcc.OpenConnection()) // فتح الاتصال
                 {
+                    //                    string query = @"
+                    //                                  SELECT 
+                    //    cc.id,
+                    //    c.year_number AS [السنة],
+                    //    c.course_name AS [اسم المادة],
+                    //    d.dep_name AS [القسم],
+                    //    cl.room_name AS [اسم القاعة],
+                    //    cc.group_number AS [المجموعة],
+                    //    cc.capacity AS [العدد],
+                    //    cc.start_time AS [وقت البداية],
+                    //    cc.end_time AS [وقت النهاية],
+                    //    CASE cc.lecture_day
+                    //        WHEN 1 THEN N'الأحد'
+                    //        WHEN 2 THEN N'الأثنين'
+                    //        WHEN 3 THEN N'الثلاثاء'
+                    //        WHEN 4 THEN N'الأربعاء'
+                    //        WHEN 5 THEN N'الخميس'
+                    //        WHEN 6 THEN N'الجمعة'
+                    //        WHEN 7 THEN N'السبت'
+                    //        ELSE N'غير محدد'
+                    //    END AS [اليوم],
+                    //    i.full_name AS [الدكتور]
+                    //FROM Course_Classroom cc
+                    //JOIN Courses c ON cc.course_id = c.course_id
+                    //JOIN Classrooms cl ON cc.classroom_id = cl.classroom_id
+                    //LEFT JOIN Instructors i ON i.instructor_id = cc.instructor_id
+                    //LEFT JOIN Course_Department cd ON cd.course_id = c.course_id
+                    //LEFT JOIN Departments d ON d.department_id = cd.department_id
+
+                    //                                   ";
                     string query = @"
-                                  SELECT 
+SELECT 
     cc.id,
+    c.course_id,
     c.year_number AS [السنة],
     c.course_name AS [اسم المادة],
     d.dep_name AS [القسم],
@@ -1912,8 +1946,10 @@ JOIN Classrooms cl ON cc.classroom_id = cl.classroom_id
 LEFT JOIN Instructors i ON i.instructor_id = cc.instructor_id
 LEFT JOIN Course_Department cd ON cd.course_id = c.course_id
 LEFT JOIN Departments d ON d.department_id = cd.department_id
+";
+                    if (dataGridView6.Columns["course_id"] != null)
+                        dataGridView6.Columns["course_id"].Visible = false;
 
-                                   ";
 
 
                     using (SqlCommand cmdcc = new SqlCommand(query, concc))
@@ -1940,6 +1976,9 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                         // إخفاء عمود id لأنه داخلي
                         if (dataGridView6.Columns["id"] != null)
                             dataGridView6.Columns["id"].Visible = false;
+
+                        if (dataGridView6.Columns["course_id"] != null)
+                            dataGridView6.Columns["course_id"].Visible = false;
                     }
                 }
             }
@@ -2028,10 +2067,9 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                 // حفظ الـ ID للصف المحدد
                 object idValue = row.Cells["id"].Value;
                 selectedCCId = (idValue != DBNull.Value) ? Convert.ToInt32(idValue) : 0;
-
                 // تظليل الصف
                 dataGridView6.Rows[e.RowIndex].Selected = true;
-
+          
                 // عرض البيانات في الحقول
                 comboBox8.Text = row.Cells["اسم المادة"].Value.ToString();
                 comboBox10.Text = row.Cells["المجموعة"].Value.ToString();
@@ -2044,7 +2082,33 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                 object value = row.Cells["العدد"].Value;
                 numericUpDown1.Value = (value != DBNull.Value) ? Convert.ToDecimal(value) : 0;
                 UpdateReservedTimes();
+             
+
             }
+            if (e.RowIndex < 0) return;
+
+            DataGridViewRow row1 = dataGridView6.Rows[e.RowIndex];
+
+            // حفظ ID و course_id للصف المحدد
+            selectedCCId1 = (row1.Cells["id"].Value != null && row1.Cells["id"].Value != DBNull.Value)
+        ? Convert.ToInt32(row1.Cells["id"].Value)
+        : 0;
+
+            selectedCourseIdForRow = (row1.Cells["course_id"].Value != null && row1.Cells["course_id"].Value != DBNull.Value)
+                ? Convert.ToInt32(row1.Cells["course_id"].Value)
+                : 0;
+
+
+            // تظليل الصف
+            row1.Selected = true;
+
+         
+      
+            UpdateStudentsCountLabel(selectedCCId1);
+
+            // تعبئة ComboBox للمجموعات الأخرى لنفس المادة
+            PopulateDestinationGroups(selectedCourseIdForRow, selectedCCId1);
+
         }
 
         private void button26_Click_1(object sender, EventArgs e)
@@ -2426,6 +2490,269 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
         {
             UpdateReservedTimes();
         }
+        //************************
+        // ==================== كود النقل المستقل ====================
+
+        // دالة لإظهار/إخفاء عناصر النقل
+     
+
+        private void PopulateDestinationGroups(int courseId, int currentCcId)
+        {
+            // إزالة أي بيانات قديمة إذا كان courseId = 0
+            if (courseId == 0)
+            {
+                comboBox1.DataSource = null;
+                button4.Enabled = false;
+                return;
+            }
+
+            DataTable dt = new DataTable();
+
+            try
+            {
+                using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
+                using (SqlCommand cmd = new SqlCommand(@"
+            SELECT 
+                cc.id,
+                N'مجموعة ' + CAST(cc.group_number AS NVARCHAR(10)) AS DisplayText
+            FROM Course_Classroom cc
+            WHERE cc.course_id = @course_id
+              AND (@current_cc_id = 0 OR cc.id <> @current_cc_id)
+            ORDER BY cc.group_number
+        ", con))
+                {
+                    cmd.Parameters.AddWithValue("@course_id", courseId);
+                    cmd.Parameters.AddWithValue("@current_cc_id", currentCcId);
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(dt);
+                }
+
+                // تعطيل الحدث مؤقتاً لتجنب التكرار
+                comboBox1.SelectedIndexChanged -= comboBox1_SelectedIndexChanged;
+
+                // إعداد ComboBox
+                comboBox1.DataSource = dt;
+                comboBox1.DisplayMember = "DisplayText";
+                comboBox1.ValueMember = "id";
+
+                comboBox1.DrawMode = DrawMode.Normal;
+                comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+                comboBox1.BackColor = SystemColors.Window;
+                comboBox1.ForeColor = SystemColors.WindowText;
+                comboBox1.Font = new Font("Segoe UI", 11, FontStyle.Bold);
+
+                // اختيار أول عنصر تلقائياً إذا كان موجود
+                if (dt.Rows.Count > 0)
+                    comboBox1.SelectedIndex = 0;
+                else
+                    comboBox1.SelectedIndex = -1;
+
+                // إعادة تفعيل الحدث
+                comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+
+                // تفعيل زر النقل إذا كانت هناك عناصر
+                button4.Enabled = dt.Rows.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ في جلب المجموعات: " + ex.Message);
+                comboBox1.DataSource = null;
+                button4.Enabled = false;
+            }
+        }
+
+
+
+
+
+        private void UpdateStudentsCountLabel(int ccId)
+        {
+            using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
+            {
+                int latestAcademicYear = 0;
+
+                // أحدث عام جامعي للمجموعة
+                using (SqlCommand cmdMaxYear = new SqlCommand(@"
+            SELECT ISNULL(MAX(academic_year_start), 0)
+            FROM Registrations
+            WHERE course_classroom_id = @cc_id
+        ", con))
+                {
+                    cmdMaxYear.Parameters.AddWithValue("@cc_id", ccId);
+                    latestAcademicYear = Convert.ToInt32(cmdMaxYear.ExecuteScalar());
+                }
+
+                if (latestAcademicYear == 0)
+                {
+                    label63.Text = "0";
+                    return;
+                }
+
+                // عدد الطلاب
+                using (SqlCommand cmdCount = new SqlCommand(@"
+            SELECT COUNT(*)
+            FROM Registrations
+            WHERE course_classroom_id = @cc_id
+              AND academic_year_start = @ay
+        ", con))
+                {
+                    cmdCount.Parameters.AddWithValue("@cc_id", ccId);
+                    cmdCount.Parameters.AddWithValue("@ay", latestAcademicYear);
+
+                    int count = Convert.ToInt32(cmdCount.ExecuteScalar());
+                    label63.Text = count.ToString();
+                }
+            }
+        }
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedValue == null)
+            {
+                MessageBox.Show("الرجاء اختيار مجموعة للنقل إليها.");
+                return;
+            }
+
+            int destCcId = Convert.ToInt32(comboBox1.SelectedValue);
+            int toMoveCount;
+            int latestAcademicYear;
+
+            using (SqlConnection con = new conn.DatabaseConnection().OpenConnection())
+            using (SqlTransaction tx = con.BeginTransaction())
+            {
+                try
+                {
+                    // أحدث عام جامعي
+                    using (SqlCommand cmdMaxYear = new SqlCommand(@"
+                SELECT ISNULL(MAX(academic_year_start), 0)
+                FROM Registrations
+                WHERE course_classroom_id = @cc_id
+            ", con, tx))
+                    {
+                        cmdMaxYear.Parameters.AddWithValue("@cc_id", selectedCCId1);
+                        latestAcademicYear = Convert.ToInt32(cmdMaxYear.ExecuteScalar());
+                    }
+
+                    if (latestAcademicYear == 0)
+                    {
+                        MessageBox.Show("لا توجد تسجيلات مرتبطة بالمجموعة.");
+                        tx.Rollback();
+                        return;
+                    }
+
+                    // عدد الطلاب المراد نقلهم
+                    using (SqlCommand cmdCount = new SqlCommand(@"
+                SELECT COUNT(*)
+                FROM Registrations
+                WHERE course_classroom_id = @cc_id
+                  AND academic_year_start = @ay
+            ", con, tx))
+                    {
+                        cmdCount.Parameters.AddWithValue("@cc_id", selectedCCId1);
+                        cmdCount.Parameters.AddWithValue("@ay", latestAcademicYear);
+                        toMoveCount = Convert.ToInt32(cmdCount.ExecuteScalar());
+                    }
+
+                    if (toMoveCount <= 0)
+                    {
+                        MessageBox.Show("لا يوجد طلاب لنقلهم.");
+                        tx.Rollback();
+                        return;
+                    }
+
+                    if (MessageBox.Show(
+                        $"سيتم نقل {toMoveCount} طالب/ة.\nهل تريد المتابعة؟",
+                        "تأكيد النقل",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    {
+                        tx.Rollback();
+                        return;
+                    }
+
+                    // تحديث التسجيلات
+                    using (SqlCommand cmdUpdate = new SqlCommand(@"
+                UPDATE Registrations
+                SET course_classroom_id = @dest_cc_id
+                WHERE course_classroom_id = @src_cc_id
+                  AND academic_year_start = @ay
+            ", con, tx))
+                    {
+                        cmdUpdate.Parameters.AddWithValue("@dest_cc_id", destCcId);
+                        cmdUpdate.Parameters.AddWithValue("@src_cc_id", selectedCCId1);
+                        cmdUpdate.Parameters.AddWithValue("@ay", latestAcademicYear);
+                        cmdUpdate.ExecuteNonQuery();
+                    }
+
+                    // الحصول على السعة وعدد الطلاب الحاليين في المجموعة المستهدفة
+                    int destCapacity = 0;
+                    int currentCount = 0;
+
+                    using (SqlCommand cmdInfo = new SqlCommand(@"
+                SELECT capacity,
+                       (SELECT COUNT(*) FROM Registrations 
+                        WHERE course_classroom_id = @dest_cc_id 
+                          AND academic_year_start = @ay) AS currentCount
+                FROM Course_Classroom
+                WHERE id = @dest_cc_id
+            ", con, tx))
+                    {
+                        cmdInfo.Parameters.AddWithValue("@dest_cc_id", destCcId);
+                        cmdInfo.Parameters.AddWithValue("@ay", latestAcademicYear);
+                        using (SqlDataReader dr = cmdInfo.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                destCapacity = Convert.ToInt32(dr["capacity"]);
+                                currentCount = Convert.ToInt32(dr["currentCount"]);
+                            }
+                        }
+                    }
+
+                    // زيادة السعة فقط إذا كان العدد يتجاوز السعة
+                    int additionalCapacity = 0;
+                    if (currentCount > destCapacity)
+                    {
+                        additionalCapacity = currentCount - destCapacity;
+                    }
+
+                    if (additionalCapacity > 0)
+                    {
+                        using (SqlCommand cmdCap = new SqlCommand(@"
+                    UPDATE Course_Classroom
+                    SET capacity = capacity + @inc
+                    WHERE id = @dest_cc_id
+                ", con, tx))
+                        {
+                            cmdCap.Parameters.AddWithValue("@inc", additionalCapacity);
+                            cmdCap.Parameters.AddWithValue("@dest_cc_id", destCcId);
+                            cmdCap.ExecuteNonQuery();
+                        }
+                    }
+
+                    tx.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tx.Rollback();
+                    MessageBox.Show("خطأ: " + ex.Message);
+                    return;
+                }
+            }
+
+            MessageBox.Show("✅ تم النقل بنجاح.");
+            UpdateStudentsCountLabel(selectedCCId1);
+            PopulateDestinationGroups(selectedCourseIdForRow, selectedCCId1);
+            LoadCourseClassroom();
+        }
+
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+        //************************
         //ربط المواد بي الاساتده
         private void LoadYears1()
         {
@@ -2849,5 +3176,8 @@ WHERE c.year_number = @year
             }
         }
 
+    
+
+      
     }
 }

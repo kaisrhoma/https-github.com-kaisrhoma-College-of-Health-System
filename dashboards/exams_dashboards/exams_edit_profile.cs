@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,31 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         {
             InitializeComponent();
             LoadUserData();
+        
+            int radius = 20; // نصف القطر للحواف
+            panel1.Paint += (s, e) =>
+            {
+                Graphics g = e.Graphics;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+
+                // مسار الحواف المستديرة
+                GraphicsPath path = new GraphicsPath();
+                path.AddArc(0, 0, radius, radius, 180, 90);
+                path.AddArc(panel1.Width - radius, 0, radius, radius, 270, 90);
+                path.AddArc(panel1.Width - radius, panel1.Height - radius, radius, radius, 0, 90);
+                path.AddArc(0, panel1.Height - radius, radius, radius, 90, 90);
+                path.CloseAllFigures();
+
+                panel1.Region = new Region(path);
+
+                // الظل
+                using (Pen shadowPen = new Pen(Color.FromArgb(80, Color.Black), 4))
+                {
+                    g.DrawPath(shadowPen, path);
+                }
+            };
         }
+        
 
         private void LoadUserData()
         {

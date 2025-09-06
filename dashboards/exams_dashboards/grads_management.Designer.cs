@@ -64,6 +64,7 @@
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.label5 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.button10 = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.numericUpDownYear1 = new System.Windows.Forms.NumericUpDown();
@@ -77,7 +78,6 @@
             this.button11 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewGrades)).BeginInit();
@@ -142,7 +142,7 @@
             this.checkBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox1.AutoSize = true;
             this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox1.Location = new System.Drawing.Point(130, 90);
+            this.checkBox1.Location = new System.Drawing.Point(602, 60);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(61, 23);
             this.checkBox1.TabIndex = 14;
@@ -154,10 +154,10 @@
             // button9
             // 
             this.button9.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
+            this.button9.BackColor = System.Drawing.Color.Red;
             this.button9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button9.ForeColor = System.Drawing.SystemColors.Window;
-            this.button9.Location = new System.Drawing.Point(196, 362);
+            this.button9.Location = new System.Drawing.Point(80, 360);
             this.button9.Margin = new System.Windows.Forms.Padding(2);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(131, 34);
@@ -181,7 +181,7 @@
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label10.AutoSize = true;
             this.label10.ForeColor = System.Drawing.Color.Black;
-            this.label10.Location = new System.Drawing.Point(375, 57);
+            this.label10.Location = new System.Drawing.Point(424, 92);
             this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(38, 19);
@@ -192,10 +192,10 @@
             // 
             this.comboYear4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboYear4.FormattingEnabled = true;
-            this.comboYear4.Location = new System.Drawing.Point(203, 52);
+            this.comboYear4.Location = new System.Drawing.Point(330, 87);
             this.comboYear4.Margin = new System.Windows.Forms.Padding(2);
             this.comboYear4.Name = "comboYear4";
-            this.comboYear4.Size = new System.Drawing.Size(168, 27);
+            this.comboYear4.Size = new System.Drawing.Size(90, 27);
             this.comboYear4.TabIndex = 10;
             this.comboYear4.SelectedIndexChanged += new System.EventHandler(this.comboYear4_SelectedIndexChanged);
             // 
@@ -204,7 +204,7 @@
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
             this.label8.ForeColor = System.Drawing.Color.Black;
-            this.label8.Location = new System.Drawing.Point(371, 90);
+            this.label8.Location = new System.Drawing.Point(116, 91);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(36, 19);
@@ -215,24 +215,25 @@
             // 
             this.comboExamRound.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboExamRound.FormattingEnabled = true;
-            this.comboExamRound.Location = new System.Drawing.Point(203, 86);
+            this.comboExamRound.Location = new System.Drawing.Point(6, 87);
             this.comboExamRound.Margin = new System.Windows.Forms.Padding(2);
             this.comboExamRound.Name = "comboExamRound";
-            this.comboExamRound.Size = new System.Drawing.Size(168, 27);
+            this.comboExamRound.Size = new System.Drawing.Size(110, 27);
             this.comboExamRound.TabIndex = 8;
             this.comboExamRound.SelectedIndexChanged += new System.EventHandler(this.comboExamRound_SelectedIndexChanged);
             // 
             // button8
             // 
-            this.button8.BackColor = System.Drawing.Color.White;
+            this.button8.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.button8.BackColor = System.Drawing.Color.LimeGreen;
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button8.ForeColor = System.Drawing.Color.White;
-            this.button8.Image = global::college_of_health_sciences.Properties.Resources.Carlosjj_Microsoft_Office_2013_Excel_48;
-            this.button8.Location = new System.Drawing.Point(6, 52);
+            this.button8.Location = new System.Drawing.Point(407, 360);
             this.button8.Margin = new System.Windows.Forms.Padding(2);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(65, 64);
+            this.button8.Size = new System.Drawing.Size(131, 34);
             this.button8.TabIndex = 7;
+            this.button8.Text = "import";
             this.button8.UseVisualStyleBackColor = false;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
@@ -252,10 +253,10 @@
             // button1
             // 
             this.button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button1.BackColor = System.Drawing.Color.LimeGreen;
+            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.SystemColors.Window;
-            this.button1.Location = new System.Drawing.Point(346, 362);
+            this.button1.Location = new System.Drawing.Point(240, 360);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(131, 34);
@@ -286,7 +287,7 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(627, 90);
+            this.label2.Location = new System.Drawing.Point(288, 91);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(38, 19);
@@ -297,10 +298,10 @@
             // 
             this.comboCourse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboCourse.FormattingEnabled = true;
-            this.comboCourse.Location = new System.Drawing.Point(455, 86);
+            this.comboCourse.Location = new System.Drawing.Point(156, 87);
             this.comboCourse.Margin = new System.Windows.Forms.Padding(2);
             this.comboCourse.Name = "comboCourse";
-            this.comboCourse.Size = new System.Drawing.Size(171, 27);
+            this.comboCourse.Size = new System.Drawing.Size(131, 27);
             this.comboCourse.TabIndex = 2;
             this.comboCourse.SelectedIndexChanged += new System.EventHandler(this.comboBoxCourse_SelectedIndexChanged);
             this.comboCourse.CursorChanged += new System.EventHandler(this.comboCourse_CursorChanged);
@@ -309,7 +310,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(628, 55);
+            this.label1.Location = new System.Drawing.Point(599, 90);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 19);
@@ -320,10 +321,10 @@
             // 
             this.comboDepartment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboDepartment.FormattingEnabled = true;
-            this.comboDepartment.Location = new System.Drawing.Point(455, 52);
+            this.comboDepartment.Location = new System.Drawing.Point(466, 87);
             this.comboDepartment.Margin = new System.Windows.Forms.Padding(2);
             this.comboDepartment.Name = "comboDepartment";
-            this.comboDepartment.Size = new System.Drawing.Size(168, 27);
+            this.comboDepartment.Size = new System.Drawing.Size(128, 27);
             this.comboDepartment.TabIndex = 0;
             this.comboDepartment.SelectedIndexChanged += new System.EventHandler(this.comboBoxDepartments_SelectedIndexChanged);
             // 
@@ -505,10 +506,10 @@
             this.button5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button5.ForeColor = System.Drawing.Color.White;
-            this.button5.Location = new System.Drawing.Point(97, 92);
+            this.button5.Location = new System.Drawing.Point(89, 86);
             this.button5.Margin = new System.Windows.Forms.Padding(2);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(130, 25);
+            this.button5.Size = new System.Drawing.Size(130, 29);
             this.button5.TabIndex = 16;
             this.button5.Text = "عرض قائمة الرسوب";
             this.button5.UseVisualStyleBackColor = false;
@@ -591,6 +592,20 @@
             this.tabPage4.Size = new System.Drawing.Size(672, 426);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "إدخال نتائج طالب";
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox2.Location = new System.Drawing.Point(601, 53);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(61, 23);
+            this.checkBox2.TabIndex = 21;
+            this.checkBox2.Text = "اعتماد";
+            this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // button10
             // 
@@ -741,20 +756,6 @@
             // 
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox2.Location = new System.Drawing.Point(601, 53);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(61, 23);
-            this.checkBox2.TabIndex = 21;
-            this.checkBox2.Text = "اعتماد";
-            this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox2.UseVisualStyleBackColor = true;
-            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // grads_management
             // 
