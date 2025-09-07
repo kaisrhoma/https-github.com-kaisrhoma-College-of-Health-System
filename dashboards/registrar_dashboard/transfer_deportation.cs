@@ -1671,7 +1671,7 @@ WHERE g.student_id = @StudentID
                     using (SqlCommand cmd = new SqlCommand(q, con))
                     {
                         int count = Convert.ToInt32(cmd.ExecuteScalar());
-                        if(count > 0)
+                        if(count == 0)
                         {
                             MessageBox.Show("⚠ ليس هناك طلاب للترقية ربما لم يتم ادخال درجاتهم او ان لم يتم احتسابها");
                             return ;

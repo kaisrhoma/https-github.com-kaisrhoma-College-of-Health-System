@@ -24,6 +24,18 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private List<string> pageSummaries = new List<string>();
         private string studentName = "", universityNumber = "";
+        // بيانات الطالب
+        // حساب المعدلات
+        private double totalWeightedGrades = 0;
+        private int totalUnits = 0;
+        private double cumulativeAverage = 0;
+        private string studentDepartment;
+        private string academicYear;
+        private string studentGender = "ذكر"; // أو "أنثى" حسب قاعدة البيانات
+     
+
+
+
 
         //3
         private List<DataTable> subjectPages = new List<DataTable>();
@@ -275,26 +287,38 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             string query = @"
 SELECT 
     c.course_name AS 'اسم المادة',
-    cd.course_dep_code AS'رمز المادة',
+    cd.course_dep_code AS 'رمز المادة',
     c.year_number AS 'السنة الدراسية',
-    cc.group_number AS 'رقم المجموعة',
+    ISNULL(CAST(cc.group_number AS NVARCHAR(50)), N'غير محدد') AS 'رقم المجموعة',
     i.full_name AS 'اسم الأستاذ',
     s.full_name AS 'اسم الطالب',
     s.university_number AS 'الرقم الجامعي',
     d.dep_name AS 'القسم',
     g.total_grade AS 'الدرجة',
-    g.success_status AS 'النتيجة'
+    g.success_status AS 'النتيجة',
+    r.status AS 'حالة التسجيل'
 FROM Grades g
-INNER JOIN Students s ON g.student_id = s.student_id
-INNER JOIN Registrations r ON r.student_id = s.student_id AND r.course_id = g.course_id
-INNER JOIN Course_Classroom cc ON r.course_classroom_id = cc.id
-INNER JOIN Courses c ON cc.course_id = c.course_id
-INNER JOIN Course_Department cd ON cd.course_id = c.course_id AND cd.department_id = s.department_id
-INNER JOIN Departments d ON s.department_id = d.department_id
-LEFT JOIN Course_Instructor ci ON c.course_id = ci.course_id
-LEFT JOIN Instructors i ON ci.instructor_id = i.instructor_id
+INNER JOIN Students s 
+    ON g.student_id = s.student_id
+INNER JOIN Registrations r 
+    ON r.student_id = s.student_id 
+   AND r.course_id = g.course_id
+INNER JOIN Courses c 
+    ON r.course_id = c.course_id
+LEFT JOIN Course_Classroom cc 
+    ON r.course_classroom_id = cc.id
+INNER JOIN Course_Department cd 
+    ON cd.course_id = c.course_id 
+   AND cd.department_id = s.department_id
+INNER JOIN Departments d 
+    ON s.department_id = d.department_id
+LEFT JOIN Course_Instructor ci 
+    ON c.course_id = ci.course_id
+LEFT JOIN Instructors i 
+    ON ci.instructor_id = i.instructor_id
 WHERE r.academic_year_start = @academic_year
   AND c.year_number = @year_number
+  AND r.status = N'مسجل'
 ORDER BY d.dep_name, c.year_number, s.university_number, c.course_id;
 
 ";
@@ -324,7 +348,7 @@ ORDER BY d.dep_name, c.year_number, s.university_number, c.course_id;
         }
 
 
-
+        //*****************************************************************************************
 
 
 
@@ -431,34 +455,228 @@ ORDER BY d.dep_name, c.year_number, s.university_number, c.course_id;
             preview.ShowDialog();
 
         }
-        //--------------------------------------------------------------------------------------------------------------------2
-        private void PrepareStudentReportPages(DataTable dt)
+        private void printDocument2_PrintPage(object sender, PrintPageEventArgs e)
         {
-            pages.Clear();
-            pageSummaries.Clear();
-
-            var groupedByYear = dt.AsEnumerable().GroupBy(r => r.Field<int>("السنة"));
-
-            foreach (var group in groupedByYear)
+            if (currentPageIndex >= pages.Count)
             {
-                DataTable page = dt.Clone();
-                foreach (var row in group)
+                e.HasMorePages = false;
+                return;
+            }
+
+            DataTable dt = pages[currentPageIndex];
+            Font headerFont = new Font("Arial", 16, FontStyle.Bold);
+            Font textFont = new Font("Arial", 10, FontStyle.Regular);
+            Font boldFont = new Font("Arial", 10, FontStyle.Bold);
+            Brush brush = Brushes.Black;
+            int margin = 40;
+            int y = margin;
+            int pageWidth = e.PageBounds.Width - 2 * margin;
+            int x = margin;
+
+            StringFormat leftFormat = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near };
+            StringFormat rightFormat = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near };
+            StringFormat centerFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+
+            // ------------------- رأس الصفحة (الشعارات ثابتة لكل صفحة) -------------------
+            Image logo = Image.FromFile(@"C:\Users\am105\Source\Repos\https-github.com-kaisrhoma-College-of-Health-System\Resources\logo.png");
+            e.Graphics.DrawImage(logo, x + pageWidth / 2 - 60, y, 120, 120);
+            y += 130;
+
+            e.Graphics.DrawString("كشف درجات التخرج", headerFont, brush, new Rectangle(x, y, pageWidth, 25), centerFormat);
+            y += 35;
+
+            // الهامش الأيمن
+            e.Graphics.DrawString("وزارة التعليم - ليبيا\nجامعة غريان\nالمسجل العام", boldFont, brush,
+                new Rectangle(x + pageWidth - 200, margin, 200, 60), rightFormat);
+
+            // الهامش الأيسر
+            e.Graphics.DrawString("Ministry of Education - Libya\nUniversity of Gharian\nRegistrar\nDate: ............", boldFont, brush,
+                new Rectangle(x, margin, 300, 60), leftFormat);
+
+            y += 10;
+
+            // ------------------- معلومات الطالب (تظهر فقط في الصفحة الأولى) -------------------
+            if (currentPageIndex == 0)
+            {
+                StringFormat arabicFormat = new StringFormat
                 {
-                    page.ImportRow(row);
+                    Alignment = StringAlignment.Near,
+                    LineAlignment = StringAlignment.Center,
+                    FormatFlags = StringFormatFlags.DirectionRightToLeft
+                };
+
+                string studentInfo = $"تشهد كلية العلوم الصحية غريان بأن الطالب/ة {studentName} (رقم القيد: {universityNumber}) " +
+                                     $"قد درس/ت في كلية العلوم الصحية قسم {studentDepartment} بصفة قيد نظامي وقد أنهى متطلبات الدراسة بنجاح " +
+                                     $"وتحصل على درجة الإجازة المتخصصة (البكالوريوس) في {studentDepartment} خلال العام الجامعي {academicYear} " +
+                                     $"بتقدير عام {GetGradeLetter(cumulativeAverage)} و بنسبة: {cumulativeAverage:F2}%.";
+
+                Rectangle infoRect = new Rectangle(x, y, pageWidth, 60);
+                e.Graphics.DrawString(studentInfo, boldFont, brush, infoRect, arabicFormat);
+                y += 70;
+            }
+
+            // ------------------- جدول المواد -------------------
+            string[] gradeHeaders = { "رمز المادة", "المادة", "عدد الوحدات", "عدد النقاط", "الدرجة", "نتيجة المادة", "ملاحظة" };
+            int gradeColCount = gradeHeaders.Length;
+            int gradeColWidth = pageWidth / gradeColCount;
+            int gradeRowHeight = 25;
+            int tableX = x;
+            int tableWidth = gradeColWidth * gradeColCount;
+
+            // ------------------- صف السنة الدراسية -------------------
+            int startYear = DateTime.Now.Year;
+            Rectangle yearRect = new Rectangle(tableX, y, tableWidth, gradeRowHeight);
+            e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), yearRect);
+            e.Graphics.DrawRectangle(Pens.Black, yearRect);
+            string yearText = $"السنة الدراسية: {GetYearText(Convert.ToInt32(dt.Rows[0]["السنة"]))} - العام الجامعي: {startYear + Convert.ToInt32(dt.Rows[0]["السنة"]) - 1}-{startYear + Convert.ToInt32(dt.Rows[0]["السنة"])}";
+            e.Graphics.DrawString(yearText, boldFont, brush, yearRect, centerFormat);
+            y += gradeRowHeight;
+
+            // ------------------- رؤوس الجدول -------------------
+            for (int i = gradeColCount - 1; i >= 0; i--)
+            {
+                Rectangle rect = new Rectangle(tableX + (gradeColCount - 1 - i) * gradeColWidth, y, gradeColWidth, gradeRowHeight);
+                e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), rect);
+                e.Graphics.DrawRectangle(Pens.Black, rect);
+                e.Graphics.DrawString(gradeHeaders[i], boldFont, brush, rect, centerFormat);
+            }
+            y += gradeRowHeight;
+
+            // ------------------- بيانات المواد -------------------
+            double sumPoints = 0;
+            int sumUnits = 0;
+
+            foreach (DataRow row in dt.Rows)
+            {
+                string code = row["رمز_المادة"].ToString();
+                string subject = row["المادة"].ToString();
+                int units = row["الوحدات"] != DBNull.Value ? Convert.ToInt32(row["الوحدات"]) : 0;
+                int grade = row["الدرجة"] != DBNull.Value ? Convert.ToInt32(row["الدرجة"]) : 0;
+                int points = grade * units;
+                string result = grade >= 60 ? "ناجح" : "راسب";
+                string note = "";
+
+                sumPoints += points;
+                sumUnits += units;
+
+                string[] values = { code, subject, units.ToString(), points.ToString(), grade.ToString(), result, note };
+
+                for (int i = gradeColCount - 1; i >= 0; i--)
+                {
+                    Rectangle rect = new Rectangle(tableX + (gradeColCount - 1 - i) * gradeColWidth, y, gradeColWidth, gradeRowHeight);
+                    e.Graphics.DrawRectangle(Pens.Black, rect);
+                    e.Graphics.DrawString(values[i], textFont, brush, rect, centerFormat);
+                }
+                y += gradeRowHeight;
+            }
+
+            // ------------------- صف المجموع -------------------
+            int mergedColsWidth = gradeColWidth * 2;
+            int startX = tableX + tableWidth - mergedColsWidth;
+
+            Rectangle groupRectMerged = new Rectangle(startX, y, mergedColsWidth, gradeRowHeight);
+            e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), groupRectMerged);
+            e.Graphics.DrawRectangle(Pens.Black, groupRectMerged);
+            e.Graphics.DrawString("المجموع", boldFont, brush, groupRectMerged, centerFormat);
+
+            Rectangle unitsRect = new Rectangle(startX - gradeColWidth, y, gradeColWidth, gradeRowHeight);
+            e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), unitsRect);
+            e.Graphics.DrawRectangle(Pens.Black, unitsRect);
+            e.Graphics.DrawString(sumUnits.ToString(), boldFont, brush, unitsRect, centerFormat);
+
+            Rectangle pointsRect = new Rectangle(startX - 2 * gradeColWidth, y, gradeColWidth, gradeRowHeight);
+            e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), pointsRect);
+            e.Graphics.DrawRectangle(Pens.Black, pointsRect);
+            e.Graphics.DrawString(sumPoints.ToString(), boldFont, brush, pointsRect, centerFormat);
+
+            for (int i = 0; i < gradeColCount - 4; i++)
+            {
+                Rectangle rect = new Rectangle(tableX + i * gradeColWidth, y, gradeColWidth, gradeRowHeight);
+                e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), rect);
+                e.Graphics.DrawRectangle(Pens.Black, rect);
+                e.Graphics.DrawString("", boldFont, brush, rect, centerFormat);
+            }
+            y += gradeRowHeight;
+
+            // ------------------- صف المعدل السنوي -------------------
+            double annualAverage = sumUnits > 0 ? sumPoints / (double)sumUnits : 0;
+
+            Rectangle avgMergedRect = new Rectangle(tableX + tableWidth - mergedColsWidth, y, mergedColsWidth, gradeRowHeight);
+            e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), avgMergedRect);
+            e.Graphics.DrawRectangle(Pens.Black, avgMergedRect);
+            e.Graphics.DrawString("المعدل السنوي", boldFont, brush, avgMergedRect, centerFormat);
+
+            Rectangle avgRemainingRect = new Rectangle(tableX, y, tableWidth - mergedColsWidth, gradeRowHeight);
+            e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), avgRemainingRect);
+            e.Graphics.DrawRectangle(Pens.Black, avgRemainingRect);
+            e.Graphics.DrawString($"{annualAverage:F2} - {GetGradeLetter(annualAverage)}", boldFont, brush, avgRemainingRect, centerFormat);
+            y += gradeRowHeight;
+
+            // ------------------- صف المعدل التراكمي -------------------
+            if (currentPageIndex == pages.Count - 1)
+            {
+                double cumulativePoints = 0;
+                int cumulativeUnits = 0;
+
+                foreach (DataTable dtPage in pages)
+                {
+                    foreach (DataRow r in dtPage.Rows)
+                    {
+                        int units = r["الوحدات"] != DBNull.Value ? Convert.ToInt32(r["الوحدات"]) : 0;
+                        int grade = r["الدرجة"] != DBNull.Value ? Convert.ToInt32(r["الدرجة"]) : 0;
+                        cumulativePoints += units * grade;
+                        cumulativeUnits += units;
+                    }
                 }
 
-                pages.Add(page);
+                double cumulativeAverage = cumulativeUnits > 0 ? cumulativePoints / (double)cumulativeUnits : 0;
+
+                Rectangle cumMergedRect = new Rectangle(tableX + tableWidth - mergedColsWidth, y, mergedColsWidth, gradeRowHeight);
+                e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), cumMergedRect);
+                e.Graphics.DrawRectangle(Pens.Black, cumMergedRect);
+                e.Graphics.DrawString("المعدل التراكمي", boldFont, brush, cumMergedRect, centerFormat);
+
+                Rectangle cumRemainingRect = new Rectangle(tableX, y, tableWidth - mergedColsWidth, gradeRowHeight);
+                e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), cumRemainingRect);
+                e.Graphics.DrawRectangle(Pens.Black, cumRemainingRect);
+                e.Graphics.DrawString($"{cumulativeAverage:F2} - {GetGradeLetter(cumulativeAverage)}", boldFont, brush, cumRemainingRect, centerFormat);
+                y += gradeRowHeight;
             }
 
-            if (dt.Rows.Count > 0)
-            {
-                studentName = dt.Rows[0]["اسم_الطالب"].ToString();
-                universityNumber = dt.Rows[0]["الرقم_الجامعي"].ToString();
-            }
+            // ------------------- ترقيم الصفحات -------------------
+            Rectangle footerRect = new Rectangle(x, e.PageBounds.Height - 40, pageWidth, 20);
+            e.Graphics.DrawString($"الصفحة {currentPageIndex + 1} من {pages.Count}", textFont, brush, footerRect, centerFormat);
 
-            currentPageIndex = 0;
+            currentPageIndex++;
+            e.HasMorePages = currentPageIndex < pages.Count;
         }
 
+
+
+        // ---------------------- تحويل السنة إلى نص ----------------------
+        private string GetYearText(int year)
+        {
+            switch (year)
+            {
+                case 1: return "أولى";
+                case 2: return "ثانية";
+                case 3: return "ثالثة";
+                case 4: return "رابعة";
+                default: return year.ToString();
+            }
+        }
+
+
+        // ---------------------- تحويل المعدل إلى تقدير ----------------------
+        private string GetGradeLetter(double avg)
+        {
+            if (avg >= 85 && avg <=100) return "ممتاز";
+            if (avg >= 75 && avg<= 84) return "جيد جدًا";
+            if (avg >= 65 && avg <74) return "جيد";
+            if (avg >= 50 && avg<= 64) return "مقبول";
+
+            return "راسب";
+        }
         private void button2_Click(object sender, EventArgs e)
         {
             string uniNumber = txtUniversityNumber.Text.Trim();
@@ -469,95 +687,130 @@ ORDER BY d.dep_name, c.year_number, s.university_number, c.course_id;
             }
 
             string query = @"
-    SELECT 
-    s.full_name AS اسم_الطالب,
-    s.university_number AS الرقم_الجامعي,
-    c.year_number AS السنة,
-    c.course_code AS رمز_المادة,
-    c.course_name AS المادة,
-    c.units AS الوحدات,
-    g.total_grade AS الدرجة
-FROM Grades g
-INNER JOIN Students s ON g.student_id = s.student_id
-INNER JOIN Courses c ON g.course_id = c.course_id
+SELECT 
+    s.student_id,
+    s.full_name           AS اسم_الطالب,
+    s.university_number   AS الرقم_جامعي,
+    s.department_id       AS القسم_ID,  -- جلب الـ department_id من جدول الطلاب
+    c.year_number         AS السنة,
+    cd.course_dep_code    AS رمز_المادة,
+    c.course_name         AS المادة,
+    c.units               AS الوحدات,
+    d.dep_name            AS القسم,
+    g.total_grade         AS الدرجة,
+    r.academic_year_start AS العام_الجامعي
+FROM Registrations r
+INNER JOIN Students s ON r.student_id = s.student_id
+INNER JOIN Courses c ON r.course_id = c.course_id
+INNER JOIN Course_Department cd ON cd.course_id = c.course_id
+INNER JOIN Departments d ON cd.department_id = d.department_id
+LEFT JOIN Grades g ON g.student_id = s.student_id AND g.course_id = c.course_id
 WHERE s.university_number = @university_number
-ORDER BY c.year_number, c.course_name;";
+  AND r.status = N'مسجل'
+ORDER BY c.year_number, c.course_name;
+";
 
-            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
                 cmd.Parameters.AddWithValue("@university_number", uniNumber);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 reportData = new DataTable();
                 da.Fill(reportData);
+
+                if (reportData.Rows.Count == 0)
+                {
+                    MessageBox.Show("لا توجد بيانات لهذا الرقم الجامعي.");
+                    return;
+                }
+
+                // جلب معلومات الطالب الأساسية
+                studentName = reportData.Rows[0]["اسم_الطالب"].ToString();
+                universityNumber = reportData.Rows[0]["الرقم_جامعي"].ToString();
+
+                // جلب القسم الحقيقي من جدول Departments باستخدام القسم_ID
+                int deptId = Convert.ToInt32(reportData.Rows[0]["القسم_ID"]);
+                using (SqlCommand deptCmd = new SqlCommand("SELECT dep_name FROM Departments WHERE department_id = @id", conn))
+                {
+                    deptCmd.Parameters.AddWithValue("@id", deptId);
+                    conn.Open();
+                    object depNameObj = deptCmd.ExecuteScalar();
+                    conn.Close();
+
+                    studentDepartment = depNameObj != null ? depNameObj.ToString() : "غير محدد";
+                }
+
+                // الحصول على آخر سنة أكاديمية مسجلة
+                DataRow lastRow = reportData.AsEnumerable()
+                                            .OrderByDescending(r => r.Field<int>("السنة"))
+                                            .ThenByDescending(r => r.Field<int>("العام_الجامعي"))
+                                            .FirstOrDefault();
+
+                if (lastRow != null)
+                    academicYear = lastRow["العام_الجامعي"].ToString();
+
+                dataGridViewReport.DataSource = reportData;
+                dataGridViewReport.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                // حساب المعدلات
+                CalculateAndDisplayAverages(reportData);
             }
-
-            if (reportData.Rows.Count == 0)
-            {
-                MessageBox.Show("لا توجد بيانات لهذا الرقم الجامعي.");
-                return;
-            }
-
-            dataGridViewReport.DataSource = reportData;
-            dataGridViewReport.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            // حساب المعدلات
-            CalculateAndDisplayAverages(reportData);
         }
+
+        //--------------------------------------------------------------------------------------------------------------------2
+
+
+
+
 
         private void CalculateAndDisplayAverages(DataTable dt)
         {
-            var groupedByYear = dt.AsEnumerable()
-           .GroupBy(r => r.Field<int>("السنة"));
-
-            double totalWeightedGrades = 0;
-            int totalUnits = 0;
-
-            string averagesText = "";
+            var groupedByYear = dt.AsEnumerable().GroupBy(r => r.Field<int>("السنة"));
+            totalWeightedGrades = 0;
+            totalUnits = 0;
 
             foreach (var yearGroup in groupedByYear)
             {
-                int year = yearGroup.Key;
                 double sumWeightedGrades = 0;
                 int sumUnits = 0;
 
                 foreach (var row in yearGroup)
                 {
-                    int grade = 0;
-                    int units = 0;
-
-                    // قراءة آمنة دون رمي استثناء
                     if (row["الدرجة"] != DBNull.Value && row["الوحدات"] != DBNull.Value)
                     {
-                        try
-                        {
-                            grade = Convert.ToInt32(row["الدرجة"]);
-                            units = Convert.ToInt32(row["الوحدات"]);
-                        }
-                        catch
-                        {
-                            // تجاهل الصف إذا كان التحويل غير ممكن
-                            continue;
-                        }
-
+                        int grade = Convert.ToInt32(row["الدرجة"]);
+                        int units = Convert.ToInt32(row["الوحدات"]);
                         sumWeightedGrades += grade * units;
                         sumUnits += units;
                     }
                 }
 
-                double yearAverage = sumUnits == 0 ? 0 : sumWeightedGrades / sumUnits;
-                averagesText += $"معدل السنة {year}: {yearAverage:F2}\n";
-
                 totalWeightedGrades += sumWeightedGrades;
                 totalUnits += sumUnits;
             }
 
-            double cumulativeAverage = totalUnits == 0 ? 0 : totalWeightedGrades / totalUnits;
-            averagesText += $"المعدل التراكمي: {cumulativeAverage:F2}";
-
-
+            cumulativeAverage = totalUnits == 0 ? 0 : totalWeightedGrades / totalUnits;
         }
 
+        // ---------------------- إعداد الصفحات للطباعة ----------------------
+        private void PrepareStudentReportPages(DataTable dt)
+        {
+            pages.Clear();
+            var groupedByYear = dt.AsEnumerable().GroupBy(r => r.Field<int>("السنة"));
+
+            foreach (var group in groupedByYear)
+            {
+                DataTable page = dt.Clone();
+                foreach (var row in group)
+                {
+                    page.ImportRow(row);
+                }
+                pages.Add(page);
+            }
+
+            currentPageIndex = 0;
+        }
+        // ---------------------- زر عرض المعاينة للطباعة ----------------------
         private void button4_Click(object sender, EventArgs e)
         {
             if (reportData == null || reportData.Rows.Count == 0)
@@ -567,194 +820,12 @@ ORDER BY c.year_number, c.course_name;";
             }
 
             PrepareStudentReportPages(reportData);
-            currentPageIndex = 0;
 
-            //// ✅ استخدم printDocument2 بدلًا من printDocument1
             PrintPreviewDialog preview = new PrintPreviewDialog();
             preview.Document = printDocument2;
             preview.ShowDialog();
         }
 
-
-
-        private void printDocument2_PrintPage(object sender, PrintPageEventArgs e)
-        {
-            if (currentPageIndex >= pages.Count)
-            {
-                e.HasMorePages = false;
-                return;
-            }
-
-            DataTable dt = pages[currentPageIndex];
-            Font headerFont = new Font("Arial", 18, FontStyle.Bold);
-            Font subHeaderFont = new Font("Arial", 12, FontStyle.Bold);
-            Font textFont = new Font("Arial", 10);
-            Brush brush = Brushes.Black;
-            int margin = 50;
-            int y = margin;
-            int pageWidth = e.PageBounds.Width - 2 * margin;
-            int pageHeight = e.PageBounds.Height;
-            int x = margin;
-
-            StringFormat centerFormat = new StringFormat
-            {
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center,
-                FormatFlags = StringFormatFlags.DirectionRightToLeft
-            };
-
-            // عنوان الكلية والتقرير
-            e.Graphics.DrawString("جامعة غريان", headerFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
-            y += 35;
-            e.Graphics.DrawString("كلية العلوم الصحية", headerFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
-            y += 35;
-            e.Graphics.DrawString("كشف التخرج", subHeaderFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
-            y += 50;
-
-            // جدول معلومات الطالب
-            string[] infoHeaders = { "اسم الطالب", "رقم القيد", "تاريخ الطباعة" };
-            string[] infoValues = { studentName, universityNumber, DateTime.Now.ToString("yyyy/MM/dd") };
-            int infoColWidth = pageWidth / 3;
-            int infoRowHeight = 25;
-
-            for (int i = 0; i < 3; i++)
-            {
-                int colIndex = 2 - i;
-                Rectangle rectHeader = new Rectangle(x + i * infoColWidth, y, infoColWidth, infoRowHeight);
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 230, 250)), rectHeader);
-                e.Graphics.DrawRectangle(Pens.Black, rectHeader);
-                e.Graphics.DrawString(infoHeaders[colIndex], subHeaderFont, brush, rectHeader, centerFormat);
-
-                Rectangle rectValue = new Rectangle(x + i * infoColWidth, y + infoRowHeight, infoColWidth, infoRowHeight);
-                e.Graphics.DrawRectangle(Pens.Black, rectValue);
-                e.Graphics.DrawString(infoValues[colIndex], textFont, brush, rectValue, centerFormat);
-            }
-
-            y += infoRowHeight * 2 + 20;
-
-            // جدول الدرجات (معكوس: نبدأ من المادة يمينًا)
-            string[] gradeHeaders = { " رمز المادة", "المادة", " عدد الوحدات", "عدد النقاط", "الدرجة", "نتيجة المادة", "ملاحظة" };
-
-            int gradeColCount = gradeHeaders.Length;
-            int gradeColWidth = pageWidth / gradeColCount;
-            int gradeRowHeight = 25;
-
-            for (int i = 0; i < gradeColCount; i++)
-            {
-                int colIndex = gradeColCount - 1 - i; // لعكس الاتجاه
-                Rectangle rect = new Rectangle(x + i * gradeColWidth, y, gradeColWidth, gradeRowHeight);
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 230, 250)), rect);
-                e.Graphics.DrawRectangle(Pens.Black, rect);
-                e.Graphics.DrawString(gradeHeaders[colIndex], subHeaderFont, brush, rect, centerFormat);
-            }
-
-            y += gradeRowHeight;
-
-            double sumPoints = 0;
-            int sumUnits = 0;
-            int completedUnits = 0;
-
-            foreach (DataRow row in dt.Rows)
-            {
-                string code = row["رمز_المادة"].ToString();
-                string subject = row["المادة"].ToString();
-                int units = row["الوحدات"] != DBNull.Value ? Convert.ToInt32(row["الوحدات"]) : 0;
-                int grade = row["الدرجة"] != DBNull.Value ? Convert.ToInt32(row["الدرجة"]) : 0;
-
-
-                int points = grade * units;
-                string result = grade >= 60 ? "ناجح" : "راسب";
-                string note = "";
-
-                sumPoints += points;
-                sumUnits += units;
-                if (grade >= 60) completedUnits += units;
-
-                string[] values = { code, subject, units.ToString(), points.ToString(), grade.ToString(), result, note };
-
-                for (int i = 0; i < values.Length; i++)
-                {
-                    int colIndex = values.Length - 1 - i; // لعكس الاتجاه
-                    Rectangle rect = new Rectangle(x + i * gradeColWidth, y, gradeColWidth, gradeRowHeight);
-                    e.Graphics.DrawRectangle(Pens.Black, rect);
-                    e.Graphics.DrawString(values[colIndex], textFont, brush, rect, centerFormat);
-                }
-
-                y += gradeRowHeight;
-            }
-
-            y += 20;
-
-            // جدول الملخص
-            double totalPoints = 0;
-            int totalUnits = 0;
-
-            foreach (DataTable page in pages)
-            {
-                foreach (DataRow row in page.Rows)
-                {
-                    int g = row["الدرجة"] != DBNull.Value ? Convert.ToInt32(row["الدرجة"]) : 0;
-                    int u = row["الوحدات"] != DBNull.Value ? Convert.ToInt32(row["الوحدات"]) : 0;
-
-                    totalPoints += g * u;
-                    totalUnits += u;
-                }
-            }
-
-            double semesterGPA = sumUnits == 0 ? 0 : sumPoints / sumUnits;
-            double cumulativeGPA = totalUnits == 0 ? 0 : totalPoints / totalUnits;
-
-            string[] summaryHeaders = currentPageIndex == pages.Count - 1
-                ? new string[] { "الوحدات المسجلة", "الوحدات المنجزة", "إجمالي النقاط", "المعدل السنوي", "المعدل التراكمي" }
-                : new string[] { "الوحدات المسجلة", "الوحدات المنجزة", "إجمالي النقاط", "المعدل السنوي" };
-
-            string[] summaryValues = currentPageIndex == pages.Count - 1
-                ? new string[] { sumUnits.ToString(), completedUnits.ToString(), ((int)sumPoints).ToString(), semesterGPA.ToString("F2"), cumulativeGPA.ToString("F2") }
-                : new string[] { sumUnits.ToString(), completedUnits.ToString(), ((int)sumPoints).ToString(), semesterGPA.ToString("F2") };
-
-            int summaryColCount = summaryHeaders.Length;
-            int summaryColWidth = pageWidth / summaryColCount;
-
-            for (int i = 0; i < summaryColCount; i++)
-            {
-                int colIndex = summaryColCount - 1 - i;
-                Rectangle rectHeader = new Rectangle(x + i * summaryColWidth, y, summaryColWidth, gradeRowHeight);
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(220, 230, 250)), rectHeader);
-                e.Graphics.DrawRectangle(Pens.Black, rectHeader);
-                e.Graphics.DrawString(summaryHeaders[colIndex], subHeaderFont, brush, rectHeader, centerFormat);
-
-                Rectangle rectValue = new Rectangle(x + i * summaryColWidth, y + gradeRowHeight, summaryColWidth, gradeRowHeight);
-                e.Graphics.DrawRectangle(Pens.Black, rectValue);
-                e.Graphics.DrawString(summaryValues[colIndex], textFont, brush, rectValue, centerFormat);
-            }
-
-            // **اجعل التوقيعات في أسفل الصفحة مهما كان المحتوى**
-
-            int signHeight = 50;
-            int signY = pageHeight - margin - signHeight; // مكان التوقيعات في أسفل الصفحة
-
-            string[] signatures = { "عميد الكلية", "قسم الدراسة والامتحانات", "القسم العلمي" };
-            int signCount = signatures.Length;
-            int signColWidth = pageWidth / signCount;
-
-            Pen dottedPen = new Pen(Color.Black);
-            dottedPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-
-            for (int i = 0; i < signCount; i++)
-            {
-                int posX = x + i * signColWidth;
-                // نص التوقيع فوق الخط
-                Rectangle rectSignText = new Rectangle(posX, signY, signColWidth, gradeRowHeight);
-                e.Graphics.DrawString(signatures[i], textFont, brush, rectSignText, centerFormat);
-
-                // خط التوقيع المنقط تحت النص
-                int lineY = signY + gradeRowHeight + 5;
-                e.Graphics.DrawLine(dottedPen, posX + 10, lineY, posX + signColWidth - 10, lineY);
-            }
-
-            currentPageIndex++;
-            e.HasMorePages = currentPageIndex < pages.Count;
-        }
 
         //--------------------------------------------------------------------------------------3
         private void printDocument3_PrintPage(object sender, PrintPageEventArgs e)

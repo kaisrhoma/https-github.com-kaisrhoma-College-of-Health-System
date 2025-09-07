@@ -92,6 +92,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                        MIN(CASE WHEN g.total_grade >= 60 THEN 1 ELSE 0 END) AS PassedAll
                 FROM Grades g
                 INNER JOIN Registrations r ON g.student_id = r.student_id
+                   AND g.course_id = r.course_id
                 WHERE r.academic_year_start = @lastYear
                   AND g.total_grade IS NOT NULL
                 GROUP BY g.student_id
@@ -111,15 +112,15 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 // 🔹 مسح أي بيانات سابقة
                 chart3.Series.Clear();
                 chart3.Titles.Clear();
+                chart3.ChartAreas.Clear();
 
-                // 🔹 إنشاء ChartArea إذا لم يوجد
-                if (chart3.ChartAreas.Count == 0)
-                    chart3.ChartAreas.Add(new System.Windows.Forms.DataVisualization.Charting.ChartArea("Default"));
+                // 🔹 إنشاء ChartArea دائمًا حتى لو لا يوجد طلاب
+                var chartArea = new System.Windows.Forms.DataVisualization.Charting.ChartArea("Default");
+                chart3.ChartAreas.Add(chartArea);
+                chart3.Dock = DockStyle.Fill;
 
-                var chartArea = chart3.ChartAreas[0];
                 chartArea.AxisX.Title = "الحالة";
                 chartArea.AxisY.Title = "عدد الطلبة";
-                chart3.Dock = DockStyle.Fill;
                 chartArea.AxisX.IntervalAutoMode = System.Windows.Forms.DataVisualization.Charting.IntervalAutoMode.VariableCount;
                 chartArea.AxisY.IsStartedFromZero = true;
                 chartArea.RecalculateAxesScale();
@@ -127,8 +128,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 // 🔹 التحقق إذا لا يوجد طلاب
                 if (passed == 0 && failed == 0)
                 {
-                    // عرض رسالة على الرسم البياني بدل الأعمدة
-                    chart3.Titles.Add($"لا توجد بيانات للطلاب للسنة الأكاديمية {lastYear}");
+                    chart3.Titles.Add($"⚠️ لا توجد بيانات للطلاب للسنة الأكاديمية {lastYear}");
                 }
                 else
                 {
@@ -163,6 +163,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     con.Close();
             }
         }
+
 
         private void UpdateChartStudentStatus()
         {

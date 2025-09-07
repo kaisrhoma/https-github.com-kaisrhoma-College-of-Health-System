@@ -289,35 +289,38 @@ WHERE 1=1
                     {
                         conn.Open();
 
-                        string query = @"SELECT 
-    s.university_number AS [رقم القيد], 
-    s.full_name AS [اسم الطالب], 
-    CAST(g.work_grade AS NVARCHAR) AS [درجة الأعمال], 
-    CAST(g.final_grade AS NVARCHAR) AS [درجة الامتحان النهائي], 
-    CAST(g.total_grade AS NVARCHAR) AS [المجموع الكلي], 
-    g.success_status AS [حالة الطالب], 
+                        string query = @"
+SELECT 
+    s.university_number AS [رقم القيد],
+    s.full_name AS [اسم الطالب],
+    CAST(g.work_grade AS NVARCHAR) AS [درجة الأعمال],
+    CAST(g.final_grade AS NVARCHAR) AS [درجة الامتحان النهائي],
+    CAST(g.total_grade AS NVARCHAR) AS [المجموع الكلي],
+    g.success_status AS [حالة الطالب],
     s.exam_round AS [الدور]
 FROM Students s
-INNER JOIN Registrations r 
+INNER JOIN Registrations r
     ON s.student_id = r.student_id
-    AND r.course_id = @courseId
-    AND r.status = N'مسجل'
-    -- عرض الطلاب فقط للسنة الأكاديمية الأعلى في المادة
-    AND r.academic_year_start = (
-        SELECT MAX(r2.academic_year_start)
-        FROM Registrations r2
-        WHERE r2.course_id = @courseId
-    )
-LEFT JOIN Grades g 
-    ON s.student_id = g.student_id 
-    AND g.course_id = r.course_id
+   AND r.course_id = @courseId
+   AND r.status = N'مسجل'
+   -- ✅ نأخذ فقط تسجيلات الطالب في آخر سنة على الإطلاق
+   AND r.academic_year_start = (
+       SELECT MAX(r2.academic_year_start)
+       FROM Registrations r2
+       WHERE r2.student_id = r.student_id
+   )
+LEFT JOIN Grades g
+    ON g.student_id = s.student_id
+   AND g.course_id = r.course_id
 WHERE 1=1
 
-";
+ ";
+
+
 
                         if (!string.IsNullOrEmpty(examRound))
                         {
-                            query += " AND s.exam_round = @examRound ";
+                            query += " AND s.exam_round = @examRound";
                         }
 
                         using (SqlCommand cmd = new SqlCommand(query, conn))

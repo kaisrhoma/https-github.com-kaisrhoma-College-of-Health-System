@@ -55,9 +55,9 @@ namespace college_of_health_sciences.system_forms
         private void button5_Click(object sender, EventArgs e)
         {
             panel4.Controls.Clear();
-            exams_edit_profile  e_edit = new exams_edit_profile();
-            e_edit.Dock = DockStyle.Fill;
-            panel4.Controls.Add(e_edit);
+            registrar_edit_profile redit = new registrar_edit_profile();
+            redit.Dock = DockStyle.Fill;
+            panel4.Controls.Add(redit);
         }
 
         private void button1_Click(object sender, EventArgs e)

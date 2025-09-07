@@ -111,12 +111,6 @@
     <Compile Include="dashboards\exams_dashboards\departments_management.Designer.cs">
       <DependentUpon>departments_management.cs</DependentUpon>
     </Compile>
-    <Compile Include="dashboards\exams_dashboards\exams_edit_profile.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="dashboards\exams_dashboards\exams_edit_profile.Designer.cs">
-      <DependentUpon>exams_edit_profile.cs</DependentUpon>
-    </Compile>
     <Compile Include="dashboards\exams_dashboards\exams_home.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -233,9 +227,6 @@
     <EmbeddedResource Include="dashboards\exams_dashboards\departments_management.resx">
       <DependentUpon>departments_management.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="dashboards\exams_dashboards\exams_edit_profile.resx">
-      <DependentUpon>exams_edit_profile.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="dashboards\exams_dashboards\exams_home.resx">
       <DependentUpon>exams_home.cs</DependentUpon>
     </EmbeddedResource>
@@ -308,6 +299,7 @@
   <ItemGroup>
     <Content Include="images\user.png" />
     <Content Include="Resources\240x320-826px-Microsoft_Office_Excel_%282019–present%29.svg.png" />
+    <Content Include="Resources\logo.png" />
     <None Include="Resources\PictureLoading1.gif" />
     <None Include="Resources\load-32.gif" />
     <None Include="Resources\logo_colorized2.png" />

@@ -1,4 +1,5 @@
 ﻿using college_of_health_sciences.dashboards.admin;
+using college_of_health_sciences.dashboards.registrar_dashboard;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -83,6 +84,14 @@ namespace college_of_health_sciences
             login_form login = new login_form();
             login.Show();
             this.Close();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            panel4.Controls.Clear();
+            registrar_edit_profile redit = new registrar_edit_profile();
+            redit.Dock = DockStyle.Fill;
+            panel4.Controls.Add(redit);
         }
     }
 }
