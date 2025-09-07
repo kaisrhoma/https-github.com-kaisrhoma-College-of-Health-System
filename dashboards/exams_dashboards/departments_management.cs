@@ -2131,6 +2131,14 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                     }
                     int instructorIdIn = Convert.ToInt32(comboBox9.SelectedValue);
 
+                    // التحقق من اختيار القسم
+                    if (comboBox6.SelectedValue == null)
+                    {
+                        MessageBox.Show("اختر القسم!");
+                        return;
+                    }
+                    int depID = Convert.ToInt32(comboBox6.SelectedValue);
+
                     // التحقق من اختيار المادة
                     if (comboBox8.SelectedValue == null)
                     {
@@ -2173,6 +2181,13 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                     }
                     int capacityIn = Convert.ToInt32(numericUpDown1.Value);
 
+                    if (numericUpDown2.Value <= 0)
+                    {
+                        MessageBox.Show("حدد المدة بشكل صحيح!");
+                        return;
+                    }
+                    int duration = Convert.ToInt32(numericUpDown2.Value);
+
                     // التحقق من اختيار وقت البداية
                     if (comboBox12.SelectedItem == null)
                     {
@@ -2182,13 +2197,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                     TimeSpan start = TimeSpan.Parse(comboBox12.SelectedItem.ToString());
 
                     // جلب عدد الوحدات من جدول Courses
-                    int courseUnits = 0;
-                    string qUnits = "SELECT units FROM Courses WHERE course_id = @course_id";
-                    using (SqlCommand cmdgetunit = new SqlCommand(qUnits, conninsert))
-                    {
-                        cmdgetunit.Parameters.AddWithValue("@course_id", courseIdIn);
-                        courseUnits = Convert.ToInt32(cmdgetunit.ExecuteScalar());
-                    }
+                    int courseUnits = duration;
 
                     TimeSpan end = start.Add(TimeSpan.FromHours(courseUnits));
 
@@ -2273,17 +2282,19 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                                          FROM Course_Classroom
                                          WHERE course_id = @course_id
                                            AND group_number = @group_number
+                                           AND department_id = @depid
                                          ";
 
                     using (SqlCommand cmdGroup = new SqlCommand(qCheckGroup, conninsert))
                     {
                         cmdGroup.Parameters.AddWithValue("@course_id", courseIdIn);
                         cmdGroup.Parameters.AddWithValue("@group_number", groupNumIn);
+                        cmdGroup.Parameters.AddWithValue("@depid", depID);
 
                         int existsGroup = (int)cmdGroup.ExecuteScalar();
                         if (existsGroup > 0)
                         {
-                            MessageBox.Show("❌ هذه المجموعة موجودة مسبقًا لهذه المادة، اختر مجموعة جديدة.");
+                            MessageBox.Show("❌ هذه المجموعة موجودة مسبقًا لهذه المادة_القسم، اختر مجموعة جديدة.");
                             return;
                         }
                     }
@@ -2292,9 +2303,9 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                     // 3️⃣ إدخال المحاضرة
                     string qinsert = @"
                     INSERT INTO Course_Classroom 
-                    (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day,instructor_id)
+                    (course_id, classroom_id, group_number, capacity, start_time, end_time, lecture_day,instructor_id,department_id)
                     VALUES
-                    (@course_id, @classroom_id, @group_number, @capacity, @start_time, @end_time, @lecture_day,@instructor_id)
+                    (@course_id, @classroom_id, @group_number, @capacity, @start_time, @end_time, @lecture_day,@instructor_id,@depid)
                     ";
                     using (SqlCommand cmdInsert = new SqlCommand(qinsert, conninsert))
                     {
@@ -2306,6 +2317,7 @@ LEFT JOIN Departments d ON d.department_id = cd.department_id
                         cmdInsert.Parameters.AddWithValue("@start_time", start);
                         cmdInsert.Parameters.AddWithValue("@end_time", end);
                         cmdInsert.Parameters.AddWithValue("@lecture_day", lectureDayIn);
+                        cmdInsert.Parameters.AddWithValue("@depid", depID);
 
                         cmdInsert.ExecuteNonQuery();
                     }

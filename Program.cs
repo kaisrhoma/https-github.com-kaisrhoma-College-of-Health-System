@@ -23,7 +23,7 @@ namespace college_of_health_sciences
             splash.ShowDialog(); // <-- ShowDialog يوقف Main حتى يغلق Splash
 
             // بعد إغلاق الـ Splash، افتح LoginForm
-            Application.Run(new exams_form());
+            Application.Run(new login_form());
         }
     }
 }
