@@ -113,19 +113,25 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             if (checkBox3.Checked)
             {
                 string query = @"
-    SELECT 
-    s.full_name AS اسم_الطالب,
+SELECT 
+    s.full_name       AS اسم_الطالب,
     s.university_number AS الرقم_الجامعي,
-    c.year_number AS السنة,
-    c.course_code AS رمز_المادة,
-    c.course_name AS المادة,
-    c.units AS الوحدات,
-    g.total_grade AS الدرجة
+    c.year_number     AS السنة,
+    c.course_code     AS رمز_المادة,
+    c.course_name     AS المادة,
+    c.units           AS الوحدات,
+    d.dep_name        AS القسم,
+    g.total_grade     AS الدرجة
 FROM Grades g
-INNER JOIN Students s ON g.student_id = s.student_id
-INNER JOIN Courses c ON g.course_id = c.course_id
+INNER JOIN Students s 
+    ON g.student_id = s.student_id
+INNER JOIN Courses c 
+    ON g.course_id = c.course_id
+INNER JOIN Departments d 
+    ON s.department_id = d.department_id
 WHERE s.university_number = @university_number
 ORDER BY c.year_number, c.course_name;";
+
 
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -152,26 +158,31 @@ ORDER BY c.year_number, c.course_name;";
             {
                 string query = @"
 SELECT 
-    s.full_name AS اسم_الطالب,
+    s.full_name       AS اسم_الطالب,
     s.university_number AS الرقم_الجامعي,
-    c.year_number AS السنة,
-    c.course_code AS رمز_المادة,
-    c.course_name AS المادة,
-    c.units AS الوحدات,
-   d.dep_name AS القسم,
-    g.total_grade AS الدرجة
-FROM Grades g
-INNER JOIN Students s ON g.student_id = s.student_id
-INNER JOIN Courses c ON g.course_id = c.course_id
-INNER JOIN Course_Department cd ON c.course_id = cd.course_id
-INNER JOIN Departments d ON cd.department_id = d.department_id
+    c.year_number     AS السنة,
+    cd.course_dep_code AS رمز_المادة,
+    c.course_name     AS المادة,
+    c.units           AS الوحدات,
+    d.dep_name        AS القسم,
+    g.total_grade     AS الدرجة
+FROM Registrations r
+INNER JOIN Students s 
+    ON r.student_id = s.student_id
+INNER JOIN Courses c 
+    ON r.course_id = c.course_id
+INNER JOIN Course_Department cd 
+    ON cd.course_id = c.course_id
+INNER JOIN Departments d 
+    ON s.department_id = d.department_id   -- هنا التعديل: استخدم department_id من Students
+LEFT JOIN Grades g 
+    ON g.student_id = s.student_id 
+   AND g.course_id = c.course_id
 WHERE s.university_number = @university_number
-  AND cd.department_id = (
-      SELECT department_id FROM Students WHERE university_number = @university_number
-  )
+  AND r.status = N'مسجل'
 ORDER BY c.year_number, c.course_name;
-
 ";
+
 
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                 using (SqlCommand cmd = new SqlCommand(query, conn))

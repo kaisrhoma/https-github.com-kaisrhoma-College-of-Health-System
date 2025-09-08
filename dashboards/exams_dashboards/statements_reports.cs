@@ -1053,25 +1053,23 @@ ORDER BY c.year_number, c.course_name;
             {
                 string query = @"
 SELECT 
-    s.full_name AS اسم_الطالب,
+    s.full_name       AS اسم_الطالب,
     s.university_number AS الرقم_الجامعي,
-    c.year_number AS السنة,
-    cd.course_dep_code AS رمز_المادة,
-    c.course_name AS المادة,
-    c.units AS الوحدات,
-    g.total_grade AS الدرجة
+    c.year_number     AS السنة,
+    c.course_code     AS رمز_المادة,
+    c.course_name     AS المادة,
+    c.units           AS الوحدات,
+    d.dep_name        AS القسم,
+    g.total_grade     AS الدرجة
 FROM Grades g
 INNER JOIN Students s 
     ON g.student_id = s.student_id
 INNER JOIN Courses c 
     ON g.course_id = c.course_id
-INNER JOIN Course_Department cd 
-    ON cd.course_id = c.course_id
--- 🔴 شلت الشرط اللي يربط القسم الحالي للطالب
+INNER JOIN Departments d 
+    ON s.department_id = d.department_id
 WHERE s.university_number = @university_number
-ORDER BY c.year_number, c.course_name;
-
-";
+ORDER BY c.year_number, c.course_name;";
 
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -1114,15 +1112,16 @@ INNER JOIN Courses c
 INNER JOIN Course_Department cd 
     ON cd.course_id = c.course_id
 INNER JOIN Departments d 
-    ON cd.department_id = d.department_id
+    ON s.department_id = d.department_id   -- هنا التعديل: استخدم department_id من Students
 LEFT JOIN Grades g 
     ON g.student_id = s.student_id 
    AND g.course_id = c.course_id
 WHERE s.university_number = @university_number
-  AND r.status = N'مسجل'   -- أو 'استص'
+  AND r.status = N'مسجل'
 ORDER BY c.year_number, c.course_name;
-
 ";
+
+
 
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -1668,16 +1667,23 @@ FROM Registrations r
 INNER JOIN (
     SELECT student_id, course_id, MAX(registration_id) AS max_reg_id
     FROM Registrations
-    WHERE academic_year_start = @CurrentYear
     GROUP BY student_id, course_id
 ) rmax ON r.registration_id = rmax.max_reg_id
 INNER JOIN Students s ON r.student_id = s.student_id
+INNER JOIN Status st ON s.status_id = st.status_id
 INNER JOIN Courses c ON r.course_id = c.course_id
 INNER JOIN Course_Department cd ON c.course_id = cd.course_id
 INNER JOIN Departments d ON cd.department_id = d.department_id
+LEFT JOIN Grades g ON r.student_id = g.student_id AND r.course_id = g.course_id
 WHERE c.course_id = @courseId
   AND c.year_number = @year
-  AND cd.department_id = @deptId;
+  AND cd.department_id = @deptId
+  AND st.description = 'مستمر'
+  AND r.status = 'مسجل'
+  AND g.total_grade IS NULL
+  AND g.success_status IS NULL;
+
+
 ;";
 
                     SqlDataAdapter da = new SqlDataAdapter(query, conn);
@@ -1762,7 +1768,7 @@ WHERE c.course_id = @courseId
             }
             else
             {
-                MessageBox.Show("يرجى اختيار القسم والسنة والمادة أولاً");
+              
             }
         }
         //-----------------------------------------------

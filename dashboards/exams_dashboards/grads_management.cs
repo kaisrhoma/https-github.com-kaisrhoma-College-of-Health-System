@@ -132,7 +132,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             }
             else
             {
-                MessageBox.Show("الرجاء اختيار القسم و مادة قبل تحميل الطلاب.");
+              label17.Text ="الرجاء اختيار القسم";
+                label17.ForeColor= Color.Red;
             }
 
 
@@ -999,6 +1000,11 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;";
             {
                 MessageBox.Show("حدث خطأ أثناء الاتصال:\n" + exOuter.Message);
             }
+            if (comboCourse.SelectedValue != null && int.TryParse(comboCourse.SelectedValue.ToString(), out int courseId))
+            {
+                string examRound = comboExamRound.SelectedItem?.ToString() ?? ""; // قيمة الدور من الكمبو بوكس الآخر
+                LoadStudents(courseId, examRound);
+            }
 
         }
 
@@ -1208,13 +1214,13 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;";
                 }
             }
 
+
             catch (Exception ex)
             {
                 MessageBox.Show("❌ خطأ أثناء استيراد البيانات:\n" + ex.Message);
             }
 
-
-
+        
         }
 
 
@@ -2762,6 +2768,20 @@ WHERE r.student_id = @studentId
                 {
                     cmd.ExecuteNonQuery();
                 }
+            }
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedTab == tabPage4)
+            {
+                txtUniversityNumber.Focus();
+            }
+            else if (tabControl1.SelectedTab == tabPage2)
+            {
+
+                textBox1.Focus();
+
             }
         }
     }

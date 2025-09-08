@@ -123,7 +123,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 con.Close();
             }
-
+            LoadDepartments();
         }
         //2
         private void LoadInstructors2()
@@ -172,7 +172,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                 }
 
                 txtDeptName2.Text = row.Cells["dep_name"].Value?.ToString() ?? "";
-
+                textBox2.Text = row.Cells["department_code"].Value?.ToString() ?? "";
                 try
                 {
                     con.Open();
@@ -212,7 +212,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         {
             try
             {
-                string query = @"SELECT d.department_id, d.dep_name, i.full_name, d.head_id 
+                string query = @"SELECT d.department_id, d.dep_name, i.full_name, d.head_id , d.department_code
                          FROM Departments d
                          LEFT JOIN Instructors i ON d.head_id = i.instructor_id";
 
@@ -244,10 +244,11 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                 dataGridView1.Columns["dep_name"].HeaderText = "اسم القسم";
                 dataGridView1.Columns["full_name"].HeaderText = "رئيس القسم";
-
+                dataGridView1.Columns["department_code"].HeaderText = "كود القسم";
                 // الأعمدة الأخرى تملأ العرض
                 dataGridView1.Columns["dep_name"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 dataGridView1.Columns["full_name"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                dataGridView1.Columns["department_code"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             }
             catch (Exception ex)
             {
@@ -264,35 +265,62 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             }
 
             string deptName = txtDeptName2.Text.Trim();
+            string deptCode = textBox2.Text.Trim(); // رمز القسم
             int headId = Convert.ToInt32(comboBoxHead2.SelectedValue);
 
             try
             {
                 con.Open();
 
-                // التحقق إذا القسم موجود مسبقًا باسم آخر غير هذا القسم
-                SqlCommand checkCmd = new SqlCommand(
-                    "SELECT COUNT(*) FROM Departments WHERE dep_name = @name AND department_id <> @id", con);
-                checkCmd.Parameters.AddWithValue("@name", deptName);
-                checkCmd.Parameters.AddWithValue("@id", selectedDeptId);
+                // 🔹 جلب اسم القسم الحالي
+                SqlCommand getNameCmd = new SqlCommand(
+                    "SELECT dep_name FROM Departments WHERE department_id = @id", con);
+                getNameCmd.Parameters.AddWithValue("@id", selectedDeptId);
+                string currentDeptName = (string)getNameCmd.ExecuteScalar();
 
-                int count = (int)checkCmd.ExecuteScalar();
-
-                if (count > 0)
+                // 🔹 إذا القسم الحالي اسمه "عام" → لا يسمح بتغيير الاسم
+                if (currentDeptName == "عام" && deptName != "عام")
                 {
-                    MessageBox.Show("هذا القسم موجود مسبقًا، لا يمكن التعديل بنفس الاسم!", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("لا يمكن تغيير اسم القسم العام!", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                // تنفيذ التعديل إذا الاسم غير موجود
+                // 🔹 التحقق إذا الاسم مكرر
+                SqlCommand checkNameCmd = new SqlCommand(
+                    "SELECT COUNT(*) FROM Departments WHERE dep_name = @name AND department_id <> @id", con);
+                checkNameCmd.Parameters.AddWithValue("@name", deptName);
+                checkNameCmd.Parameters.AddWithValue("@id", selectedDeptId);
+
+                int nameCount = (int)checkNameCmd.ExecuteScalar();
+                if (nameCount > 0)
+                {
+                    MessageBox.Show("هذا الاسم مستخدم مسبقًا، لا يمكن التعديل!", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 🔹 التحقق إذا الرمز مكرر
+                SqlCommand checkCodeCmd = new SqlCommand(
+                    "SELECT COUNT(*) FROM Departments WHERE department_code = @code AND department_id <> @id", con);
+                checkCodeCmd.Parameters.AddWithValue("@code", deptCode);
+                checkCodeCmd.Parameters.AddWithValue("@id", selectedDeptId);
+
+                int codeCount = (int)checkCodeCmd.ExecuteScalar();
+                if (codeCount > 0)
+                {
+                    MessageBox.Show("رمز القسم مستخدم مسبقًا، لا يمكن التعديل!", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 🔹 تنفيذ التعديل
                 SqlCommand cmd = new SqlCommand(
-                    "UPDATE Departments SET dep_name = @name, head_id = @head WHERE department_id = @id", con);
+                    "UPDATE Departments SET dep_name = @name, department_code = @code, head_id = @head WHERE department_id = @id", con);
                 cmd.Parameters.AddWithValue("@name", deptName);
+                cmd.Parameters.AddWithValue("@code", deptCode);
                 cmd.Parameters.AddWithValue("@head", headId);
                 cmd.Parameters.AddWithValue("@id", selectedDeptId);
 
                 cmd.ExecuteNonQuery();
-                MessageBox.Show("تم التعديل بنجاح");
+                MessageBox.Show("تم التعديل بنجاح ✅");
 
                 LoadDepartments(); // إعادة تحميل
             }
@@ -304,25 +332,39 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
             {
                 con.Close();
             }
-
-
         }
+
+
 
         private void button1_Click(object sender, EventArgs e)
         {
-
             if (selectedDeptId == -1)
             {
                 MessageBox.Show("الرجاء اختيار قسم للحذف");
                 return;
             }
 
-            if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            try
             {
-                try
+                con.Open();
+
+                // 🔹 جلب اسم القسم الحالي من قاعدة البيانات
+                SqlCommand getNameCmd = new SqlCommand(
+                    "SELECT dep_name FROM Departments WHERE department_id = @id", con);
+                getNameCmd.Parameters.AddWithValue("@id", selectedDeptId);
+
+                string currentDeptName = (string)getNameCmd.ExecuteScalar();
+
+                // 🔹 إذا القسم اسمه "عام" → ممنوع الحذف
+                if (currentDeptName == "عام")
                 {
-                    con.Open();
+                    MessageBox.Show("⚠️ لا يمكن حذف القسم العام!", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
                     SqlCommand cmd = new SqlCommand("DELETE FROM Departments WHERE department_id = @id", con);
                     cmd.Parameters.AddWithValue("@id", selectedDeptId);
 
@@ -334,17 +376,17 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
                     comboBoxHead2.SelectedIndex = -1;
                     selectedDeptId = -1;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("خطأ: " + ex.Message);
-                }
-                finally
-                {
-                    con.Close();
-                }
             }
-
+            catch (Exception ex)
+            {
+                MessageBox.Show("خطأ: " + ex.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
         }
+
         //المواد
         // دالة لملء ComboBox السنة
         private int selectedCourseId = 0;
@@ -1302,7 +1344,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         //ربط المواد بي القسم
         // تحميل السنوات في الكمبو الأول
 
-
+        private void tabControl1_Click(object sender, EventArgs e)
+        {
+           
+        }
         private void LoadYears()
         {
 
@@ -3187,5 +3232,48 @@ WHERE c.year_number = @year
                 MessageBox.Show("Error: " + ex.Message);
             }
         }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedTab == tabPage4)
+            {
+                textBox7.Focus();
+
+            }
+            else if (tabControl1.SelectedTab == tabPage1)
+            {
+                txtDeptName.Focus();
+            }
+            else if (tabControl1.SelectedTab == tabPage2)
+            {
+                LoadDepartments1();
+                comboBoxYear4_SelectedIndexChanged(null, null);
+            }
+            else if (tabControl1.SelectedTab == tabPage3)
+            {
+                textBoxName.Focus();
+
+            }
+            else if (tabControl1.SelectedTab == tabPage5)
+            {
+
+            }
+            else if (tabControl1.SelectedTab == tabPage6)
+            {
+                txtCourseCode.Focus();
+            }
+        
+            else if (tabControl1.SelectedTab == tabPage8)
+            {
+                LoadInstructorCourses();
+                comboBox5_SelectedIndexChanged(null, null);
+            }
+
+
+
+
+
+
+            }
     }
 }
