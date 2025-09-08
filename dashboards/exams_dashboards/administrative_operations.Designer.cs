@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(administrative_operations));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.button2 = new System.Windows.Forms.Button();
@@ -44,6 +46,7 @@
             this.button6 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
@@ -56,6 +59,8 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControl1.ImageList = this.imageList1;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Multiline = true;
@@ -77,11 +82,12 @@
             this.tabPage2.Controls.Add(this.button1);
             this.tabPage2.Controls.Add(this.comboBox4);
             this.tabPage2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage2.Location = new System.Drawing.Point(4, 33);
+            this.tabPage2.ImageIndex = 13;
+            this.tabPage2.Location = new System.Drawing.Point(4, 41);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(5);
-            this.tabPage2.Size = new System.Drawing.Size(899, 529);
+            this.tabPage2.Size = new System.Drawing.Size(899, 521);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "إصدار جدول الإمتحانات";
             // 
@@ -91,10 +97,13 @@
             this.button2.BackColor = System.Drawing.Color.LimeGreen;
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.ForeColor = System.Drawing.Color.White;
-            this.button2.Location = new System.Drawing.Point(355, 414);
+            this.button2.Image = global::college_of_health_sciences.Properties.Resources.printbutton;
+            this.button2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button2.Location = new System.Drawing.Point(382, 402);
             this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(181, 42);
+            this.button2.Padding = new System.Windows.Forms.Padding(0, 0, 20, 0);
+            this.button2.Size = new System.Drawing.Size(124, 42);
             this.button2.TabIndex = 30;
             this.button2.Text = "طباعة";
             this.button2.UseVisualStyleBackColor = false;
@@ -111,7 +120,7 @@
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowHeadersWidth = 51;
             this.dataGridView2.RowTemplate.Height = 24;
-            this.dataGridView2.Size = new System.Drawing.Size(811, 212);
+            this.dataGridView2.Size = new System.Drawing.Size(811, 204);
             this.dataGridView2.TabIndex = 27;
             // 
             // label1
@@ -172,11 +181,12 @@
             this.tabPage3.Controls.Add(this.comboBox1);
             this.tabPage3.Controls.Add(this.label5);
             this.tabPage3.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage3.Location = new System.Drawing.Point(4, 33);
+            this.tabPage3.ImageIndex = 1;
+            this.tabPage3.Location = new System.Drawing.Point(4, 41);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(5);
-            this.tabPage3.Size = new System.Drawing.Size(899, 529);
+            this.tabPage3.Size = new System.Drawing.Size(899, 521);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "اصدار جدول المحاضرات";
             // 
@@ -186,7 +196,7 @@
             this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.ForeColor = System.Drawing.Color.White;
-            this.button3.Location = new System.Drawing.Point(447, 410);
+            this.button3.Location = new System.Drawing.Point(364, 402);
             this.button3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(181, 42);
@@ -200,10 +210,13 @@
             this.button5.BackColor = System.Drawing.Color.LimeGreen;
             this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button5.ForeColor = System.Drawing.Color.White;
-            this.button5.Location = new System.Drawing.Point(260, 410);
+            this.button5.Image = global::college_of_health_sciences.Properties.Resources.printbutton;
+            this.button5.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button5.Location = new System.Drawing.Point(737, 402);
             this.button5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(181, 42);
+            this.button5.Padding = new System.Windows.Forms.Padding(0, 0, 20, 0);
+            this.button5.Size = new System.Drawing.Size(116, 42);
             this.button5.TabIndex = 36;
             this.button5.Text = "طباعة";
             this.button5.UseVisualStyleBackColor = false;
@@ -219,7 +232,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(811, 212);
+            this.dataGridView1.Size = new System.Drawing.Size(811, 204);
             this.dataGridView1.TabIndex = 35;
             // 
             // label2
@@ -268,6 +281,76 @@
             this.label5.TabIndex = 29;
             this.label5.Text = "إصدار جدول المحاضرات";
             // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "user (1).png");
+            this.imageList1.Images.SetKeyName(1, "teacher.png");
+            this.imageList1.Images.SetKeyName(2, "subjects2.png");
+            this.imageList1.Images.SetKeyName(3, "subjects.png");
+            this.imageList1.Images.SetKeyName(4, "subject.png");
+            this.imageList1.Images.SetKeyName(5, "studentlogin.png");
+            this.imageList1.Images.SetKeyName(6, "studenthomepage.png");
+            this.imageList1.Images.SetKeyName(7, "student.png");
+            this.imageList1.Images.SetKeyName(8, "selectedcheckboxicon.png");
+            this.imageList1.Images.SetKeyName(9, "searchuser.png");
+            this.imageList1.Images.SetKeyName(10, "search (1).png");
+            this.imageList1.Images.SetKeyName(11, "printbutton.png");
+            this.imageList1.Images.SetKeyName(12, "pdfbutton.png");
+            this.imageList1.Images.SetKeyName(13, "marks.png");
+            this.imageList1.Images.SetKeyName(14, "logout.png");
+            this.imageList1.Images.SetKeyName(15, "locationinfo.png");
+            this.imageList1.Images.SetKeyName(16, "lecturerhomepage.png");
+            this.imageList1.Images.SetKeyName(17, "home.png");
+            this.imageList1.Images.SetKeyName(18, "historybutton.png");
+            this.imageList1.Images.SetKeyName(19, "graducationcap.png");
+            this.imageList1.Images.SetKeyName(20, "facultylogin.png");
+            this.imageList1.Images.SetKeyName(21, "facultyhomepage.png");
+            this.imageList1.Images.SetKeyName(22, "faculities.png");
+            this.imageList1.Images.SetKeyName(23, "exit.png");
+            this.imageList1.Images.SetKeyName(24, "downloadedbutton.png");
+            this.imageList1.Images.SetKeyName(25, "downloadbutton.png");
+            this.imageList1.Images.SetKeyName(26, "dobinfo.png");
+            this.imageList1.Images.SetKeyName(27, "courceshomepage.png");
+            this.imageList1.Images.SetKeyName(28, "cources.png");
+            this.imageList1.Images.SetKeyName(29, "book.png");
+            this.imageList1.Images.SetKeyName(30, "backgroundimage3.jpg");
+            this.imageList1.Images.SetKeyName(31, "backgroundimage2.jpg");
+            this.imageList1.Images.SetKeyName(32, "back.png");
+            this.imageList1.Images.SetKeyName(33, "attandancereport.png");
+            this.imageList1.Images.SetKeyName(34, "attandance.png");
+            this.imageList1.Images.SetKeyName(35, "assignsubject.png");
+            this.imageList1.Images.SetKeyName(36, "adminprofile.png");
+            this.imageList1.Images.SetKeyName(37, "Usersdac.png");
+            this.imageList1.Images.SetKeyName(38, "Usersac.png");
+            this.imageList1.Images.SetKeyName(39, "Subjectsdac.png");
+            this.imageList1.Images.SetKeyName(40, "Studentsdac.png");
+            this.imageList1.Images.SetKeyName(41, "Studentsac.png");
+            this.imageList1.Images.SetKeyName(42, "Searchdac.png");
+            this.imageList1.Images.SetKeyName(43, "Searchac.png");
+            this.imageList1.Images.SetKeyName(44, "Profiledac.png");
+            this.imageList1.Images.SetKeyName(45, "Profileac.png");
+            this.imageList1.Images.SetKeyName(46, "Marksheet Reportdac.png");
+            this.imageList1.Images.SetKeyName(47, "Marksheet Reportac.png");
+            this.imageList1.Images.SetKeyName(48, "Mark Attandancedac.png");
+            this.imageList1.Images.SetKeyName(49, "Mark Attandanceac.png");
+            this.imageList1.Images.SetKeyName(50, "Logoutdac.png");
+            this.imageList1.Images.SetKeyName(51, "Logoutac.png");
+            this.imageList1.Images.SetKeyName(52, "Homedac.png");
+            this.imageList1.Images.SetKeyName(53, "Homeac.png");
+            this.imageList1.Images.SetKeyName(54, "Faculitiesdac.png");
+            this.imageList1.Images.SetKeyName(55, "Faculitiesac.png");
+            this.imageList1.Images.SetKeyName(56, "Exitdac.png");
+            this.imageList1.Images.SetKeyName(57, "Exitac.png");
+            this.imageList1.Images.SetKeyName(58, "Enter Marksdac.png");
+            this.imageList1.Images.SetKeyName(59, "Enter Marksac.png");
+            this.imageList1.Images.SetKeyName(60, "Courcesac.png");
+            this.imageList1.Images.SetKeyName(61, "Attandance Reportdac.png");
+            this.imageList1.Images.SetKeyName(62, "Attandance Reportac.png");
+            this.imageList1.Images.SetKeyName(63, "Assign Subjectdac.png");
+            this.imageList1.Images.SetKeyName(64, "Assign Subjectac.png");
+            // 
             // administrative_operations
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -304,5 +387,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }

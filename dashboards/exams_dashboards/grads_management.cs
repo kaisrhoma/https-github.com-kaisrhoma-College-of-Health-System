@@ -169,12 +169,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
         private void comboDepartmentOrYearChanged(object sender, EventArgs e)
         {
-            if (comboDepartment.SelectedValue != null && comboYear4.SelectedItem != null &&
-         int.TryParse(comboDepartment.SelectedValue.ToString(), out int deptId) &&
-         int.TryParse(comboYear4.SelectedItem.ToString(), out int year))
-            {
-                LoadCourses(deptId, year);
-            }
+
         }
 
 
@@ -350,11 +345,6 @@ WHERE 1=1
 
 
 
-        private void grads_management_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void tabPage1_Click(object sender, EventArgs e)
         {
 
@@ -374,12 +364,6 @@ WHERE 1=1
 
         private void comboYear_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboDepartment.SelectedValue != null && comboYear4.SelectedItem != null)
-            {
-                int deptId = (int)comboDepartment.SelectedValue;
-                int year = Convert.ToInt32(comboYear4.SelectedItem);
-                LoadCourses(deptId, year);
-            }
 
         }
 
@@ -1638,10 +1622,6 @@ VALUES (@userId, 'UPDATE', 'Grades', @recordId)";
             if (txtUniversityNumber.Text != "") { button3_Click(null, null); }
         }
 
-        private void tabPage2_Click(object sender, EventArgs e)
-        {
-
-        }
         //--------------------------------------------------------------------------------------------------------------------------3
         private void BeginPrint_Reset(object sender, PrintEventArgs e)
         {
@@ -2771,18 +2751,22 @@ WHERE r.student_id = @studentId
             }
         }
 
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+
+        private void tabControl1_SelectedIndexChanged_1(object sender, EventArgs e)
         {
             if (tabControl1.SelectedTab == tabPage4)
             {
-                txtUniversityNumber.Focus();
+                this.BeginInvoke(new Action(() => txtUniversityNumber.Focus()));
             }
             else if (tabControl1.SelectedTab == tabPage2)
             {
-
-                textBox1.Focus();
-
+                this.BeginInvoke(new Action(() => textBox1.Focus()));
             }
+        }
+
+        private void grads_management_Load(object sender, EventArgs e)
+        {
+            txtUniversityNumber.Focus();
         }
     }
 

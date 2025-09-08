@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(certificates_reports));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
@@ -70,6 +72,7 @@
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.printDocument2 = new System.Drawing.Printing.PrintDocument();
             this.printDocument3 = new System.Drawing.Printing.PrintDocument();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -95,6 +98,7 @@
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControl1.ImageList = this.imageList1;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Multiline = true;
@@ -115,11 +119,12 @@
             this.tabPage1.Controls.Add(this.button5);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage1.Location = new System.Drawing.Point(4, 40);
+            this.tabPage1.ImageIndex = 35;
+            this.tabPage1.Location = new System.Drawing.Point(4, 41);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(5);
-            this.tabPage1.Size = new System.Drawing.Size(899, 522);
+            this.tabPage1.Size = new System.Drawing.Size(899, 521);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "شهادة القيد";
             // 
@@ -129,7 +134,7 @@
             this.button1.BackColor = System.Drawing.Color.LimeGreen;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(371, 448);
+            this.button1.Location = new System.Drawing.Point(371, 447);
             this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(147, 47);
@@ -149,7 +154,7 @@
             this.dataGridView3.Name = "dataGridView3";
             this.dataGridView3.RowHeadersWidth = 51;
             this.dataGridView3.RowTemplate.Height = 24;
-            this.dataGridView3.Size = new System.Drawing.Size(780, 244);
+            this.dataGridView3.Size = new System.Drawing.Size(780, 243);
             this.dataGridView3.TabIndex = 41;
             // 
             // button5
@@ -190,11 +195,12 @@
             this.tabPage2.Controls.Add(this.button2);
             this.tabPage2.Controls.Add(this.label4);
             this.tabPage2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage2.Location = new System.Drawing.Point(4, 40);
+            this.tabPage2.ImageIndex = 34;
+            this.tabPage2.Location = new System.Drawing.Point(4, 41);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(5);
-            this.tabPage2.Size = new System.Drawing.Size(899, 522);
+            this.tabPage2.Size = new System.Drawing.Size(899, 521);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "كشف الدرجات";
             // 
@@ -223,7 +229,7 @@
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowHeadersWidth = 51;
             this.dataGridView2.RowTemplate.Height = 24;
-            this.dataGridView2.Size = new System.Drawing.Size(780, 258);
+            this.dataGridView2.Size = new System.Drawing.Size(780, 257);
             this.dataGridView2.TabIndex = 41;
             // 
             // button4
@@ -232,7 +238,7 @@
             this.button4.BackColor = System.Drawing.Color.LimeGreen;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.ForeColor = System.Drawing.Color.White;
-            this.button4.Location = new System.Drawing.Point(391, 444);
+            this.button4.Location = new System.Drawing.Point(391, 443);
             this.button4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(147, 47);
@@ -300,11 +306,12 @@
             this.tabPage3.Controls.Add(this.textBox1);
             this.tabPage3.Controls.Add(this.label5);
             this.tabPage3.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage3.Location = new System.Drawing.Point(4, 40);
+            this.tabPage3.ImageIndex = 29;
+            this.tabPage3.Location = new System.Drawing.Point(4, 41);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(5);
-            this.tabPage3.Size = new System.Drawing.Size(899, 522);
+            this.tabPage3.Size = new System.Drawing.Size(899, 521);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "ورقة تنزيل المواد";
             // 
@@ -314,7 +321,7 @@
             this.button3.BackColor = System.Drawing.Color.LimeGreen;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.ForeColor = System.Drawing.Color.White;
-            this.button3.Location = new System.Drawing.Point(383, 437);
+            this.button3.Location = new System.Drawing.Point(383, 436);
             this.button3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(147, 47);
@@ -349,7 +356,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(781, 254);
+            this.dataGridView1.Size = new System.Drawing.Size(781, 253);
             this.dataGridView1.TabIndex = 38;
             // 
             // label2
@@ -397,11 +404,12 @@
             this.tabPage4.Controls.Add(this.panel1);
             this.tabPage4.Controls.Add(this.button7);
             this.tabPage4.Controls.Add(this.label8);
-            this.tabPage4.Location = new System.Drawing.Point(4, 40);
+            this.tabPage4.ImageIndex = 5;
+            this.tabPage4.Location = new System.Drawing.Point(4, 41);
             this.tabPage4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.tabPage4.Size = new System.Drawing.Size(899, 522);
+            this.tabPage4.Size = new System.Drawing.Size(899, 521);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "تنزيل المواد";
             // 
@@ -495,7 +503,7 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(365, 206);
+            this.groupBox2.Size = new System.Drawing.Size(365, 205);
             this.groupBox2.TabIndex = 59;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "المواد اللتي سيتم تنزيلها";
@@ -511,7 +519,7 @@
             this.dataGridView4.Name = "dataGridView4";
             this.dataGridView4.RowHeadersWidth = 51;
             this.dataGridView4.RowTemplate.Height = 24;
-            this.dataGridView4.Size = new System.Drawing.Size(355, 170);
+            this.dataGridView4.Size = new System.Drawing.Size(355, 169);
             this.dataGridView4.TabIndex = 44;
             // 
             // groupBox1
@@ -524,7 +532,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox1.Size = new System.Drawing.Size(409, 206);
+            this.groupBox1.Size = new System.Drawing.Size(409, 205);
             this.groupBox1.TabIndex = 58;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "الطلبة";
@@ -540,7 +548,7 @@
             this.dataGridView5.Name = "dataGridView5";
             this.dataGridView5.RowHeadersWidth = 51;
             this.dataGridView5.RowTemplate.Height = 24;
-            this.dataGridView5.Size = new System.Drawing.Size(397, 170);
+            this.dataGridView5.Size = new System.Drawing.Size(397, 169);
             this.dataGridView5.TabIndex = 57;
             // 
             // panel1
@@ -604,7 +612,7 @@
             this.button7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button7.ForeColor = System.Drawing.Color.White;
-            this.button7.Location = new System.Drawing.Point(357, 446);
+            this.button7.Location = new System.Drawing.Point(357, 445);
             this.button7.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(147, 47);
@@ -636,6 +644,49 @@
             // printDocument3
             // 
             this.printDocument3.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument3_PrintPage);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "printbutton.png");
+            this.imageList1.Images.SetKeyName(1, "user (1).png");
+            this.imageList1.Images.SetKeyName(2, "teacher.png");
+            this.imageList1.Images.SetKeyName(3, "subjects2.png");
+            this.imageList1.Images.SetKeyName(4, "subjects.png");
+            this.imageList1.Images.SetKeyName(5, "subject.png");
+            this.imageList1.Images.SetKeyName(6, "studentlogin.png");
+            this.imageList1.Images.SetKeyName(7, "studenthomepage.png");
+            this.imageList1.Images.SetKeyName(8, "student.png");
+            this.imageList1.Images.SetKeyName(9, "selectedcheckboxicon.png");
+            this.imageList1.Images.SetKeyName(10, "searchuser.png");
+            this.imageList1.Images.SetKeyName(11, "search (1).png");
+            this.imageList1.Images.SetKeyName(12, "printbutton.png");
+            this.imageList1.Images.SetKeyName(13, "pdfbutton.png");
+            this.imageList1.Images.SetKeyName(14, "marks.png");
+            this.imageList1.Images.SetKeyName(15, "logout.png");
+            this.imageList1.Images.SetKeyName(16, "locationinfo.png");
+            this.imageList1.Images.SetKeyName(17, "lecturerhomepage.png");
+            this.imageList1.Images.SetKeyName(18, "home.png");
+            this.imageList1.Images.SetKeyName(19, "historybutton.png");
+            this.imageList1.Images.SetKeyName(20, "graducationcap.png");
+            this.imageList1.Images.SetKeyName(21, "facultylogin.png");
+            this.imageList1.Images.SetKeyName(22, "facultyhomepage.png");
+            this.imageList1.Images.SetKeyName(23, "faculities.png");
+            this.imageList1.Images.SetKeyName(24, "exit.png");
+            this.imageList1.Images.SetKeyName(25, "downloadedbutton.png");
+            this.imageList1.Images.SetKeyName(26, "downloadbutton.png");
+            this.imageList1.Images.SetKeyName(27, "dobinfo.png");
+            this.imageList1.Images.SetKeyName(28, "courceshomepage.png");
+            this.imageList1.Images.SetKeyName(29, "cources.png");
+            this.imageList1.Images.SetKeyName(30, "book.png");
+            this.imageList1.Images.SetKeyName(31, "backgroundimage3.jpg");
+            this.imageList1.Images.SetKeyName(32, "backgroundimage2.jpg");
+            this.imageList1.Images.SetKeyName(33, "back.png");
+            this.imageList1.Images.SetKeyName(34, "attandancereport.png");
+            this.imageList1.Images.SetKeyName(35, "attandance.png");
+            this.imageList1.Images.SetKeyName(36, "assignsubject.png");
+            this.imageList1.Images.SetKeyName(37, "adminprofile.png");
             // 
             // certificates_reports
             // 
@@ -715,5 +766,6 @@
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }

@@ -1798,6 +1798,11 @@ WHERE c.course_id = @courseId
 
         }
 
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void printDocument0_PrintPage(object sender, PrintPageEventArgs e)
         {
             if (pages == null || pages.Count == 0 || currentPageIndex >= pages.Count)

@@ -68,5 +68,10 @@ namespace college_of_health_sciences.system_forms
             this.Close();
             (new login_form()).ShowDialog();
         }
+
+        private void panel4_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

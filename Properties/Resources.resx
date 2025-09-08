@@ -118,52 +118,286 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="load-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\load-32.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="search (1)" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\search (1).png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Folder.24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Folder.24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="downloadedbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\downloadedbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Attandance Reportdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Attandance Reportdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="password" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\password.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Application_Loader" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Application_Loader.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="marks" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\marks.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="cohs_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cohs_logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="PictureLoading1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PictureLoading1.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="logo_colorized2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\logo_colorized2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Logoutdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logoutdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="cancel.24" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\cancel.24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Homeac1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Homeac1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="user" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\user.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Profileac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Profileac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="userid" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\userid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Faculitiesdac1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Faculitiesdac1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="adminlogin" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\adminlogin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="faculities" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\faculities.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Attandance Reportac1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Attandance Reportac1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="studenthomepage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\studenthomepage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="User.24" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\User.24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="PictureLoading" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PictureLoading.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="logo_colorized2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\logo_colorized2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Carlosjj-Microsoft-Office-2013-Excel.48" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Carlosjj-Microsoft-Office-2013-Excel.481.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="adminlogin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\adminlogin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Enter Marksdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Enter Marksdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Homedac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Homedac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="printbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\printbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="userid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\userid.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Studentsac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Studentsac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Subjectsdac1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Subjectsdac1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="attandance" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\attandance.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="courceshomepage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\courceshomepage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="exit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\exit.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Homeac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Homeac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cancel.24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cancel.24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bg.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Folder.24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Folder.24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="loadin_splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\loadin_splash.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="subjects2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\subjects2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="home" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\home.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Studentsdac1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Studentsdac1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="graducationcap" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\graducationcap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="locationinfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\locationinfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Marksheet Reportdac1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Marksheet Reportdac1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="load-32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\load-32.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Marksheet Reportdac2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Marksheet Reportdac2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="studentlogin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\studentlogin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="login_backimage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\login_backimage.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="book" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\book.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="facultyhomepage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\facultyhomepage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Courcesac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Courcesac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="searchuser" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\searchuser.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Enter Marksac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Enter Marksac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pdfbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pdfbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Marksheet Reportdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Marksheet Reportdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="assignsubject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\assignsubject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="logout" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\logout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Searchdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Searchdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="teacher" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\teacher.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cohs_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cohs_logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="user" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\user.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dobinfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\dobinfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Subjectsdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Subjectsdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Usersdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Usersdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Assign Subjectac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Assign Subjectac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Exitdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Exitdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="facultylogin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\facultylogin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Attandance Reportac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Attandance Reportac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Marksheet Reportac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Marksheet Reportac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="subjects" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\subjects.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="lecturerhomepage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lecturerhomepage.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="back1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\back1.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PictureLoading" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PictureLoading.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="back" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\back.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Profiledac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Profiledac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Exitac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Exitac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Carlosjj-Microsoft-Office-2013-Excel.48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Carlosjj-Microsoft-Office-2013-Excel.481.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Studentsdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Studentsdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="garyan_univirsty_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\garyan_univirsty_logo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="PictureLoading1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PictureLoading1.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Faculitiesdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Faculitiesdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="attandancereport" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\attandancereport.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Assign Subjectdac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Assign Subjectdac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="subject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\subject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mark Attandancedac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mark Attandancedac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="backgroundimage3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\backgroundimage3.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Searchac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Searchac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="historybutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\historybutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Logoutac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logoutac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Application_Loader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Application_Loader.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Attandance Reportdac1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Attandance Reportdac1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mark Attandancedac1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mark Attandancedac1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="downloadbutton" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\downloadbutton.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="student" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\student.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="cources" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\cources.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Faculitiesac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Faculitiesac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Usersac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Usersac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="backgroundimage2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\backgroundimage2.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="selectedcheckboxicon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\selectedcheckboxicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Homedac1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Homedac1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mark Attandanceac" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mark Attandanceac.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="adminprofile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\adminprofile.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="loadin_splash_png" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\loadin_splash_png.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

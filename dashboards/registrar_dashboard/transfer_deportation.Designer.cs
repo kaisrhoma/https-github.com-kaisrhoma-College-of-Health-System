@@ -28,8 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(transfer_deportation));
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
@@ -81,11 +86,10 @@
             this.dataGridView4 = new System.Windows.Forms.DataGridView();
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -103,7 +107,6 @@
             this.tabPage4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
             this.SuspendLayout();
             // 
             // tabPage1
@@ -114,11 +117,12 @@
             this.tabPage1.Controls.Add(this.label5);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage1.Location = new System.Drawing.Point(4, 40);
+            this.tabPage1.ImageIndex = 1;
+            this.tabPage1.Location = new System.Drawing.Point(4, 41);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(5);
-            this.tabPage1.Size = new System.Drawing.Size(899, 522);
+            this.tabPage1.Size = new System.Drawing.Size(899, 521);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "التحويل و الترحيل";
             // 
@@ -136,14 +140,59 @@
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.comboBox1);
             this.groupBox2.Controls.Add(this.button1);
-            this.groupBox2.Location = new System.Drawing.Point(35, 370);
+            this.groupBox2.Location = new System.Drawing.Point(35, 358);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox2.Size = new System.Drawing.Size(825, 139);
+            this.groupBox2.Size = new System.Drawing.Size(825, 148);
             this.groupBox2.TabIndex = 45;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "ترحيل البيانات للسنوات القادمة";
+            // 
+            // label18
+            // 
+            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label18.AutoSize = true;
+            this.label18.ForeColor = System.Drawing.Color.Black;
+            this.label18.Location = new System.Drawing.Point(289, 85);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(94, 23);
+            this.label18.TabIndex = 56;
+            this.label18.Text = "العام الجامعي";
+            // 
+            // numericUpDown6
+            // 
+            this.numericUpDown6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.numericUpDown6.Location = new System.Drawing.Point(162, 78);
+            this.numericUpDown6.Maximum = new decimal(new int[] {
+            3000,
+            0,
+            0,
+            0});
+            this.numericUpDown6.Minimum = new decimal(new int[] {
+            1900,
+            0,
+            0,
+            0});
+            this.numericUpDown6.Name = "numericUpDown6";
+            this.numericUpDown6.Size = new System.Drawing.Size(120, 30);
+            this.numericUpDown6.TabIndex = 55;
+            this.numericUpDown6.Value = new decimal(new int[] {
+            1900,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Black;
+            this.label1.Location = new System.Drawing.Point(686, 95);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(118, 23);
+            this.label1.TabIndex = 54;
+            this.label1.Text = "النسخ الاحيتياطي";
             // 
             // label6
             // 
@@ -404,6 +453,7 @@
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControl1.ImageList = this.imageList1;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Multiline = true;
@@ -421,10 +471,11 @@
             this.tabPage2.Controls.Add(this.groupBox3);
             this.tabPage2.Controls.Add(this.label13);
             this.tabPage2.Controls.Add(this.label14);
-            this.tabPage2.Location = new System.Drawing.Point(4, 40);
+            this.tabPage2.ImageIndex = 35;
+            this.tabPage2.Location = new System.Drawing.Point(4, 41);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(899, 522);
+            this.tabPage2.Size = new System.Drawing.Size(899, 521);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "ترقية سنة أولى القسم العام";
             // 
@@ -447,7 +498,7 @@
             this.groupBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox3.Size = new System.Drawing.Size(826, 424);
+            this.groupBox3.Size = new System.Drawing.Size(826, 423);
             this.groupBox3.TabIndex = 49;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "ترحيل البيانات للسنوات القادمة";
@@ -458,7 +509,7 @@
             this.button10.BackColor = System.Drawing.Color.LimeGreen;
             this.button10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button10.ForeColor = System.Drawing.Color.White;
-            this.button10.Location = new System.Drawing.Point(677, 370);
+            this.button10.Location = new System.Drawing.Point(677, 369);
             this.button10.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(128, 37);
@@ -556,7 +607,7 @@
             this.button8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button8.ForeColor = System.Drawing.Color.White;
-            this.button8.Location = new System.Drawing.Point(292, 367);
+            this.button8.Location = new System.Drawing.Point(292, 366);
             this.button8.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(224, 40);
@@ -598,7 +649,7 @@
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowHeadersWidth = 51;
             this.dataGridView2.RowTemplate.Height = 24;
-            this.dataGridView2.Size = new System.Drawing.Size(786, 223);
+            this.dataGridView2.Size = new System.Drawing.Size(786, 222);
             this.dataGridView2.TabIndex = 27;
             // 
             // label13
@@ -629,10 +680,11 @@
             this.tabPage3.Controls.Add(this.groupBox4);
             this.tabPage3.Controls.Add(this.label16);
             this.tabPage3.Controls.Add(this.label17);
-            this.tabPage3.Location = new System.Drawing.Point(4, 40);
+            this.tabPage3.ImageIndex = 35;
+            this.tabPage3.Location = new System.Drawing.Point(4, 41);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(899, 522);
+            this.tabPage3.Size = new System.Drawing.Size(899, 521);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "ترقية السنوات من ثانية الى رابعة";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -653,7 +705,7 @@
             this.groupBox4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox4.Size = new System.Drawing.Size(826, 424);
+            this.groupBox4.Size = new System.Drawing.Size(826, 423);
             this.groupBox4.TabIndex = 52;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "ترحيل البيانات للسنوات القادمة";
@@ -664,7 +716,7 @@
             this.button11.BackColor = System.Drawing.Color.LimeGreen;
             this.button11.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button11.ForeColor = System.Drawing.Color.White;
-            this.button11.Location = new System.Drawing.Point(677, 370);
+            this.button11.Location = new System.Drawing.Point(677, 369);
             this.button11.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(128, 37);
@@ -747,7 +799,7 @@
             this.button13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button13.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button13.ForeColor = System.Drawing.Color.White;
-            this.button13.Location = new System.Drawing.Point(308, 367);
+            this.button13.Location = new System.Drawing.Point(308, 366);
             this.button13.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button13.Name = "button13";
             this.button13.Size = new System.Drawing.Size(224, 40);
@@ -768,7 +820,7 @@
             this.dataGridView3.Name = "dataGridView3";
             this.dataGridView3.RowHeadersWidth = 51;
             this.dataGridView3.RowTemplate.Height = 24;
-            this.dataGridView3.Size = new System.Drawing.Size(786, 268);
+            this.dataGridView3.Size = new System.Drawing.Size(786, 267);
             this.dataGridView3.TabIndex = 27;
             // 
             // label16
@@ -799,10 +851,11 @@
             this.tabPage4.Controls.Add(this.groupBox5);
             this.tabPage4.Controls.Add(this.label19);
             this.tabPage4.Controls.Add(this.label20);
-            this.tabPage4.Location = new System.Drawing.Point(4, 40);
+            this.tabPage4.ImageIndex = 35;
+            this.tabPage4.Location = new System.Drawing.Point(4, 41);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(899, 522);
+            this.tabPage4.Size = new System.Drawing.Size(899, 521);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "معادلة مواد";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -818,7 +871,7 @@
             this.groupBox5.Margin = new System.Windows.Forms.Padding(3, 2, 3, 30);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.groupBox5.Size = new System.Drawing.Size(826, 424);
+            this.groupBox5.Size = new System.Drawing.Size(826, 423);
             this.groupBox5.TabIndex = 55;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "طلبة المعادلة و التمهيدي";
@@ -829,7 +882,7 @@
             this.button14.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(109)))), ((int)(((byte)(148)))));
             this.button14.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button14.ForeColor = System.Drawing.Color.White;
-            this.button14.Location = new System.Drawing.Point(304, 367);
+            this.button14.Location = new System.Drawing.Point(304, 366);
             this.button14.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(224, 40);
@@ -850,7 +903,7 @@
             this.dataGridView4.Name = "dataGridView4";
             this.dataGridView4.RowHeadersWidth = 51;
             this.dataGridView4.RowTemplate.Height = 24;
-            this.dataGridView4.Size = new System.Drawing.Size(786, 309);
+            this.dataGridView4.Size = new System.Drawing.Size(786, 308);
             this.dataGridView4.TabIndex = 27;
             this.dataGridView4.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView4_CellContentClick);
             // 
@@ -877,50 +930,48 @@
             this.label20.Size = new System.Drawing.Size(0, 35);
             this.label20.TabIndex = 53;
             // 
-            // label1
+            // imageList1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.Black;
-            this.label1.Location = new System.Drawing.Point(686, 95);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(118, 23);
-            this.label1.TabIndex = 54;
-            this.label1.Text = "النسخ الاحيتياطي";
-            // 
-            // label18
-            // 
-            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label18.AutoSize = true;
-            this.label18.ForeColor = System.Drawing.Color.Black;
-            this.label18.Location = new System.Drawing.Point(289, 85);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(94, 23);
-            this.label18.TabIndex = 56;
-            this.label18.Text = "العام الجامعي";
-            // 
-            // numericUpDown6
-            // 
-            this.numericUpDown6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDown6.Location = new System.Drawing.Point(162, 78);
-            this.numericUpDown6.Maximum = new decimal(new int[] {
-            3000,
-            0,
-            0,
-            0});
-            this.numericUpDown6.Minimum = new decimal(new int[] {
-            1900,
-            0,
-            0,
-            0});
-            this.numericUpDown6.Name = "numericUpDown6";
-            this.numericUpDown6.Size = new System.Drawing.Size(120, 30);
-            this.numericUpDown6.TabIndex = 55;
-            this.numericUpDown6.Value = new decimal(new int[] {
-            1900,
-            0,
-            0,
-            0});
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "printbutton.png");
+            this.imageList1.Images.SetKeyName(1, "user (1).png");
+            this.imageList1.Images.SetKeyName(2, "teacher.png");
+            this.imageList1.Images.SetKeyName(3, "subjects2.png");
+            this.imageList1.Images.SetKeyName(4, "subjects.png");
+            this.imageList1.Images.SetKeyName(5, "subject.png");
+            this.imageList1.Images.SetKeyName(6, "studentlogin.png");
+            this.imageList1.Images.SetKeyName(7, "studenthomepage.png");
+            this.imageList1.Images.SetKeyName(8, "student.png");
+            this.imageList1.Images.SetKeyName(9, "selectedcheckboxicon.png");
+            this.imageList1.Images.SetKeyName(10, "searchuser.png");
+            this.imageList1.Images.SetKeyName(11, "search (1).png");
+            this.imageList1.Images.SetKeyName(12, "printbutton.png");
+            this.imageList1.Images.SetKeyName(13, "pdfbutton.png");
+            this.imageList1.Images.SetKeyName(14, "marks.png");
+            this.imageList1.Images.SetKeyName(15, "logout.png");
+            this.imageList1.Images.SetKeyName(16, "locationinfo.png");
+            this.imageList1.Images.SetKeyName(17, "lecturerhomepage.png");
+            this.imageList1.Images.SetKeyName(18, "home.png");
+            this.imageList1.Images.SetKeyName(19, "historybutton.png");
+            this.imageList1.Images.SetKeyName(20, "graducationcap.png");
+            this.imageList1.Images.SetKeyName(21, "facultylogin.png");
+            this.imageList1.Images.SetKeyName(22, "facultyhomepage.png");
+            this.imageList1.Images.SetKeyName(23, "faculities.png");
+            this.imageList1.Images.SetKeyName(24, "exit.png");
+            this.imageList1.Images.SetKeyName(25, "downloadedbutton.png");
+            this.imageList1.Images.SetKeyName(26, "downloadbutton.png");
+            this.imageList1.Images.SetKeyName(27, "dobinfo.png");
+            this.imageList1.Images.SetKeyName(28, "courceshomepage.png");
+            this.imageList1.Images.SetKeyName(29, "cources.png");
+            this.imageList1.Images.SetKeyName(30, "book.png");
+            this.imageList1.Images.SetKeyName(31, "backgroundimage3.jpg");
+            this.imageList1.Images.SetKeyName(32, "backgroundimage2.jpg");
+            this.imageList1.Images.SetKeyName(33, "back.png");
+            this.imageList1.Images.SetKeyName(34, "attandancereport.png");
+            this.imageList1.Images.SetKeyName(35, "attandance.png");
+            this.imageList1.Images.SetKeyName(36, "assignsubject.png");
+            this.imageList1.Images.SetKeyName(37, "adminprofile.png");
             // 
             // transfer_deportation
             // 
@@ -935,6 +986,7 @@
             this.tabPage1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
@@ -958,7 +1010,6 @@
             this.tabPage4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1021,5 +1072,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.NumericUpDown numericUpDown6;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }

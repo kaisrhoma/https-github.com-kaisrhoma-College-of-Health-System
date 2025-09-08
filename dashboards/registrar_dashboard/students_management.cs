@@ -575,7 +575,7 @@ namespace college_of_health_sciences.dashboards.registrar_dashboard
             panel1.BringToFront();
 
             var loadTask = Task.Run(() => LoadComboBoxesAndData());
-            var delayTask = Task.Delay(2000);
+            var delayTask = Task.Delay(1500);
 
             // انتظر انتهاء كلاهما
             await Task.WhenAll(loadTask, delayTask);

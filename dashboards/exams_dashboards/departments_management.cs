@@ -3071,6 +3071,14 @@ WHERE c.year_number = @year
                 using (SqlConnection connUpdate = db.OpenConnection())
                 {
                     // ==================== التحقق من الحقول ====================
+                    // التحقق من اختيار القسم
+                    if (comboBox6.SelectedValue == null)
+                    {
+                        MessageBox.Show("اختر القسم!");
+                        return;
+                    }
+                    int depID = Convert.ToInt32(comboBox6.SelectedValue);
+
                     if (comboBox9.SelectedValue == null) { MessageBox.Show("اختر الدكتور!"); return; }
                     int instructorIdIn = Convert.ToInt32(comboBox9.SelectedValue);
 
@@ -3090,6 +3098,13 @@ WHERE c.year_number = @year
 
                     if (numericUpDown1.Value <= 0) { MessageBox.Show("حدد العدد بشكل صحيح!"); return; }
                     int capacityIn = Convert.ToInt32(numericUpDown1.Value);
+
+                    if (numericUpDown2.Value <= 0)
+                    {
+                        MessageBox.Show("حدد المدة بشكل صحيح!");
+                        return;
+                    }
+                    int duration = Convert.ToInt32(numericUpDown2.Value);
 
                     if (comboBox12.SelectedItem == null) { MessageBox.Show("اختر وقت البداية!"); return; }
                     TimeSpan start = TimeSpan.Parse(comboBox12.SelectedItem.ToString());
@@ -3176,12 +3191,14 @@ WHERE c.year_number = @year
                 FROM Course_Classroom
                 WHERE course_id = @course_id
                   AND group_number = @group_number
+                  AND department_id = @depID
                   AND id <> @cc_id";
                     using (SqlCommand cmdGroup = new SqlCommand(qCheckGroup, connUpdate))
                     {
                         cmdGroup.Parameters.AddWithValue("@course_id", courseIdIn);
                         cmdGroup.Parameters.AddWithValue("@group_number", groupNumIn);
                         cmdGroup.Parameters.AddWithValue("@cc_id", selectedCCId);
+                        cmdGroup.Parameters.AddWithValue("@depID", depID);
 
                         int existsGroup = (int)cmdGroup.ExecuteScalar();
                         if (existsGroup > 0)
@@ -3201,7 +3218,8 @@ WHERE c.year_number = @year
                     start_time = @start_time,
                     end_time = @end_time,
                     lecture_day = @lecture_day,
-                    instructor_id = @instructor_id
+                    instructor_id = @instructor_id,
+                    department_id = @depID
                 WHERE id = @cc_id";
                     using (SqlCommand cmdUpdate = new SqlCommand(qUpdate, connUpdate))
                     {
@@ -3213,6 +3231,7 @@ WHERE c.year_number = @year
                         cmdUpdate.Parameters.AddWithValue("@end_time", end);
                         cmdUpdate.Parameters.AddWithValue("@lecture_day", lectureDayIn);
                         cmdUpdate.Parameters.AddWithValue("@instructor_id", instructorIdIn);
+                        cmdUpdate.Parameters.AddWithValue("@depID", depID);
                         cmdUpdate.Parameters.AddWithValue("@cc_id", selectedCCId);
 
                         cmdUpdate.ExecuteNonQuery();

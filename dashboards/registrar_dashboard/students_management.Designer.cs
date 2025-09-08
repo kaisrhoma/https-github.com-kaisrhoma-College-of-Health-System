@@ -29,8 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(students_management));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
@@ -71,11 +74,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.tabPage2.SuspendLayout();
@@ -87,8 +91,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericYear)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -98,6 +100,7 @@
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControl1.ImageList = this.imageList1;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Multiline = true;
@@ -118,13 +121,37 @@
             this.tabPage1.Controls.Add(this.groupBox3);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage1.Location = new System.Drawing.Point(4, 40);
+            this.tabPage1.ImageIndex = 8;
+            this.tabPage1.Location = new System.Drawing.Point(4, 41);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(5);
-            this.tabPage1.Size = new System.Drawing.Size(899, 522);
+            this.tabPage1.Size = new System.Drawing.Size(899, 521);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "تسجيل طالب جديد";
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.White;
+            this.panel1.Controls.Add(this.pictureBox1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(5, 5);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(889, 511);
+            this.panel1.TabIndex = 18;
+            this.panel1.Visible = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox1.Image = global::college_of_health_sciences.Properties.Resources.load_32;
+            this.pictureBox1.Location = new System.Drawing.Point(340, 145);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(198, 170);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 18;
+            this.pictureBox1.TabStop = false;
             // 
             // label1
             // 
@@ -400,11 +427,12 @@
             this.tabPage2.Controls.Add(this.groupBox4);
             this.tabPage2.Controls.Add(this.label4);
             this.tabPage2.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage2.Location = new System.Drawing.Point(4, 40);
+            this.tabPage2.ImageIndex = 35;
+            this.tabPage2.Location = new System.Drawing.Point(4, 41);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(5);
-            this.tabPage2.Size = new System.Drawing.Size(899, 522);
+            this.tabPage2.Size = new System.Drawing.Size(899, 521);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "تحديث بيانات طالب";
             // 
@@ -545,11 +573,12 @@
             this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Controls.Add(this.label5);
             this.tabPage3.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabPage3.Location = new System.Drawing.Point(4, 40);
+            this.tabPage3.ImageIndex = 37;
+            this.tabPage3.Location = new System.Drawing.Point(4, 41);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(5);
-            this.tabPage3.Size = new System.Drawing.Size(899, 522);
+            this.tabPage3.Size = new System.Drawing.Size(899, 521);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "إدارة الحالة الدراسية";
             // 
@@ -671,32 +700,52 @@
             this.label5.TabIndex = 29;
             this.label5.Text = "إدارة الحالة الدراسية";
             // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "printbutton.png");
+            this.imageList1.Images.SetKeyName(1, "user (1).png");
+            this.imageList1.Images.SetKeyName(2, "teacher.png");
+            this.imageList1.Images.SetKeyName(3, "subjects2.png");
+            this.imageList1.Images.SetKeyName(4, "subjects.png");
+            this.imageList1.Images.SetKeyName(5, "subject.png");
+            this.imageList1.Images.SetKeyName(6, "studentlogin.png");
+            this.imageList1.Images.SetKeyName(7, "studenthomepage.png");
+            this.imageList1.Images.SetKeyName(8, "student.png");
+            this.imageList1.Images.SetKeyName(9, "selectedcheckboxicon.png");
+            this.imageList1.Images.SetKeyName(10, "searchuser.png");
+            this.imageList1.Images.SetKeyName(11, "search (1).png");
+            this.imageList1.Images.SetKeyName(12, "printbutton.png");
+            this.imageList1.Images.SetKeyName(13, "pdfbutton.png");
+            this.imageList1.Images.SetKeyName(14, "marks.png");
+            this.imageList1.Images.SetKeyName(15, "logout.png");
+            this.imageList1.Images.SetKeyName(16, "locationinfo.png");
+            this.imageList1.Images.SetKeyName(17, "lecturerhomepage.png");
+            this.imageList1.Images.SetKeyName(18, "home.png");
+            this.imageList1.Images.SetKeyName(19, "historybutton.png");
+            this.imageList1.Images.SetKeyName(20, "graducationcap.png");
+            this.imageList1.Images.SetKeyName(21, "facultylogin.png");
+            this.imageList1.Images.SetKeyName(22, "facultyhomepage.png");
+            this.imageList1.Images.SetKeyName(23, "faculities.png");
+            this.imageList1.Images.SetKeyName(24, "exit.png");
+            this.imageList1.Images.SetKeyName(25, "downloadedbutton.png");
+            this.imageList1.Images.SetKeyName(26, "downloadbutton.png");
+            this.imageList1.Images.SetKeyName(27, "dobinfo.png");
+            this.imageList1.Images.SetKeyName(28, "courceshomepage.png");
+            this.imageList1.Images.SetKeyName(29, "cources.png");
+            this.imageList1.Images.SetKeyName(30, "book.png");
+            this.imageList1.Images.SetKeyName(31, "backgroundimage3.jpg");
+            this.imageList1.Images.SetKeyName(32, "backgroundimage2.jpg");
+            this.imageList1.Images.SetKeyName(33, "back.png");
+            this.imageList1.Images.SetKeyName(34, "attandancereport.png");
+            this.imageList1.Images.SetKeyName(35, "attandance.png");
+            this.imageList1.Images.SetKeyName(36, "assignsubject.png");
+            this.imageList1.Images.SetKeyName(37, "adminprofile.png");
+            // 
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
-            // 
-            // panel1
-            // 
-            this.panel1.BackColor = System.Drawing.Color.White;
-            this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(5, 5);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(889, 512);
-            this.panel1.TabIndex = 18;
-            this.panel1.Visible = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.Image = global::college_of_health_sciences.Properties.Resources.load_32;
-            this.pictureBox1.Location = new System.Drawing.Point(340, 146);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(198, 170);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 18;
-            this.pictureBox1.TabStop = false;
             // 
             // students_management
             // 
@@ -709,6 +758,8 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
@@ -725,8 +776,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericYear)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
-            this.panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -778,5 +827,6 @@
         private System.Windows.Forms.NumericUpDown numericYear;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }
