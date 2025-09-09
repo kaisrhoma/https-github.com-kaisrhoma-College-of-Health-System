@@ -15,6 +15,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
     public partial class departments_management : UserControl
     {
         SqlConnection con = new SqlConnection(@"Data Source=.\SQLEXPRESS;Initial Catalog=Cohs_DB;Integrated Security=True");
+      
+
         private DataTable dtCourses = new DataTable();
         private DataRow selectedCourse = null;
         private bool isSelecting = false;
@@ -1932,36 +1934,7 @@ WHERE ci.course_id = @course_id
 
                 using (SqlConnection concc = dbshowcc.OpenConnection()) // فتح الاتصال
                 {
-                    //                    string query = @"
-                    //                                  SELECT 
-                    //    cc.id,
-                    //    c.year_number AS [السنة],
-                    //    c.course_name AS [اسم المادة],
-                    //    d.dep_name AS [القسم],
-                    //    cl.room_name AS [اسم القاعة],
-                    //    cc.group_number AS [المجموعة],
-                    //    cc.capacity AS [العدد],
-                    //    cc.start_time AS [وقت البداية],
-                    //    cc.end_time AS [وقت النهاية],
-                    //    CASE cc.lecture_day
-                    //        WHEN 1 THEN N'الأحد'
-                    //        WHEN 2 THEN N'الأثنين'
-                    //        WHEN 3 THEN N'الثلاثاء'
-                    //        WHEN 4 THEN N'الأربعاء'
-                    //        WHEN 5 THEN N'الخميس'
-                    //        WHEN 6 THEN N'الجمعة'
-                    //        WHEN 7 THEN N'السبت'
-                    //        ELSE N'غير محدد'
-                    //    END AS [اليوم],
-                    //    i.full_name AS [الدكتور]
-                    //FROM Course_Classroom cc
-                    //JOIN Courses c ON cc.course_id = c.course_id
-                    //JOIN Classrooms cl ON cc.classroom_id = cl.classroom_id
-                    //LEFT JOIN Instructors i ON i.instructor_id = cc.instructor_id
-                    //LEFT JOIN Course_Department cd ON cd.course_id = c.course_id
-                    //LEFT JOIN Departments d ON d.department_id = cd.department_id
-
-                    //                                   ";
+                 
                     string query = @"
 SELECT 
     cc.id,

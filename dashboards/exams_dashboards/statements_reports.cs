@@ -31,7 +31,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         private double cumulativeAverage = 0;
         private string studentDepartment;
         private string academicYear;
-        private string studentGender = "ذكر"; // أو "أنثى" حسب قاعدة البيانات
+
      
 
 
@@ -323,7 +323,7 @@ ORDER BY d.dep_name, c.year_number, s.university_number, c.course_id;
 
 ";
 
-            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
                 cmd.Parameters.AddWithValue("@academic_year", academicYearStart);
@@ -477,8 +477,9 @@ ORDER BY d.dep_name, c.year_number, s.university_number, c.course_id;
             StringFormat rightFormat = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near };
             StringFormat centerFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
-            // ------------------- رأس الصفحة (الشعارات ثابتة لكل صفحة) -------------------
-            Image logo = Image.FromFile(@"C:\Users\am105\Source\Repos\https-github.com-kaisrhoma-College-of-Health-System\Resources\logo.png");
+         
+            Image logo = Properties.Resources.garyan_univirsty_logo;
+
             e.Graphics.DrawImage(logo, x + pageWidth / 2 - 60, y, 120, 120);
             y += 130;
 
@@ -1071,7 +1072,7 @@ INNER JOIN Departments d
 WHERE s.university_number = @university_number
 ORDER BY c.year_number, c.course_name;";
 
-                using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@university_number", uniNumber);
@@ -1123,7 +1124,7 @@ ORDER BY c.year_number, c.course_name;
 
 
 
-                using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@university_number", uniNumber);
@@ -1365,7 +1366,7 @@ ORDER BY c.year_number, c.course_name;
         {
             string query = "SELECT department_id, dep_name FROM Departments";
 
-            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
                 conn.Open();

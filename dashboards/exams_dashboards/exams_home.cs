@@ -14,6 +14,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
     public partial class exams_home : UserControl
     {
         SqlConnection con = new SqlConnection(@"Data Source=.\SQLEXPRESS;Initial Catalog=Cohs_DB;Integrated Security=True");
+        private readonly string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
         public exams_home()
         {
 
@@ -26,8 +27,8 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         }
         private void LoadDashboardStatistics()
         {
-            string connStr = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
-            using (SqlConnection conn = new SqlConnection(connStr))
+       
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
 

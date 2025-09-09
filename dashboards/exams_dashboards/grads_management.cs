@@ -375,7 +375,7 @@ WHERE 1=1
             {
                 try
                 {
-                    using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+                    using (SqlConnection conn = new SqlConnection(connectionString))
                     {
                         conn.Open();
                         using (SqlTransaction transaction = conn.BeginTransaction())
@@ -1638,7 +1638,7 @@ VALUES (@userId, 'UPDATE', 'Grades', @recordId)";
             if (!int.TryParse(comboBox_Year.SelectedItem.ToString(), out yearNumber))
                 return;
 
-            using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+            using (SqlConnection conn = new SqlConnection(connectionString))
 
             {
                 conn.Open();
@@ -1842,7 +1842,7 @@ VALUES (@userId, 'UPDATE', 'Grades', @recordId)";
             int courseId = Convert.ToInt32(comboBox_Course.SelectedValue);
 
             // نص الاتصال بقاعدة البيانات
-            string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
+       //     string connectionString = @"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;";
 
 
             string query = @"
@@ -2213,7 +2213,7 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;
             try
             {
 
-                using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
 
@@ -2286,7 +2286,7 @@ AND s.exam_round = @examRound
 
                 try
                 {
-                    using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+                    using (SqlConnection conn = new SqlConnection(connectionString))
                     {
                         conn.Open();
                         using (SqlTransaction transaction = conn.BeginTransaction())
@@ -2448,7 +2448,7 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
             {
                 try
                 {
-                    using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=Cohs_DB;Integrated Security=True;"))
+                    using (SqlConnection conn = new SqlConnection(connectionString))
                     {
                         conn.Open();
                         using (SqlTransaction transaction = conn.BeginTransaction())

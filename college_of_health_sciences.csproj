@@ -377,6 +377,7 @@
     <None Include="Resources\bg.jpg" />
     <None Include="Resources\loadin_splash.gif" />
     <None Include="Resources\loadin_splash_png.png" />
+    <None Include="Resources\logo.bmp" />
     <Content Include="Resources\logo.png" />
     <None Include="Resources\PictureLoading1.gif" />
     <None Include="Resources\load-32.gif" />
