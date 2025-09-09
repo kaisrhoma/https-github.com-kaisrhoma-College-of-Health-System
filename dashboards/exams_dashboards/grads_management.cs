@@ -1967,16 +1967,16 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
             if (isHandlingCellValueChanged) return;  // لمنع التكرار المتداخل
 
-            string exr = comboExamRound.Text;
+            //string exr = comboExamRound.Text;
 
             try
             {
                 isHandlingCellValueChanged = true;
                 var row = dataGridViewGrades.Rows[e.RowIndex];
 
-                if (exr == "دور أول")
-                {
-                    // الدور الأول كما كان سابقًا
+                //if (exr == "دور أول")
+                //{
+                //    // الدور الأول كما كان سابقًا
                     int workGrade = 0, finalGrade = 0;
 
                     if (int.TryParse(row.Cells["درجة الأعمال"].Value?.ToString(), out int wg))
@@ -1987,23 +1987,23 @@ ORDER BY c.course_id, cc.group_number, s.university_number;
 
                     int total = workGrade + finalGrade;
                     row.Cells["المجموع الكلي"].Value = total;
-                }
-                else if (exr == "دور ثاني")
-                {
-                    // الدور الثاني: إذا تم تعديل "المجموع الكلي"، احسب الدرجات الفرعية تلقائيًا
-                    if (e.ColumnIndex == row.Cells["المجموع الكلي"].ColumnIndex)
-                    {
-                        if (int.TryParse(row.Cells["المجموع الكلي"].Value?.ToString(), out int total))
-                        {
-                            // 40% أعمال السنة و60% امتحان نهائي
-                            int finalGrade = (int)Math.Round(total * 0.6);
-                            int workGrade = total - finalGrade; // لضمان أن المجموع يبقى صحيحًا
+                //}
+                //else if (exr == "دور ثاني")
+                //{
+                //    // الدور الثاني: إذا تم تعديل "المجموع الكلي"، احسب الدرجات الفرعية تلقائيًا
+                //    if (e.ColumnIndex == row.Cells["المجموع الكلي"].ColumnIndex)
+                //    {
+                //        if (int.TryParse(row.Cells["المجموع الكلي"].Value?.ToString(), out int total))
+                //        {
+                //            // 40% أعمال السنة و60% امتحان نهائي
+                //            int finalGrade = (int)Math.Round(total * 0.6);
+                //            int workGrade = total - finalGrade; // لضمان أن المجموع يبقى صحيحًا
 
-                            row.Cells["درجة الامتحان النهائي"].Value = finalGrade;
-                            row.Cells["درجة الأعمال"].Value = workGrade;
-                        }
-                    }
-                }
+                //            row.Cells["درجة الامتحان النهائي"].Value = finalGrade;
+                //            row.Cells["درجة الأعمال"].Value = workGrade;
+                //        }
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -2197,6 +2197,8 @@ INNER JOIN CurrentYearFails cf ON s.student_id = cf.student_id;
             {
                 MessageBox.Show("حدث خطأ أثناء الاتصال:\n" + exOuter.Message);
             }
+
+            button10_Click(null, null); // إعادة تحميل البيانات
 
         }
 
@@ -2599,6 +2601,7 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
                 }
             }
 
+
         }
 
 
@@ -2608,10 +2611,10 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
             var row = dataGridView1.Rows[e.RowIndex];
             if (row.IsNewRow) return;
 
-            string exr = comboBox2.Text;
+            //string exr = comboBox2.Text;
 
-            if (exr == "دور أول")
-            {
+            //if (exr == "دور أول")
+            //{
                 // حساب المجموع من أعمال السنة + الامتحان النهائي
                 string workStr = row.Cells["أعمال السنة"].Value?.ToString();
                 string finalStr = row.Cells["الامتحان النهائي"].Value?.ToString();
@@ -2630,20 +2633,20 @@ VALUES(@sid,@cid,@cw,@fe,@total, CASE WHEN (@cw + ISNULL(@fe,0)) >= 60 THEN N'ن
                 if (!finalEmpty && int.TryParse(finalStr, out int fg)) finalGrade = fg;
 
                 row.Cells["المجموع"].Value = work + finalGrade;
-            }
-            else if (exr == "دور ثاني")
-            {
-                // إذا تم تعديل المجموع فقط، احسب الأعمال والنهائي تلقائيًا
-                string totalStr = row.Cells["المجموع"].Value?.ToString();
-                if (int.TryParse(totalStr, out int total))
-                {
-                    int finalGrade = (int)Math.Round(total * 0.6);  // 60% امتحان نهائي
-                    int work = total - finalGrade;                 // 40% أعمال السنة
+            //}
+            //else if (exr == "دور ثاني")
+            //{
+            //    // إذا تم تعديل المجموع فقط، احسب الأعمال والنهائي تلقائيًا
+            //    string totalStr = row.Cells["المجموع"].Value?.ToString();
+            //    if (int.TryParse(totalStr, out int total))
+            //    {
+            //        int finalGrade = (int)Math.Round(total * 0.6);  // 60% امتحان نهائي
+            //        int work = total - finalGrade;                 // 40% أعمال السنة
 
-                    row.Cells["الامتحان النهائي"].Value = finalGrade;
-                    row.Cells["أعمال السنة"].Value = work;
-                }
-            }
+            //        row.Cells["الامتحان النهائي"].Value = finalGrade;
+            //        row.Cells["أعمال السنة"].Value = work;
+            //    }
+            //}
 
             // اترك عمود الحالة فارغ
             row.Cells["الحالة"].Value = "";

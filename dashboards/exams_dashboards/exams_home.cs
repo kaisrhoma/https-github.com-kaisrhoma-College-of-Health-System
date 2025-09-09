@@ -77,7 +77,7 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
 
                 if (result == DBNull.Value)
                 {
-                    MessageBox.Show("⚠️ لا توجد بيانات للسنة الأكاديمية.");
+                    chart3.Titles.Add("⚠️ لا توجد بيانات للسنة الأكاديمية.");
                     return;
                 }
 

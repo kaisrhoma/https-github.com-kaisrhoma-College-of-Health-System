@@ -477,24 +477,24 @@ ORDER BY d.dep_name, c.year_number, s.university_number, c.course_id;
             StringFormat rightFormat = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near };
             StringFormat centerFormat = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
 
-         
-            Image logo = Properties.Resources.garyan_univirsty_logo;
 
-            e.Graphics.DrawImage(logo, x + pageWidth / 2 - 60, y, 120, 120);
+            //Image logo = Properties.Resources.garyan_univirsty_logo;
+
+            //e.Graphics.DrawImage(logo, x + pageWidth / 2 - 60, y, 120, 120);
             y += 130;
 
-            e.Graphics.DrawString("كشف درجات التخرج", headerFont, brush, new Rectangle(x, y, pageWidth, 25), centerFormat);
+            //e.Graphics.DrawString("كشف درجات التخرج", headerFont, brush, new Rectangle(x, y, pageWidth, 25), centerFormat);
             y += 35;
 
-            // الهامش الأيمن
-            e.Graphics.DrawString("وزارة التعليم - ليبيا\nجامعة غريان\nالمسجل العام", boldFont, brush,
-                new Rectangle(x + pageWidth - 200, margin, 200, 60), rightFormat);
+            //// الهامش الأيمن
+            //e.Graphics.DrawString("وزارة التعليم - ليبيا\nجامعة غريان\nالمسجل العام", boldFont, brush,
+            //    new Rectangle(x + pageWidth - 200, margin, 200, 60), rightFormat);
 
-            // الهامش الأيسر
-            e.Graphics.DrawString("Ministry of Education - Libya\nUniversity of Gharian\nRegistrar\nDate: ............", boldFont, brush,
-                new Rectangle(x, margin, 300, 60), leftFormat);
+            //// الهامش الأيسر
+            //e.Graphics.DrawString("Ministry of Education - Libya\nUniversity of Gharian\nRegistrar\nDate: ............", boldFont, brush,
+            //    new Rectangle(x, margin, 300, 60), leftFormat);
 
-            y += 10;
+            //y += 10;
 
             // ------------------- معلومات الطالب (تظهر فقط في الصفحة الأولى) -------------------
             if (currentPageIndex == 0)
@@ -854,18 +854,19 @@ ORDER BY c.year_number, c.course_name;
                 LineAlignment = StringAlignment.Center,
                 FormatFlags = StringFormatFlags.DirectionRightToLeft
             };
-
-            // عنوان الكلية والتقرير
-            e.Graphics.DrawString("جامعة غريان", headerFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
-            y += 35;
-            e.Graphics.DrawString("كلية العلوم الصحية", headerFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
-            y += 50;
-            e.Graphics.DrawString($"القسم: {d}", headerFont, brush,
-         e.MarginBounds.Left + e.MarginBounds.Width / 2, y, centerFormat);
-            y += 10;
-            e.Graphics.DrawString("كشف درجات", subHeaderFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
-            y += 25;
-
+            if (currentPageIndex == 0)
+            {
+                // عنوان الكلية والتقرير
+                e.Graphics.DrawString("جامعة غريان", headerFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
+                y += 35;
+                e.Graphics.DrawString("كلية العلوم الصحية", headerFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
+                y += 50;
+                e.Graphics.DrawString($"القسم: {d}", headerFont, brush,
+             e.MarginBounds.Left + e.MarginBounds.Width / 2, y, centerFormat);
+                y += 10;
+                e.Graphics.DrawString("كشف درجات", subHeaderFont, brush, new Rectangle(x, y, pageWidth, 30), centerFormat);
+                y += 25;
+            }
 
 
             // جدول معلومات الطالب
@@ -983,27 +984,31 @@ ORDER BY c.year_number, c.course_name;
                 e.Graphics.DrawString(summaryValues[colIndex], textFont, brush, rectValue, centerFormat);
             }
 
+
             // **اجعل التوقيعات في أسفل الصفحة مهما كان المحتوى**
-            int signHeight = 50;
-            int signY = pageHeight - margin - signHeight; // مكان التوقيعات في أسفل الصفحة
-
-            string[] signatures = { "قسم الدراسة والامتحانات", "المسجل العام" };
-            int signCount = signatures.Length;
-            int signColWidth = pageWidth / signCount;
-
-            Pen dottedPen = new Pen(Color.Black);
-            dottedPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-
-            for (int i = 0; i < signCount; i++)
+            if (currentPageIndex == 0)
             {
-                int posX = x + i * signColWidth;
-                // نص التوقيع فوق الخط
-                Rectangle rectSignText = new Rectangle(posX, signY, signColWidth, gradeRowHeight);
-                e.Graphics.DrawString(signatures[i], textFont, brush, rectSignText, centerFormat);
+                int signHeight = 50;
+                int signY = pageHeight - margin - signHeight; // مكان التوقيعات في أسفل الصفحة
 
-                // خط التوقيع المنقط تحت النص
-                int lineY = signY + gradeRowHeight + 20;
-                e.Graphics.DrawLine(dottedPen, posX + 5, lineY, posX + signColWidth - 10, lineY);
+                string[] signatures = { "قسم الدراسة والامتحانات", "المسجل العام" };
+                int signCount = signatures.Length;
+                int signColWidth = pageWidth / signCount;
+
+                Pen dottedPen = new Pen(Color.Black);
+                dottedPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+
+                for (int i = 0; i < signCount; i++)
+                {
+                    int posX = x + i * signColWidth;
+                    // نص التوقيع فوق الخط
+                    Rectangle rectSignText = new Rectangle(posX, signY, signColWidth, gradeRowHeight);
+                    e.Graphics.DrawString(signatures[i], textFont, brush, rectSignText, centerFormat);
+
+                    // خط التوقيع المنقط تحت النص
+                    int lineY = signY + gradeRowHeight + 20;
+                    e.Graphics.DrawLine(dottedPen, posX + 5, lineY, posX + signColWidth - 10, lineY);
+                }
             }
 
             // ===== إضافة ترقيم الصفحة =====
