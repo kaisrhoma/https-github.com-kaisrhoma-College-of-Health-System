@@ -395,5 +395,10 @@ namespace college_of_health_sciences.dashboards.exams_dashboards
         {
 
         }
+
+        private void chart3_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

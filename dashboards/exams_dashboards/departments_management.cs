@@ -3261,11 +3261,6 @@ WHERE c.year_number = @year
                 comboBox5_SelectedIndexChanged(null, null);
             }
 
-
-
-
-
-
             }
     }
 }
